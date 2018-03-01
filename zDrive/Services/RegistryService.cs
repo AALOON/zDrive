@@ -107,7 +107,7 @@ namespace zDrive.Services
             return Write(AutoRunPath, value);
         }
 
-        public object RemoveAutoRun(object value)
+        public object RemoveAutoRun()
         {
             return Remove(AutoRunPath);
         }

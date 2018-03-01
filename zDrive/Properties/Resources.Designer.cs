@@ -106,6 +106,15 @@ namespace zDrive.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {1:F2}{2}/{0:F2}{3}.
+        /// </summary>
+        public static string InfoFormat_FreeMax {
+            get {
+                return ResourceManager.GetString("InfoFormat_FreeMax", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to байт.
         /// </summary>
         public static string Size_bytes {

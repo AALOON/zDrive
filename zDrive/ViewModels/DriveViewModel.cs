@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using zDrive.Converters;
+﻿using zDrive.Converters;
 using zDrive.Helpers;
 
 namespace zDrive.ViewModels
@@ -7,6 +6,7 @@ namespace zDrive.ViewModels
     internal class DriveViewModel : ViewModelBase
     {
         #region Fields
+
         private string _key;
         private string _label;
         private string _name;
@@ -14,7 +14,7 @@ namespace zDrive.ViewModels
         private System.IO.DriveType _type;
         private long _totalsize;
         private long _totalfreespace;
-        private InfoFormat _formatOfInfo;
+        private InfoFormat _infoFormat;
 
         #endregion Fields
 
@@ -53,16 +53,7 @@ namespace zDrive.ViewModels
         public long TotalSize
         {
             get => _totalsize;
-            set
-            {
-                if (_totalsize != value)
-                {
-                    _totalsize = value;
-                    RaisePropertyChanged("TotalSize");
-                    RaisePropertyChanged("Value");
-                    RaisePropertyChanged("FreeText");
-                }
-            }
+            set => Set(ref _totalsize, value);
         }
 
         public long TotalFreeSpace
@@ -73,8 +64,9 @@ namespace zDrive.ViewModels
                 if (_totalfreespace != value)
                 {
                     _totalfreespace = value;
-                    RaisePropertyChanged("TotalFreeSpace");
-                    RaisePropertyChanged("Value");
+                    RaisePropertyChanged(nameof(TotalFreeSpace));
+                    RaisePropertyChanged(nameof(Value));
+                    RaisePropertyChanged(nameof(Info));
                 }
             }
         }
@@ -90,24 +82,21 @@ namespace zDrive.ViewModels
             }
         }
 
-        public InfoFormat FormatOfInfo
-        {
-            get => _formatOfInfo;
-            set
-            {
-                _formatOfInfo = value;
-                RaisePropertyChanged(nameof(FormatOfInfo));
-            }
-        }
-
-        public string Info => FormatOfInfo.ToFormatedString(TotalFreeSpace, TotalSize);
-
+        public string Info => _infoFormat.ToFormatedString(TotalFreeSpace, TotalSize);
+        
         #endregion Properties
 
-        public DriveViewModel()
+        public void UpdateInfo(InfoFormat format)
+        {
+            _infoFormat = format;
+            RaisePropertyChanged(nameof(Info));
+        }
+
+
+        public DriveViewModel(InfoFormat infoFormat)
         {
             OpenCommand = new RelayCommand(Open);
-            _formatOfInfo = InfoFormat.Free;
+            _infoFormat = infoFormat;
         }
 
         public RelayCommand OpenCommand { get; set; }

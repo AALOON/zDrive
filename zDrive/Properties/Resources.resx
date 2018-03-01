@@ -177,4 +177,7 @@
   <data name="TopmostCheckbox_Text" xml:space="preserve">
     <value>Поверх всех окон</value>
   </data>
+  <data name="InfoFormat_FreeMax" xml:space="preserve">
+    <value>{1:F2}{2}/{0:F2}{3}</value>
+  </data>
 </root>

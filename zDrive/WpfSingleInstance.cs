@@ -54,7 +54,17 @@ namespace zDrive
         private static void OtherInstanceAttemptedToStart(Object state, Boolean timedOut)
         {
             RemoveApplicationsStartupDeadlockForStartupCrushedWindows();
-            Application.Current.Dispatcher.BeginInvoke(new Action(() => { try { Application.Current.MainWindow.Activate(); } catch { } }));
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                try
+                {
+                    if (Application.Current.MainWindow != null) Application.Current.MainWindow.Activate();
+                }
+                catch
+                {
+                    throw;
+                }
+            }));
         }
 
         private static DispatcherTimer _autoExitAplicationIfStartupDeadlock;

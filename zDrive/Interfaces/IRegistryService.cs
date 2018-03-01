@@ -11,6 +11,6 @@
         object Read(string name, object defaultvalue);
         object ReadAutoRun();
         object WriteAutoRun(object value);
-        object RemoveAutoRun(object value);
+        object RemoveAutoRun();
     }
 }

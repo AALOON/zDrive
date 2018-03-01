@@ -5,6 +5,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:p="clr-namespace:zDrive.Properties"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
+        xmlns:converters="clr-namespace:zDrive.Converters"
         mc:Ignorable="d"
         
         Title="{x:Static p:Resources.AppTitle_Text}"
@@ -36,6 +38,12 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Skins/GraySkin.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <ObjectDataProvider x:Key="InfoFormatList" MethodName="GetValues"
+                                ObjectType="{x:Type system:Enum}">
+                <ObjectDataProvider.MethodParameters>
+                    <x:Type TypeName="converters:InfoFormat"/>
+                </ObjectDataProvider.MethodParameters>
+            </ObjectDataProvider>
         </ResourceDictionary>
     </Window.Resources>
     <Grid HorizontalAlignment="Left">
@@ -92,27 +100,33 @@
             <Popup x:Name="PropertiesPopup" Placement="Right"
                    PopupAnimation="Slide" AllowsTransparency="True" 
                    HorizontalAlignment="Center" VerticalAlignment="Center" 
-                   PlacementTarget="{Binding ElementName=Propertys}"
+                   PlacementTarget="{Binding ElementName=PartProperties}"
                    >
-                <Grid>
+                <Grid >
                     <Grid>
                         <ContentControl Template="{StaticResource PropertiesBackround}"/>
                     </Grid>
-                    <StackPanel TextBlock.FontSize="10" >
+                    <StackPanel Margin="4">
                         <CheckBox Name="TopmostCheckbox"
                                   IsChecked="{Binding Topmost}"
-                                  Foreground="{StaticResource Foreground}" 
+                                  FontSize="{StaticResource MenuFontSize}"
+                                  Foreground="{StaticResource Foreground}"
                                   Content="{x:Static p:Resources.TopmostCheckbox_Text}"/>
                         <CheckBox Name="HideUnavailableCheckbox"
                                   IsChecked="{Binding ShowUnavailable}"
-                                  Foreground="{StaticResource Foreground}" 
+                                  FontSize="{StaticResource MenuFontSize}"
+                                  Foreground="{StaticResource Foreground}"
                                   Content="{x:Static p:Resources.HideUnavailableCheckbox_Text}"/>
                         <CheckBox Name="AutorunCheckbox"
                                   IsChecked="{Binding AutoRun}"
-                                  Foreground="{StaticResource Foreground}" 
-                                  Content="{x:Static p:Resources.AutorunCheckbox_Text}"/>                       
+                                  FontSize="{StaticResource MenuFontSize}"
+                                  Foreground="{StaticResource Foreground}"
+                                  Content="{x:Static p:Resources.AutorunCheckbox_Text}"/>
+                        <ComboBox ItemsSource="{Binding Source={StaticResource InfoFormatList}}"
+                                  SelectedItem="{Binding InfoFormat}"/>
                         <Button Name="CloseButton"
                                 Background="{x:Null}" Margin="2" Command="{Binding CloseCommnad}"
+                                FontSize="{StaticResource MenuFontSize}"
                                 Foreground="{StaticResource Foreground}"
                                 Content="{x:Static p:Resources.CloseButton_Text}"/>
                     </StackPanel>

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
+using zDrive.Converters;
 using zDrive.Interfaces;
 using zDrive.ViewModels;
 
@@ -11,15 +12,30 @@ namespace zDrive.Services
 {
     internal class DriveInfoService : IDriveInfoService
     {
+        private readonly object _lock = new object();
         private readonly Func<DriveInfo, string> _keyFunc = x => x.Name + x.VolumeLabel + x.DriveFormat;
+        private InfoFormat _infoFormat = InfoFormat.Free;
 
         public bool ShowUnavailable { get; set; }
+
+        public InfoFormat InfoFormat
+        {
+            get => _infoFormat;
+            set
+            {
+                _infoFormat = value;
+                foreach (var driveViewModel in Drives)
+                    driveViewModel.UpdateInfo(_infoFormat);
+            }
+        }
+
         public IList<DriveViewModel> Drives { get; set; }
 
         private DriveInfo[] GetDrives()
         {
             return DriveInfo.GetDrives();
         }
+
         private IDictionary<string, DriveInfo> GetDrivesDictionary(DriveInfo[] driveInfos)
         {
             return driveInfos.ToDictionary(_keyFunc);
@@ -27,15 +43,21 @@ namespace zDrive.Services
 
         private DriveViewModel GetDriveViewModel(DriveInfo drive)
         {
-            return new DriveViewModel
+            if (drive.IsReady)
+                return new DriveViewModel(_infoFormat)
+                {
+                    Key = _keyFunc(drive),
+                    Name = drive.Name,
+                    Type = drive.DriveType,
+                    Label = drive.VolumeLabel,
+                    Format = drive.DriveFormat,
+                    TotalSize = drive.TotalSize,
+                    TotalFreeSpace = drive.TotalFreeSpace
+                };
+            return new DriveViewModel(_infoFormat)
             {
-                Key = _keyFunc(drive),
                 Name = drive.Name,
-                Type = drive.DriveType,
-                Label = drive.VolumeLabel,
-                Format = drive.DriveFormat,
-                TotalSize = drive.TotalSize,
-                TotalFreeSpace = drive.TotalFreeSpace
+                Type = drive.DriveType
             };
         }
 
@@ -46,20 +68,22 @@ namespace zDrive.Services
 
         public void Update()
         {
-            if(Drives == null)
+            if (Drives == null)
                 throw new NullReferenceException(nameof(Drives));
 
-            if (Drives.Count != 0)
-                UpdateNotEmpty();
-            else
+            lock (_lock)
             {
-                foreach (var item in GetDrives())
+                if (Drives.Count != 0)
+                    UpdateNotEmpty();
+                else
                 {
-                    if (ShowUnavailable)
-                        if (!item.IsReady)
+                    foreach (var item in GetDrives())
+                    {
+                        if (!ShowUnavailable && !item.IsReady)
                             continue;
 
-                    MainThreadOperation(() => Drives.Add(GetDriveViewModel(item)));
+                        MainThreadOperation(() => Drives.Add(GetDriveViewModel(item)));
+                    }
                 }
             }
         }
@@ -76,10 +100,18 @@ namespace zDrive.Services
                 {
                     var driveInfo = driveInfosDictionary[drive.Key];
 
-                    drive.Label = driveInfo.VolumeLabel;
-                    drive.Format = driveInfo.DriveFormat;
-                    drive.TotalSize = driveInfo.TotalSize;
-                    drive.TotalFreeSpace = driveInfo.TotalFreeSpace;
+                    if (driveInfo.IsReady)
+                    {
+                        drive.Label = driveInfo.VolumeLabel;
+                        drive.Format = driveInfo.DriveFormat;
+                        drive.TotalSize = driveInfo.TotalSize;
+                        drive.TotalFreeSpace = driveInfo.TotalFreeSpace;
+                    }
+                    else
+                    {
+                        if (!ShowUnavailable)
+                            needRemove.Add(i);
+                    }
 
                     driveInfosDictionary.Remove(drive.Key);
                 }

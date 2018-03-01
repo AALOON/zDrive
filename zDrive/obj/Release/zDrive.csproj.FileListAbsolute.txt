@@ -31,3 +31,24 @@ D:\!C_Document\Documents\Visual Studio 2013\Projects\zDrive\zDrive\obj\Release\z
 D:\!C_Document\Documents\Visual Studio 2013\Projects\zDrive\zDrive\obj\Release\zDrive.Properties.Resources.resources
 D:\!C_Document\Documents\Visual Studio 2013\Projects\zDrive\zDrive\obj\Release\zDrive.csproj.GenerateResource.Cache
 D:\!C_Document\Documents\Visual Studio 2013\Projects\zDrive\zDrive\obj\Release\zDrive.csproj.CoreCompileInputs.cache
+C:\Users\Albert\source\repos\zDrive\zDrive\zDrive\bin\Release\zDrive.exe.config
+C:\Users\Albert\source\repos\zDrive\zDrive\zDrive\bin\Release\zDrive.exe
+C:\Users\Albert\source\repos\zDrive\zDrive\zDrive\bin\Release\zDrive.pdb
+C:\Users\Albert\source\repos\zDrive\zDrive\zDrive\obj\Release\zDrive.csprojResolveAssemblyReference.cache
+C:\Users\Albert\source\repos\zDrive\zDrive\zDrive\obj\Release\MainWindow.g.cs
+C:\Users\Albert\source\repos\zDrive\zDrive\zDrive\obj\Release\App.g.cs
+C:\Users\Albert\source\repos\zDrive\zDrive\zDrive\obj\Release\GeneratedInternalTypeHelper.g.cs
+C:\Users\Albert\source\repos\zDrive\zDrive\zDrive\obj\Release\zDrive_MarkupCompile.cache
+C:\Users\Albert\source\repos\zDrive\zDrive\zDrive\obj\Release\zDrive_MarkupCompile.lref
+C:\Users\Albert\source\repos\zDrive\zDrive\zDrive\obj\Release\App.baml
+C:\Users\Albert\source\repos\zDrive\zDrive\zDrive\obj\Release\MainWindow.baml
+C:\Users\Albert\source\repos\zDrive\zDrive\zDrive\obj\Release\Skins\GraySkin.baml
+C:\Users\Albert\source\repos\zDrive\zDrive\zDrive\obj\Release\zDrive.g.resources
+C:\Users\Albert\source\repos\zDrive\zDrive\zDrive\obj\Release\zDrive.csproj.CoreCompileInputs.cache
+C:\Users\Albert\source\repos\zDrive\zDrive\zDrive\obj\Release\zDrive.exe
+C:\Users\Albert\source\repos\zDrive\zDrive\zDrive\obj\Release\zDrive.pdb
+C:\Users\Albert\source\repos\zDrive\zDrive\zDrive\bin\Release\en-US\zDrive.resources.dll
+C:\Users\Albert\source\repos\zDrive\zDrive\zDrive\obj\Release\zDrive.Properties.Resources.resources
+C:\Users\Albert\source\repos\zDrive\zDrive\zDrive\obj\Release\zDrive.Properties.Resources.en-US.resources
+C:\Users\Albert\source\repos\zDrive\zDrive\zDrive\obj\Release\zDrive.csproj.GenerateResource.Cache
+C:\Users\Albert\source\repos\zDrive\zDrive\zDrive\obj\Release\en-US\zDrive.resources.dll

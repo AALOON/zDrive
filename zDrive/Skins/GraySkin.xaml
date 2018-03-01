@@ -1,7 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:vm="clr-namespace:zDrive.ViewModels"
-                    xmlns:helpers="clr-namespace:zDrive.Helpers">
+                    xmlns:helpers="clr-namespace:zDrive.Helpers"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
 
     <SolidColorBrush x:Key="IconBrush" Color="#107dac"/>
     
@@ -18,6 +19,8 @@
     <SolidColorBrush x:Key="ProgressBarBorederBrush" Color="#1ebbd7"/>
     <SolidColorBrush x:Key="SpaceEnough" Color="#1ebbd7"/>
     <SolidColorBrush x:Key="SpaceNotEnough" Color="#FFEC7A4F"/>
+
+    <system:Double x:Key="MenuFontSize">11</system:Double>
 
     <ControlTemplate x:Key="PropertiesBackround">
         <Grid>

@@ -4,6 +4,7 @@ using System.Windows;
 using System.Collections.ObjectModel;
 using System.Timers;
 using System.Threading.Tasks;
+using zDrive.Converters;
 using zDrive.Interfaces;
 
 namespace zDrive.ViewModels
@@ -12,6 +13,9 @@ namespace zDrive.ViewModels
     {
         #region < Private Fields >
 
+        private const int TimerUpdate = 10000;
+
+        private readonly Timer _timer;
         private readonly ObservableCollection<DriveViewModel> _drives;
 
         private readonly IRegistryService _registryService;
@@ -20,6 +24,7 @@ namespace zDrive.ViewModels
         private bool _showUnavailable;
         private bool _topmost;
         private double _x, _y;
+        private InfoFormat _formatOfInfo;
 
         #endregion < Private Fields >
 
@@ -79,31 +84,48 @@ namespace zDrive.ViewModels
                 if (value)
                     _registryService.WriteAutoRun(System.Reflection.Assembly.GetExecutingAssembly().Location);
                 else
-                    _registryService.Remove();
+                    _registryService.RemoveAutoRun();
                 RaisePropertyChanged(nameof(AutoRun));
+            }
+        }
+
+        public InfoFormat InfoFormat
+        {
+            get => _formatOfInfo;
+            set
+            {
+                _formatOfInfo = value;
+                _driveInfoService.InfoFormat = value;
+                _registryService.Write(nameof(InfoFormat), (int)value);
+                RaisePropertyChanged(nameof(InfoFormat));
             }
         }
         #endregion < Properties >
 
-        private readonly Timer _timer = new Timer(10000);
-
         public MainViewModel(IRegistryService registryService, IDriveInfoService driveInfoService)
         {
             _drives = new ObservableCollection<DriveViewModel>();
+
             _registryService = registryService;
             _driveInfoService = driveInfoService;
             _driveInfoService.Drives = _drives;
 
             InitSetting();
+
+            _timer = new Timer(TimerUpdate) { AutoReset = false };
             _timer.Elapsed += timer_Elapsed;
-            CheckDisks();
+
             InitRelay();
+
+            //First initialization
+            CheckDisks();
         }
 
         void InitSetting()
         {
-            Topmost = Convert.ToBoolean(_registryService.Read("Topmost", false));
-            ShowUnavailable = Convert.ToBoolean(_registryService.Read("ShowUnavailable", false));
+            _topmost = Convert.ToBoolean(_registryService.Read(nameof(Topmost), false));
+            _showUnavailable = Convert.ToBoolean(_registryService.Read(nameof(ShowUnavailable), false));
+            InfoFormat = (InfoFormat)Convert.ToInt32(_registryService.Read(nameof(InfoFormat), InfoFormat.Free));
 
             X = Convert.ToDouble(_registryService.Read("X", 0D));
             Y = Convert.ToDouble(_registryService.Read("Y", 0D));
@@ -119,11 +141,11 @@ namespace zDrive.ViewModels
             CheckDisks();
         }
 
-        public void CheckDisks()
+        public async void CheckDisks()
         {
             _timer.Stop();
-            Task.Factory.StartNew(() => _driveInfoService.Update())
-                        .ContinueWith(_ => _timer.Start());
+            await Task.Factory.StartNew(() => _driveInfoService.Update());
+            _timer.Start();
         }
 
         #region < Relay Commands >
@@ -132,6 +154,7 @@ namespace zDrive.ViewModels
         {
             CloseCommnad = new RelayCommand(Close);
         }
+
         private void Close(object param)
         {
             Application.Current.Shutdown();

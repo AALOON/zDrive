@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-D:\!C_Document\Documents\Visual Studio 2013\Projects\zDrive\zDrive\obj\Debug\
+C:\Users\Albert\source\repos\zDrive\zDrive\zDrive\obj\Debug\
 zDrive
 none
 false
 DEBUG;TRACE
-D:\!C_Document\Documents\Visual Studio 2013\Projects\zDrive\zDrive\App.xaml
-11151548125
+C:\Users\Albert\source\repos\zDrive\zDrive\zDrive\App.xaml
+2-1787410236
 
-231653083061
+25-1477580386
 12-146840801
-MainWindow.xaml;
+MainWindow.xaml;Skins\GraySkin.xaml;
 
-False
+True
 

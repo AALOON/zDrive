@@ -1,11 +1,12 @@
-﻿using zDrive.Helpers;
+﻿using System.Globalization;
+using zDrive.Converters;
+using zDrive.Helpers;
 
 namespace zDrive.ViewModels
 {
     internal class DriveViewModel : ViewModelBase
     {
         #region Fields
-
         private string _key;
         private string _label;
         private string _name;
@@ -13,6 +14,7 @@ namespace zDrive.ViewModels
         private System.IO.DriveType _type;
         private long _totalsize;
         private long _totalfreespace;
+        private InfoFormat _formatOfInfo;
 
         #endregion Fields
 
@@ -88,35 +90,24 @@ namespace zDrive.ViewModels
             }
         }
 
-        public string FreeText
+        public InfoFormat FormatOfInfo
         {
-            get
+            get => _formatOfInfo;
+            set
             {
-                var val = (double)_totalfreespace;
-                var stl = "ОСТ. {0:0.00} ";
-
-                if (_totalfreespace == 0)
-                    stl = "НЕДОСТУПЕН";
-                else if (val < 1024)
-                    stl += "Б";
-                else if ((val /= 1024) < 1024)
-                    stl += "КБ";
-                else if ((val /= 1024) < 1024)
-                    stl += "МБ";
-                else if ((val /= 1024) < 1024)
-                    stl += "ГБ";
-                else if ((val /= 1024) < 1024)
-                    stl += "ТБ";
-                
-                return string.Format(stl, val);
+                _formatOfInfo = value;
+                RaisePropertyChanged(nameof(FormatOfInfo));
             }
         }
+
+        public string Info => FormatOfInfo.ToFormatedString(TotalFreeSpace, TotalSize);
 
         #endregion Properties
 
         public DriveViewModel()
         {
             OpenCommand = new RelayCommand(Open);
+            _formatOfInfo = InfoFormat.Free;
         }
 
         public RelayCommand OpenCommand { get; set; }

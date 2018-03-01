@@ -1,128 +1,47 @@
-﻿<Window x:Name="Window" x:Class="zDrive.MainWindow"
+﻿<Window x:Class="zDrive.MainWindow"
+        x:Name="Window"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="clr-namespace:zDrive.ViewModels"
-        xmlns:hlp="clr-namespace:zDrive.Helpers"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:p="clr-namespace:zDrive.Properties"
         mc:Ignorable="d"
-        xmlns:converters="clr-namespace:zDrive.Converters"
-        Title="MainWindow" AllowsTransparency="True" WindowStyle="None" 
-        Width="140" SizeToContent="Height"  Background="{x:Null}" ResizeMode="NoResize" ShowInTaskbar="False" 
-        TextOptions.TextFormattingMode="Display"       
-        TextOptions.TextRenderingMode="Grayscale"
+        
+        Title="{x:Static p:Resources.AppTitle_Text}"
+        
+        AllowsTransparency="True" ShowInTaskbar="False" 
+        WindowStyle="None" ResizeMode="NoResize" 
+        SizeToContent="WidthAndHeight"    
+        
+        TextOptions.TextFormattingMode="Ideal"       
+        TextOptions.TextRenderingMode="ClearType"
+        
         SnapsToDevicePixels="True"
         RenderOptions.BitmapScalingMode="HighQuality" 
         UseLayoutRounding="True"
+        
+        Background="{x:Null}"
+        
         Topmost="{Binding Topmost}" 
         Left="{Binding X, Mode=TwoWay}" 
-        Top="{Binding Y,Mode=TwoWay}">
+        Top="{Binding Y,Mode=TwoWay}"
+        
+        Deactivated="MainWindow_OnDeactivated">
 
     <Window.DataContext>
         <Binding Path="Main" Source="{StaticResource Locator}" />
     </Window.DataContext>
     <Window.Resources>
-        <converters:FlagToPathConverter x:Key="DriveConverter"/>
-        <converters:BadPercentToBoolConvert x:Key="PercenttoBoolConverter"/>
-        <DataTemplate DataType="{x:Type vm:DriveViewModel}">
-            <Grid Margin="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="36"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="10"/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <Grid Grid.RowSpan="5" Grid.ColumnSpan="5" Margin="2" Opacity="0.625">
-                    <Rectangle Fill="#338B8B8B" RadiusX="3" RadiusY="3" Margin="-3" StrokeThickness="0"/>
-                    <Rectangle Fill="#338B8B8B" RadiusX="2" RadiusY="2" Margin="-2" StrokeThickness="0"/>
-                    <Rectangle Fill="#998B8B8B" RadiusX="1" RadiusY="1" Margin="-1" StrokeThickness="0"/>
-                    <!--<Rectangle Fill="#19000000" RadiusX="3" RadiusY="3" Margin="-3" StrokeThickness="0"/>
-                    <Rectangle Fill="#19000000" RadiusX="2" RadiusY="2" Margin="-2" StrokeThickness="0"/>
-                    <Rectangle Fill="#7F000000" RadiusX="1" RadiusY="1" Margin="-1" StrokeThickness="0"/>-->
-                    <!--<Rectangle>
-                        <Rectangle.Fill>
-                            <LinearGradientBrush x:Name="rad"  EndPoint="0.825,0.735" StartPoint="0.238,0.15">
-                                <GradientStop Color="#33FFFFFF" Offset="0.386"/>
-                                <GradientStop Color="#4CFFFFFF" Offset="0.667" x:Name="gstop"/>
-                                <GradientStop Color="#21FFFFFF" Offset="0.812" x:Name="gstop2"/>
-                                <GradientStop Color="#0EFFFFFF" Offset="0.249"/>
-                            </LinearGradientBrush>
-                        </Rectangle.Fill>
-                    </Rectangle>-->
-                    <Rectangle Stroke="#35FFFFFF"/>
-                </Grid>
-                <Grid Width="35" Height="35" Grid.RowSpan="3" Margin="1" hlp:MouseBehaviour.MouseDownCommand="{Binding OpenCommand}" Background="#02A4A4A4" Cursor="Hand">
-                    <Grid >
-                        <Grid.LayoutTransform>
-                            <TransformGroup>
-                                <ScaleTransform ScaleX="0.8" ScaleY="0.8"/>
-                                <SkewTransform/>
-                                <RotateTransform/>
-                                <TranslateTransform/>
-                            </TransformGroup>
-                        </Grid.LayoutTransform>
-                        <Path
-                            Data="{Binding Type, Converter={StaticResource DriveConverter}}"
-                              Fill="{StaticResource IconBrush}" HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <!--<Path.Effect>
-                                <DropShadowEffect Direction="300" BlurRadius="7" Opacity="0.8"/>
-                            </Path.Effect>-->
-                        </Path>
-                    </Grid>
-                </Grid>
-                <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="2,2,3,1" VerticalAlignment="Top" >
-                    <TextBlock Text="{Binding Name}" Foreground="{StaticResource WhiteBrush}" Width="16" FontFamily="Candara" FontWeight="Bold" FontStretch="UltraExpanded">
-                        <TextBlock.Effect>
-                            <DropShadowEffect Direction="300" BlurRadius="7" Opacity="0.8" ShadowDepth="2"/>
-                        </TextBlock.Effect>
-                    </TextBlock>
-                    <TextBlock Text="{Binding Label}" Grid.Column="2" Foreground="{StaticResource WhiteBrush}" Width="60" FontWeight="Bold" FontFamily="Candara" FontStretch="UltraExpanded">
-                        <TextBlock.Effect>
-                            <DropShadowEffect Direction="300" BlurRadius="7" Opacity="0.8" ShadowDepth="2"/>
-                        </TextBlock.Effect>
-                    </TextBlock>
-                </StackPanel>
-                <TextBlock Grid.Column="2" Grid.Row="1" FontFamily="Consolas"
-                           Foreground="{StaticResource WhiteBrush}"
-                           Text="{Binding FreeText}" FontSize="8.5" Margin="2,0"></TextBlock>
-                <ProgressBar Grid.Column="2" Grid.Row="2" Margin="2,2,4,3" VerticalAlignment="Top" Height="10" Value="{Binding Value, Mode=OneWay}">
-                    <ProgressBar.Style>
-                        <Style TargetType="ProgressBar">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="ProgressBar" >
-                                        <Border BorderBrush="#FFDFE1FF" BorderThickness="0.8" Padding="1" ScrollViewer.VerticalScrollBarVisibility="Disabled" Opacity="0.6">
-                                            <Grid x:Name="PART_Track" >
-                                                <Rectangle x:Name="PART_Indicator" HorizontalAlignment="Left">
-                                                    <Rectangle.Style>
-                                                        <Style TargetType="Rectangle">
-                                                            <Setter Property="Fill" Value="#FFDFE1FF" />
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding Path=Value, Converter={StaticResource PercenttoBoolConverter}}" Value="True">
-                                                                    <Setter Property="Rectangle.Fill" Value="#FFEC7A4F"/>
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </Rectangle.Style>
-                                                </Rectangle>
-                                            </Grid>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </ProgressBar.Style>
-                </ProgressBar>
-            </Grid>
-        </DataTemplate>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Skins/GraySkin.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Window.Resources>
-    <Grid>
+    <Grid HorizontalAlignment="Left">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <ListBox ItemsSource="{Binding Drives}" FontSize="11" Background="{x:Null}" BorderBrush="{x:Null}">
             <ListBox.ItemContainerStyle>
@@ -146,7 +65,8 @@
                 </Style>
             </ListBox.ItemContainerStyle>
         </ListBox>
-        <Grid Grid.Column="1" Width="25" MouseDown="Grid_MouseDown">
+        <Grid Name="PartProperties"
+            Grid.Column="1" Width="25" MouseDown="Grid_MouseDown">
             <Grid.Style>
                 <Style TargetType="Grid">
                     <Style.Triggers>
@@ -169,46 +89,37 @@
                     </Style.Triggers>
                 </Style>
             </Grid.Style>
-            <Popup x:Name="popup" Placement="Right"
+            <Popup x:Name="PropertiesPopup" Placement="Right"
                    PopupAnimation="Slide" AllowsTransparency="True" 
                    HorizontalAlignment="Center" VerticalAlignment="Center" 
                    PlacementTarget="{Binding ElementName=Propertys}"
                    >
                 <Grid>
-                    <Grid Opacity="0.625">
-                        <Rectangle Fill="#198B8B8B" RadiusX="3" RadiusY="3" Margin="-3" StrokeThickness="0"/>
-                        <Rectangle Fill="#198B8B8B" RadiusX="2" RadiusY="2" Margin="-2" StrokeThickness="0"/>
-                        <Rectangle Fill="#7F8B8B8B" RadiusX="1" RadiusY="1" Margin="-1" StrokeThickness="0"/>
-                        <!--<Rectangle Fill="#19000000" RadiusX="3" RadiusY="3" Margin="-3" StrokeThickness="0"/>
-                        <Rectangle Fill="#19000000" RadiusX="2" RadiusY="2" Margin="-2" StrokeThickness="0"/>
-                        <Rectangle Fill="#7F000000" RadiusX="1" RadiusY="1" Margin="-1" StrokeThickness="0"/>-->
-                        <!--<Rectangle>
-                        <Rectangle.Fill>
-                            <LinearGradientBrush x:Name="rad"  EndPoint="0.825,0.735" StartPoint="0.238,0.15">
-                                <GradientStop Color="#33FFFFFF" Offset="0.386"/>
-                                <GradientStop Color="#4CFFFFFF" Offset="0.667" x:Name="gstop"/>
-                                <GradientStop Color="#21FFFFFF" Offset="0.812" x:Name="gstop2"/>
-                                <GradientStop Color="#0EFFFFFF" Offset="0.249"/>
-                            </LinearGradientBrush>
-                        </Rectangle.Fill>
-                    </Rectangle>-->
-                        <Rectangle Stroke="#35FFFFFF"/>
+                    <Grid>
+                        <ContentControl Template="{StaticResource PropertiesBackround}"/>
                     </Grid>
                     <StackPanel TextBlock.FontSize="10" >
-                        <CheckBox IsChecked="{Binding Topmost}"
-                              Foreground="{StaticResource WhiteBrush}" Content="Поверх всех окон"/>
-                        <CheckBox IsChecked="{Binding ShowUnavailable}"
-                              Foreground="{StaticResource WhiteBrush}" Content="Скрывать недоступные"/>
-                        <CheckBox IsChecked="{Binding AutoRun}"
-                              Foreground="{StaticResource WhiteBrush}" Content="Автозапуск"/>                       
-                        <Button Background="{x:Null}" Margin="2" Command="{Binding CloseCommnad}"
-                                Foreground="{StaticResource WhiteBrush}">
-                            Закрыть</Button>
+                        <CheckBox Name="TopmostCheckbox"
+                                  IsChecked="{Binding Topmost}"
+                                  Foreground="{StaticResource Foreground}" 
+                                  Content="{x:Static p:Resources.TopmostCheckbox_Text}"/>
+                        <CheckBox Name="HideUnavailableCheckbox"
+                                  IsChecked="{Binding ShowUnavailable}"
+                                  Foreground="{StaticResource Foreground}" 
+                                  Content="{x:Static p:Resources.HideUnavailableCheckbox_Text}"/>
+                        <CheckBox Name="AutorunCheckbox"
+                                  IsChecked="{Binding AutoRun}"
+                                  Foreground="{StaticResource Foreground}" 
+                                  Content="{x:Static p:Resources.AutorunCheckbox_Text}"/>                       
+                        <Button Name="CloseButton"
+                                Background="{x:Null}" Margin="2" Command="{Binding CloseCommnad}"
+                                Foreground="{StaticResource Foreground}"
+                                Content="{x:Static p:Resources.CloseButton_Text}"/>
                     </StackPanel>
 
                 </Grid>
             </Popup>
-            <Rectangle Fill="Black" Width="24" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" RadiusX="3" RadiusY="3" Opacity="0.01"></Rectangle>
+            <Rectangle Fill="{StaticResource Foreground}" Width="24" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" RadiusX="3" RadiusY="3" Opacity="0.01"></Rectangle>
             <Path Data="M14 4v-0.5c0-0.825-0.675-1.5-1.5-1.5h-5c-0.825 0-1.5 0.675-1.5 1.5v0.5h-6v4h6v0.5c0 0.825 0.675 1.5 1.5 1.5h5c0.825 0 1.5-0.675 1.5-1.5v-0.5h18v-4h-18zM8 8v-4h4v4h-4zM26 13.5c0-0.825-0.675-1.5-1.5-1.5h-5c-0.825 0-1.5 0.675-1.5 1.5v0.5h-18v4h18v0.5c0 0.825 0.675 1.5 1.5 1.5h5c0.825 0 1.5-0.675 1.5-1.5v-0.5h6v-4h-6v-0.5zM20 18v-4h4v4h-4zM14 23.5c0-0.825-0.675-1.5-1.5-1.5h-5c-0.825 0-1.5 0.675-1.5 1.5v0.5h-6v4h6v0.5c0 0.825 0.675 1.5 1.5 1.5h5c0.825 0 1.5-0.675 1.5-1.5v-0.5h18v-4h-18v-0.5zM8 28v-4h4v4h-4z" 
                   Fill="#444444" OpacityMask="Black">
                 <Path.LayoutTransform>

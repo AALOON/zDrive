@@ -39,7 +39,7 @@ namespace zDrive
                         isRemove = true;
                         break;
                     case DbtDevicearrival:
-                            isRemove = false;
+                        isRemove = false;
                         break;
                 }
 
@@ -65,14 +65,18 @@ namespace zDrive
         {
             if (e.ChangedButton == MouseButton.Left)
             {
-                popup.IsOpen = false;
+                PropertiesPopup.IsOpen = false;
                 DragMove();
             }
             else if (e.ChangedButton == MouseButton.Right)
             {
-                popup.IsOpen = !popup.IsOpen;
+                PropertiesPopup.IsOpen = !PropertiesPopup.IsOpen;
             }
         }
 
+        private void MainWindow_OnDeactivated(object sender, EventArgs e)
+        {
+            PropertiesPopup.IsOpen = false;
+        }
     }
 }

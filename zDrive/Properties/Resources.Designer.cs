@@ -22,7 +22,7 @@ namespace zDrive.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace zDrive.Properties {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("zDrive.Properties.Resources", typeof(Resources).Assembly);
@@ -51,12 +51,192 @@ namespace zDrive.Properties {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to zDrive - Информация о информационных хранилищах.
+        /// </summary>
+        public static string AppTitle_Text {
+            get {
+                return ResourceManager.GetString("AppTitle_Text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Автозапуск.
+        /// </summary>
+        public static string AutorunCheckbox_Text {
+            get {
+                return ResourceManager.GetString("AutorunCheckbox_Text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Закрыть приложение.
+        /// </summary>
+        public static string CloseButton_Text {
+            get {
+                return ResourceManager.GetString("CloseButton_Text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Скрыть недоступные.
+        /// </summary>
+        public static string HideUnavailableCheckbox_Text {
+            get {
+                return ResourceManager.GetString("HideUnavailableCheckbox_Text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {1:F2}{2} Свободно.
+        /// </summary>
+        public static string InfoFormat_Free {
+            get {
+                return ResourceManager.GetString("InfoFormat_Free", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to байт.
+        /// </summary>
+        public static string Size_bytes {
+            get {
+                return ResourceManager.GetString("Size_bytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Б.
+        /// </summary>
+        public static string Size_bytes_Short {
+            get {
+                return ResourceManager.GetString("Size_bytes_Short", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Недоступен.
+        /// </summary>
+        public static string Size_bytes_Unvailable {
+            get {
+                return ResourceManager.GetString("Size_bytes_Unvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Недост..
+        /// </summary>
+        public static string Size_bytes_Unvailable_Short {
+            get {
+                return ResourceManager.GetString("Size_bytes_Unvailable_Short", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ГБ.
+        /// </summary>
+        public static string Size_Gigabytes_Short {
+            get {
+                return ResourceManager.GetString("Size_Gigabytes_Short", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to гигабайт.
+        /// </summary>
+        public static string Size_Gigagabytes {
+            get {
+                return ResourceManager.GetString("Size_Gigagabytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to килобайт.
+        /// </summary>
+        public static string Size_Kilobytes {
+            get {
+                return ResourceManager.GetString("Size_Kilobytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to КБ.
+        /// </summary>
+        public static string Size_Kilobytes_Short {
+            get {
+                return ResourceManager.GetString("Size_Kilobytes_Short", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to мегабайт.
+        /// </summary>
+        public static string Size_Megabytes {
+            get {
+                return ResourceManager.GetString("Size_Megabytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to МБ.
+        /// </summary>
+        public static string Size_Megabytes_Short {
+            get {
+                return ResourceManager.GetString("Size_Megabytes_Short", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to петабайт.
+        /// </summary>
+        public static string Size_Petabytes {
+            get {
+                return ResourceManager.GetString("Size_Petabytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ПБ.
+        /// </summary>
+        public static string Size_Petabytes_Short {
+            get {
+                return ResourceManager.GetString("Size_Petabytes_Short", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to терабайт.
+        /// </summary>
+        public static string Size_Terabytes {
+            get {
+                return ResourceManager.GetString("Size_Terabytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ТБ.
+        /// </summary>
+        public static string Size_Terabytes_Short {
+            get {
+                return ResourceManager.GetString("Size_Terabytes_Short", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Поверх всех окон.
+        /// </summary>
+        public static string TopmostCheckbox_Text {
+            get {
+                return ResourceManager.GetString("TopmostCheckbox_Text", resourceCulture);
             }
         }
     }

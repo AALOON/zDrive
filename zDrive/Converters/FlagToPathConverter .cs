@@ -4,8 +4,8 @@ using System.Windows.Data;
 
 namespace zDrive.Converters
 {
-    [ValueConversion(typeof(System.IO.DriveType), typeof(string))]  
-    public class FlagToPathConverter: IValueConverter
+    [ValueConversion(typeof(System.IO.DriveType), typeof(string))]
+    public class FlagToPathConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {

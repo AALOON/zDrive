@@ -118,63 +118,63 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Size_bytes" xml:space="preserve">
-    <value>байт</value>
+    <value>byte</value>
   </data>
   <data name="Size_bytes_Short" xml:space="preserve">
-    <value>Б</value>
+    <value>B</value>
   </data>
   <data name="Size_Gigabytes_Short" xml:space="preserve">
-    <value>ГБ</value>
+    <value>GB</value>
   </data>
   <data name="Size_Gigagabytes" xml:space="preserve">
-    <value>гигабайт</value>
+    <value>gigabyte</value>
   </data>
   <data name="Size_Kilobytes" xml:space="preserve">
-    <value>килобайт</value>
+    <value>kilobyte</value>
   </data>
   <data name="Size_Kilobytes_Short" xml:space="preserve">
-    <value>КБ</value>
+    <value>KB</value>
   </data>
   <data name="Size_Megabytes" xml:space="preserve">
-    <value>мегабайт</value>
+    <value>megabyte</value>
   </data>
   <data name="Size_Megabytes_Short" xml:space="preserve">
-    <value>МБ</value>
+    <value>MB</value>
   </data>
   <data name="Size_Petabytes" xml:space="preserve">
-    <value>петабайт</value>
+    <value>petabyte</value>
   </data>
   <data name="Size_Petabytes_Short" xml:space="preserve">
-    <value>ПБ</value>
+    <value>PB</value>
   </data>
   <data name="Size_Terabytes" xml:space="preserve">
-    <value>терабайт</value>
+    <value>terabyte</value>
   </data>
   <data name="Size_Terabytes_Short" xml:space="preserve">
-    <value>ТБ</value>
+    <value>TB</value>
   </data>
   <data name="AppTitle_Text" xml:space="preserve">
-    <value>zDrive - Информация о информационных хранилищах</value>
+    <value>zDrive - Information storage info</value>
   </data>
   <data name="AutorunCheckbox_Text" xml:space="preserve">
-    <value>Автозапуск</value>
+    <value>Autorun</value>
   </data>
   <data name="CloseButton_Text" xml:space="preserve">
-    <value>Закрыть приложение</value>
+    <value>Close application</value>
   </data>
   <data name="HideUnavailableCheckbox_Text" xml:space="preserve">
-    <value>Скрыть недоступные</value>
+    <value>Hide unavailable</value>
   </data>
   <data name="InfoFormat_Free" xml:space="preserve">
-    <value>{1:F2}{2} Свободно</value>
+    <value>{1:F2}{2} Free</value>
   </data>
   <data name="Size_bytes_Unvailable" xml:space="preserve">
-    <value>Недоступен</value>
+    <value>Unvailable</value>
   </data>
   <data name="Size_bytes_Unvailable_Short" xml:space="preserve">
-    <value>Недост.</value>
+    <value>Err</value>
   </data>
   <data name="TopmostCheckbox_Text" xml:space="preserve">
-    <value>Поверх всех окон</value>
+    <value>Topmost</value>
   </data>
 </root>

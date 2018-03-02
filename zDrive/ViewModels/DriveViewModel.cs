@@ -82,7 +82,7 @@ namespace zDrive.ViewModels
             }
         }
 
-        public string Info => _infoFormat.ToFormatedString(TotalFreeSpace, TotalSize);
+        public string Info => _infoFormat.ToFormatedString(TotalSize, TotalFreeSpace);
         
         #endregion Properties
 

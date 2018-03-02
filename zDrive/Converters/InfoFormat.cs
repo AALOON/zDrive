@@ -65,9 +65,9 @@ namespace zDrive.Converters
             if (strSizeMax == Un || strSizeFree == Un)
                 return Un;
 
-            return string.Format(CultureInfo.CurrentCulture, formatString, 
+            return string.Format(CultureInfo.CurrentCulture, formatString,
                                 max, free, 
-                                strSizeFree, strSizeMax);
+                                strSizeMax, strSizeFree);
         }
     }
 }

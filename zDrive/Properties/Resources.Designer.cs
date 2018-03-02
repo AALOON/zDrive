@@ -97,7 +97,7 @@ namespace zDrive.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {1:F2}{2} Свободно.
+        ///   Looks up a localized string similar to {1:F2}{3} Свободно.
         /// </summary>
         public static string InfoFormat_Free {
             get {
@@ -106,7 +106,7 @@ namespace zDrive.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {1:F2}{2}/{0:F2}{3}.
+        ///   Looks up a localized string similar to {1:F2}{3}/{0:F2}{2}.
         /// </summary>
         public static string InfoFormat_FreeMax {
             get {

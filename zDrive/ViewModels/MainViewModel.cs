@@ -1,36 +1,77 @@
 ﻿using System;
-using zDrive.Helpers;
+using System.Collections.Generic;
 using System.Windows;
-using System.Collections.ObjectModel;
-using System.Timers;
-using System.Threading.Tasks;
 using zDrive.Converters;
+using zDrive.Helpers;
 using zDrive.Interfaces;
 
 namespace zDrive.ViewModels
 {
-    internal class MainViewModel : ViewModelBase
+    internal class MainViewModel : ViewModelBase, IMainViewModel
     {
-        #region < Private Fields >
-
-        private const int TimerUpdate = 10000;
-
-        private readonly Timer _timer;
-        private readonly ObservableCollection<DriveViewModel> _drives;
-
         private readonly IRegistryService _registryService;
         private readonly IDriveInfoService _driveInfoService;
+        private readonly IDriveDetectionService _detectionService;
+        //private readonly IInfoFormatService _infoFormatService;
 
         private bool _showUnavailable;
         private bool _topmost;
         private double _x, _y;
-        private InfoFormat _formatOfInfo;
 
-        #endregion < Private Fields >
+        public MainViewModel(IRegistryService registryService,
+                                      IDriveInfoService driveInfoService,
+                                      IDriveDetectionService detectionService,
+                                      IInfoFormatService infoFormatService,
+                                      IDictionary<string, IDriveViewModel> drives,
+                                      ICollection<IInfoViewModel> infos)
+        {
+            _registryService = registryService;
+            _driveInfoService = driveInfoService;
+            _detectionService = detectionService;
+            //_infoFormatService = infoFormatService;
+            Drives = drives;
+            Infos = infos;
 
-        #region < Properties >
+            _detectionService.DeviceAdded += DeviceAdded;
+            _detectionService.DeviceRemoved += DeviceRemoved;
 
-        public ObservableCollection<DriveViewModel> Drives => _drives;
+            InitRelay();
+
+            Initialize();
+
+            //TODO: 
+            var t = new RamInfoViewModel(infoFormatService);
+            Infos.Add(t);
+            t.RaiseChanges();
+        }
+
+        private void Initialize()
+        {
+            _topmost = Convert.ToBoolean(_registryService.Read(nameof(Topmost), false));
+            _showUnavailable = Convert.ToBoolean(_registryService.Read(nameof(ShowUnavailable), false));
+            InfoFormat = (InfoFormat)Convert.ToInt32(_registryService.Read(nameof(InfoFormat), InfoFormat.Free));
+
+            X = Convert.ToDouble(_registryService.Read(nameof(X), 0D));
+            Y = Convert.ToDouble(_registryService.Read(nameof(Y), 0D));
+
+            if (Math.Abs(X) < 0.1)
+                X = SystemParameters.WorkArea.Width - 180;
+            if (Math.Abs(Y) < 0.1)
+                Y = 0D;
+        }
+
+        private void DeviceAdded(object sender, DeviceArrivalEventArgs e)
+        {
+            _driveInfoService.UpdateAddition(e.Volume);
+        }
+
+        private void DeviceRemoved(object sender, DeviceRemovalEventArgs e)
+        {
+            _driveInfoService.UpdateRemoval(e.Volume);
+        }
+
+        public ICollection<IInfoViewModel> Infos { get; }
+        public IDictionary<string, IDriveViewModel> Drives { get; }
 
         public bool ShowUnavailable
         {
@@ -41,7 +82,7 @@ namespace zDrive.ViewModels
                 {
                     _driveInfoService.ShowUnavailable = value;
                     _registryService.Write("ShowUnavailable", value);
-                    CheckDisks();
+                    //CheckDisks();
                 }
             }
         }
@@ -91,61 +132,19 @@ namespace zDrive.ViewModels
 
         public InfoFormat InfoFormat
         {
-            get => _formatOfInfo;
+            get => _driveInfoService.InfoFormat;
             set
             {
-                _formatOfInfo = value;
                 _driveInfoService.InfoFormat = value;
+
                 _registryService.Write(nameof(InfoFormat), (int)value);
                 RaisePropertyChanged(nameof(InfoFormat));
             }
         }
-        #endregion < Properties >
 
-        public MainViewModel(IRegistryService registryService, IDriveInfoService driveInfoService)
+        public IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            _drives = new ObservableCollection<DriveViewModel>();
-
-            _registryService = registryService;
-            _driveInfoService = driveInfoService;
-            _driveInfoService.Drives = _drives;
-
-            InitSetting();
-
-            _timer = new Timer(TimerUpdate) { AutoReset = false };
-            _timer.Elapsed += timer_Elapsed;
-
-            InitRelay();
-
-            //First initialization
-            CheckDisks();
-        }
-
-        void InitSetting()
-        {
-            _topmost = Convert.ToBoolean(_registryService.Read(nameof(Topmost), false));
-            _showUnavailable = Convert.ToBoolean(_registryService.Read(nameof(ShowUnavailable), false));
-            InfoFormat = (InfoFormat)Convert.ToInt32(_registryService.Read(nameof(InfoFormat), InfoFormat.Free));
-
-            X = Convert.ToDouble(_registryService.Read("X", 0D));
-            Y = Convert.ToDouble(_registryService.Read("Y", 0D));
-
-            if (Math.Abs(X) < 0.1)
-                X = SystemParameters.WorkArea.Width - 180;
-            if (Math.Abs(Y) < 0.1)
-                Y = 0D;
-        }
-
-        void timer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            CheckDisks();
-        }
-
-        public async void CheckDisks()
-        {
-            _timer.Stop();
-            await Task.Factory.StartNew(() => _driveInfoService.Update());
-            _timer.Start();
+            return _detectionService.WndProc(hwnd, msg, wParam, lParam, ref handled);
         }
 
         #region < Relay Commands >
@@ -157,12 +156,13 @@ namespace zDrive.ViewModels
 
         private void Close(object param)
         {
-            Application.Current.Shutdown();
+            //Application.Current.Shutdown();
+            var window = param as Window;
+            window?.Close();
         }
 
         public RelayCommand CloseCommnad { get; set; }
 
-        #endregion
-
+        #endregion < Relay Commands >
     }
 }

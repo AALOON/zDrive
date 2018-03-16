@@ -1,105 +1,65 @@
-﻿using zDrive.Converters;
+﻿using System;
+using System.IO;
 using zDrive.Helpers;
+using zDrive.Interfaces;
 
 namespace zDrive.ViewModels
 {
-    internal class DriveViewModel : ViewModelBase
+    internal class DriveViewModel : ViewModelBase, IDriveViewModel
     {
-        #region Fields
+        private readonly DriveInfo _driveInfo;
+        private readonly IInfoFormatter _infoFormatter;
 
-        private string _key;
-        private string _label;
-        private string _name;
-        private string _format;
-        private System.IO.DriveType _type;
-        private long _totalsize;
-        private long _totalfreespace;
-        private InfoFormat _infoFormat;
-
-        #endregion Fields
-
-        #region Properties
-
-        public string Key
+        public DriveViewModel(DriveInfo driveInfo, IInfoFormatter format)
         {
-            get => _key;
-            set => Set(ref _key, value);
+            _driveInfo = driveInfo ?? throw new ArgumentNullException(nameof(driveInfo));
+            _infoFormatter = format ?? throw new ArgumentNullException(nameof(format));
+            OpenCommand = new RelayCommand(Open);
         }
 
-        public string Label
+        public void RaiseChanges()
         {
-            get => _label;
-            set => Set(ref _label, value);
+            RaisePropertyChanged(nameof(Label));
+            RaisePropertyChanged(nameof(Format));
+            RaisePropertyChanged(nameof(Type));
+            RaisePropertyChanged(nameof(TotalSize));
+            RaisePropertyChanged(nameof(TotalFreeSpace));
+            RaisePropertyChanged(nameof(Info));
+            RaisePropertyChanged(nameof(Value));
         }
 
-        public string Name
-        {
-            get => _name;
-            set => Set(ref _name, value);
-        }
+        public string Key => _driveInfo.Name;
+        public string Name => _driveInfo.Name;
 
-        public string Format
-        {
-            get => _format;
-            set => Set(ref _format, value);
-        }
 
-        public System.IO.DriveType Type
-        {
-            get => _type;
-            set => SetValueType(ref _type, value);
-        }
+        public string Label => _driveInfo.IsReady ? _driveInfo.VolumeLabel : "";
+        public string Format => _driveInfo.IsReady ? _driveInfo.DriveFormat : "";
+        public DriveType Type => _driveInfo.IsReady ? _driveInfo.DriveType : DriveType.Unknown;
+        public long TotalSize => _driveInfo.IsReady ? _driveInfo.TotalSize : 0L;
+        public long TotalFreeSpace => _driveInfo.IsReady ? _driveInfo.AvailableFreeSpace: 0L;
 
-        public long TotalSize
-        {
-            get => _totalsize;
-            set => Set(ref _totalsize, value);
-        }
 
-        public long TotalFreeSpace
-        {
-            get => _totalfreespace;
-            set
-            {
-                if (_totalfreespace != value)
-                {
-                    _totalfreespace = value;
-                    RaisePropertyChanged(nameof(TotalFreeSpace));
-                    RaisePropertyChanged(nameof(Value));
-                    RaisePropertyChanged(nameof(Info));
-                }
-            }
-        }
+        public string Info => _infoFormatter.GetFormatedString(TotalSize, TotalFreeSpace);
 
         public double Value
         {
             get
             {
-                if (_totalfreespace == 0)
-                    return 0;
+                if (!_driveInfo.IsReady)
+                    return 0d;
 
-                return (_totalsize - _totalfreespace) / (_totalsize / 100d);
+                var free = _driveInfo.AvailableFreeSpace;
+                var total = _driveInfo.TotalSize;
+
+                if (total == 0L)
+                    return 0d;
+
+                return (total - free) / (total / 100d);
             }
         }
 
-        public string Info => _infoFormat.ToFormatedString(TotalSize, TotalFreeSpace);
-        
-        #endregion Properties
 
-        public void UpdateInfo(InfoFormat format)
-        {
-            _infoFormat = format;
-            RaisePropertyChanged(nameof(Info));
-        }
-
-
-        public DriveViewModel(InfoFormat infoFormat)
-        {
-            OpenCommand = new RelayCommand(Open);
-            _infoFormat = infoFormat;
-        }
-
-        public RelayCommand OpenCommand { get; set; }
+        public RelayCommand OpenCommand { get; }
 
         void Open(object param)
         {

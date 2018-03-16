@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using zDrive.Helpers;
 
 namespace zDrive.Services
 {
@@ -26,7 +27,7 @@ namespace zDrive.Services
 
         public bool Equals(TypeKey b)
         {
-            return Type == b.Type && Key.Equals(b.Key);
+            return Type == b.Type && Key.Compare(b.Key);
         }
 
         public override int GetHashCode()
@@ -36,10 +37,13 @@ namespace zDrive.Services
 
         public override string ToString()
         {
-            return Type.ToString() + Key;
+            return Type + Key;
         }
     }
 
+    /// <summary>
+    /// Simple implementation of Inversion of control
+    /// </summary>
     public static class SimpleIoc
     {
         private static readonly Dictionary<TypeKey, Func<object>> Initilizers = new Dictionary<TypeKey, Func<object>>();
@@ -112,18 +116,7 @@ namespace zDrive.Services
         public static TBase Resolve<TBase>(string key = null) where TBase : class
         {
             var baseType = typeof(TBase);
-            var typeKey = new TypeKey(baseType, key);
-
-            if (Objects.ContainsKey(typeKey))
-                return (TBase)Objects[typeKey];
-
-            if (!Initilizers.ContainsKey(typeKey))
-                return null;
-
-            TBase instance = (TBase)Initilizers[typeKey].Invoke();
-            Objects.Add(typeKey, instance);
-
-            return instance;
+            return (TBase)Resolve(baseType, key);
         }
 
         public static object Resolve(Type type, string key = null)
@@ -135,7 +128,7 @@ namespace zDrive.Services
                 return Objects[typeKey];
 
             if (!Initilizers.ContainsKey(typeKey))
-                return null;
+                throw new ArgumentException("There not such intializers");
 
             object instance = Initilizers[typeKey].Invoke();
             Objects.Add(typeKey, instance);

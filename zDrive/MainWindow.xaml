@@ -51,28 +51,53 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <ListBox ItemsSource="{Binding Drives}" FontSize="11" Background="{x:Null}" BorderBrush="{x:Null}">
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="{x:Type ListBoxItem}" >
-                    <Style.Resources>
-                    </Style.Resources>
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="ListBoxItem">
-                                <Border Name="Border"  SnapsToDevicePixels="true">
-                                    <ContentPresenter/>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsSelected" Value="true">
-                                        <Setter TargetName="Border" Property="Background" Value="Transparent"/>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </ListBox.ItemContainerStyle>
-        </ListBox>
+        <StackPanel Orientation="Vertical">
+            <ListBox ItemsSource="{Binding Infos}" FontSize="11" Background="{x:Null}" BorderBrush="{x:Null}" Padding="-1, -2">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}" >
+                        <Style.Resources>
+                        </Style.Resources>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListBoxItem">
+                                    <Border Name="Border"  SnapsToDevicePixels="true">
+                                        <ContentPresenter/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsSelected" Value="true">
+                                            <Setter TargetName="Border" Property="Background" Value="Transparent"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+            </ListBox>
+            <ListBox ItemsSource="{Binding Drives}" FontSize="11" Background="{x:Null}" BorderBrush="{x:Null}" Padding="-1, -2">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}" >
+                        <Style.Resources>
+                        </Style.Resources>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListBoxItem">
+                                    <Border Name="Border"  SnapsToDevicePixels="true">
+                                        <!-- ReSharper disable once Xaml.BindingWithContextNotResolved -->
+                                        <ContentPresenter Content="{Binding Value}" d:DataContext="{d:DesignData}" />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsSelected" Value="true">
+                                            <Setter TargetName="Border" Property="Background" Value="Transparent"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+            </ListBox>
+        </StackPanel>
         <Grid Name="PartProperties"
             Grid.Column="1" Width="25" MouseDown="Grid_MouseDown">
             <Grid.Style>
@@ -125,7 +150,8 @@
                         <ComboBox ItemsSource="{Binding Source={StaticResource InfoFormatList}}"
                                   SelectedItem="{Binding InfoFormat}"/>
                         <Button Name="CloseButton"
-                                Background="{x:Null}" Margin="2" Command="{Binding CloseCommnad}"
+                                Background="{x:Null}" Margin="2" 
+                                Command="{Binding CloseCommnad}" CommandParameter="{Binding ElementName=Window}"
                                 FontSize="{StaticResource MenuFontSize}"
                                 Foreground="{StaticResource Foreground}"
                                 Content="{x:Static p:Resources.CloseButton_Text}"/>
@@ -133,7 +159,9 @@
 
                 </Grid>
             </Popup>
-            <Rectangle Fill="{StaticResource Foreground}" Width="24" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" RadiusX="3" RadiusY="3" Opacity="0.01"></Rectangle>
+            <Rectangle Fill="{StaticResource WhiteBrush}" Width="24" Height="22" 
+                       VerticalAlignment="Top" HorizontalAlignment="Left" 
+                       RadiusX="3" RadiusY="3" Opacity="0.03"></Rectangle>
             <Path Data="M14 4v-0.5c0-0.825-0.675-1.5-1.5-1.5h-5c-0.825 0-1.5 0.675-1.5 1.5v0.5h-6v4h6v0.5c0 0.825 0.675 1.5 1.5 1.5h5c0.825 0 1.5-0.675 1.5-1.5v-0.5h18v-4h-18zM8 8v-4h4v4h-4zM26 13.5c0-0.825-0.675-1.5-1.5-1.5h-5c-0.825 0-1.5 0.675-1.5 1.5v0.5h-18v4h18v0.5c0 0.825 0.675 1.5 1.5 1.5h5c0.825 0 1.5-0.675 1.5-1.5v-0.5h6v-4h-6v-0.5zM20 18v-4h4v4h-4zM14 23.5c0-0.825-0.675-1.5-1.5-1.5h-5c-0.825 0-1.5 0.675-1.5 1.5v0.5h-6v4h6v0.5c0 0.825 0.675 1.5 1.5 1.5h5c0.825 0 1.5-0.675 1.5-1.5v-0.5h18v-4h-18v-0.5zM8 28v-4h4v4h-4z" 
                   Fill="#444444" OpacityMask="Black">
                 <Path.LayoutTransform>

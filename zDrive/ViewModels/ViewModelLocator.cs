@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using zDrive.Interfaces;
+using zDrive.OtherCollections;
 using zDrive.Services;
 
 namespace zDrive.ViewModels
@@ -12,12 +10,16 @@ namespace zDrive.ViewModels
     {
         static ViewModelLocator()
         {
-            SimpleIoc.RegisterType<IRegistryService, RegistryService>(() => new RegistryService());
-            SimpleIoc.RegisterType<IDriveInfoService, DriveInfoService>(() => new DriveInfoService());
+            SimpleIoc.RegisterType<IDictionary<string, IDriveViewModel>, ObservableDictionary<string, IDriveViewModel>>(() => new ObservableDictionary<string, IDriveViewModel>());
+            SimpleIoc.RegisterType<ICollection<IInfoViewModel>, ObservableCollection<IInfoViewModel>>(() => new ObservableCollection<IInfoViewModel>());
+            SimpleIoc.RegisterType<IRegistryService, RegistryService>();
+            SimpleIoc.RegisterType<IDriveDetectionService, DriveDetectionService>();
+            SimpleIoc.RegisterType<IInfoFormatService, InfoFormatService>();
+            SimpleIoc.RegisterType<IDriveInfoService, DriveInfoService>();
             SimpleIoc.RegisterType<MainViewModel>();
         }
 
-        public MainViewModel Main => new MainViewModel(new RegistryService(), new DriveInfoService());//SimpleIoc.Resolve<MainViewModel>();
+        public IMainViewModel Main => SimpleIoc.Resolve<MainViewModel>();
 
         public static void Cleanup()
         {

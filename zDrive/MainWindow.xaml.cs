@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
-using zDrive.Services;
+using zDrive.Interfaces;
 using zDrive.ViewModels;
 
 namespace zDrive
@@ -16,47 +15,16 @@ namespace zDrive
         public MainWindow()
         {
             InitializeComponent();
-            //DataContext = new MainViewModel(new RegistryService(), new DriveInfoService());
         }
 
         #region < Detect Flash Mesage Hook >
-
-        const int WmDevicechange = 0x0219;
-        const int DbtDevicearrival = 0x8000;
-        const int DbtDeviceremovalcomplete = 0x8004;
-        //const int DbtDevtypvolume = 0x00000002;
-
-        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
-        {
-            // Handle messages...
-            if (msg == WmDevicechange)
-            {
-                var eventCode = wParam.ToInt32();
-                bool? isRemove = null;
-                switch (eventCode)
-                {
-                    case DbtDeviceremovalcomplete: // Удалилось устройство
-                        isRemove = true;
-                        break;
-                    case DbtDevicearrival:
-                        isRemove = false;
-                        break;
-                }
-
-                if (isRemove.HasValue)
-                {
-                    var mainViewModel = DataContext as MainViewModel;
-                    mainViewModel?.CheckDisks();
-                }
-
-            }
-            return IntPtr.Zero;
-        }
+        
         protected override void OnSourceInitialized(EventArgs e)
         {
             base.OnSourceInitialized(e);
-            HwndSource source = (HwndSource)PresentationSource.FromVisual(this);
-            source?.AddHook(WndProc);
+
+            if(PresentationSource.FromVisual(this) is HwndSource source && DataContext is IMainViewModel context)
+                source.AddHook(context.WndProc);
         }
 
         #endregion

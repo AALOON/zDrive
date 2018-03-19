@@ -13,6 +13,7 @@ namespace zDrive.ViewModels
         private readonly IDriveInfoService _driveInfoService;
         private readonly IDriveDetectionService _detectionService;
         //private readonly IInfoFormatService _infoFormatService;
+        //private readonly ITimerService _timerService;
 
         private bool _showUnavailable;
         private bool _topmost;
@@ -21,7 +22,9 @@ namespace zDrive.ViewModels
         public MainViewModel(IRegistryService registryService,
                                       IDriveInfoService driveInfoService,
                                       IDriveDetectionService detectionService,
+                                      IInfosService infosService,
                                       IInfoFormatService infoFormatService,
+                                      ITimerService timerService,
                                       IDictionary<string, IDriveViewModel> drives,
                                       ICollection<IInfoViewModel> infos)
         {
@@ -29,20 +32,20 @@ namespace zDrive.ViewModels
             _driveInfoService = driveInfoService;
             _detectionService = detectionService;
             //_infoFormatService = infoFormatService;
+            //_timerService = timerService;
             Drives = drives;
             Infos = infos;
 
             _detectionService.DeviceAdded += DeviceAdded;
             _detectionService.DeviceRemoved += DeviceRemoved;
 
+            timerService.Tick += TimerTick;
+            
             InitRelay();
 
             Initialize();
 
-            //TODO: 
-            var t = new RamInfoViewModel(infoFormatService);
-            Infos.Add(t);
-            t.RaiseChanges();
+            infosService.Add(InfoWidget.RamDisk);
         }
 
         private void Initialize()
@@ -68,6 +71,15 @@ namespace zDrive.ViewModels
         private void DeviceRemoved(object sender, DeviceRemovalEventArgs e)
         {
             _driveInfoService.UpdateRemoval(e.Volume);
+        }
+
+        private void TimerTick(object sender, EventArgs e)
+        {
+            foreach (var infoViewModel in Infos)
+            {
+                infoViewModel.RaiseChanges();
+            }
+            _driveInfoService.Update();
         }
 
         public ICollection<IInfoViewModel> Infos { get; }

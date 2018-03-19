@@ -14,8 +14,10 @@ namespace zDrive.ViewModels
             SimpleIoc.RegisterType<ICollection<IInfoViewModel>, ObservableCollection<IInfoViewModel>>(() => new ObservableCollection<IInfoViewModel>());
             SimpleIoc.RegisterType<IRegistryService, RegistryService>();
             SimpleIoc.RegisterType<IDriveDetectionService, DriveDetectionService>();
+            SimpleIoc.RegisterType<IInfosService, InfosService>();
             SimpleIoc.RegisterType<IInfoFormatService, InfoFormatService>();
             SimpleIoc.RegisterType<IDriveInfoService, DriveInfoService>();
+            SimpleIoc.RegisterType<ITimerService, TimerService>();
             SimpleIoc.RegisterType<MainViewModel>();
         }
 

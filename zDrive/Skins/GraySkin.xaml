@@ -87,12 +87,6 @@
                            FontWeight="Bold" 
                            FontStretch="UltraExpanded">
                 </TextBlock>
-                <TextBlock Text="{Binding Label}" 
-                           Foreground="{StaticResource ForegroundName}"
-                           FontWeight="Bold" 
-                           FontFamily="Verdana" 
-                           FontStretch="UltraExpanded">
-                </TextBlock>
             </StackPanel>
             <TextBlock Name="Part_Info"
                            Grid.Column="1" Grid.Row="1" 

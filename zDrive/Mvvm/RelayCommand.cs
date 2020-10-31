@@ -2,21 +2,14 @@
 using System.Diagnostics;
 using System.Windows.Input;
 
-namespace zDrive.Helpers
+namespace zDrive.Mvvm
 {
     /// <summary>
-    /// This RelayCommand is taken from MSDN magazine
-    /// http://msdn.microsoft.com/en-us/magazine/dd419663.aspx#id0090030
+    ///     This RelayCommand is taken from MSDN magazine
+    ///     http://msdn.microsoft.com/en-us/magazine/dd419663.aspx#id0090030
     /// </summary>
     public class RelayCommand : ICommand
     {
-        #region Fields
-
-        private readonly Action<object> _execute;
-        private readonly Predicate<object> _canExecute;
-
-        #endregion Fields
-
         #region Constructors
 
         public RelayCommand(Action<object> execute, Predicate<object> canExecute = null)
@@ -27,6 +20,13 @@ namespace zDrive.Helpers
         }
 
         #endregion Constructors
+
+        #region Fields
+
+        private readonly Action<object> _execute;
+        private readonly Predicate<object> _canExecute;
+
+        #endregion Fields
 
         #region ICommand Members
 

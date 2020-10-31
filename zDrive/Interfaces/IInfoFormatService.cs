@@ -6,6 +6,7 @@ namespace zDrive.Interfaces
     {
         string GetFormatedString(double max, double free);
     }
+
     internal interface IInfoFormatService : IInfoFormatter
     {
         InfoFormat Format { get; set; }

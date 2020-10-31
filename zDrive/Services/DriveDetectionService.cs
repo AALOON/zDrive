@@ -8,10 +8,10 @@ namespace zDrive.Services
     {
         #region Win32 Structures And Consts
 
-        const int WmDeviceChange = 0x0219;
-        const int DbtDeviceArrival = 0x8000;
-        const int DbtDeviceremovalComplete = 0x8004;
-        const int DbtDevtypVolume = 0x00000002;
+        private const int WmDeviceChange = 0x0219;
+        private const int DbtDeviceArrival = 0x8000;
+        private const int DbtDeviceremovalComplete = 0x8004;
+        private const int DbtDevtypVolume = 0x00000002;
 
         [StructLayout(LayoutKind.Sequential)]
         public struct DevBroadcastVolume
@@ -20,7 +20,7 @@ namespace zDrive.Services
             public int DeviceType;
             public int Reserved;
             public int Mask;
-            public Int16 Flags;
+            public short Flags;
 
             public char GetLetter()
             {
@@ -33,15 +33,16 @@ namespace zDrive.Services
                         break;
                     mask >>= 1;
                 }
+
                 return c;
             }
 
             public char GetLetterBynarySearch()
             {
-                char lettersCount = 'A';
-                int first = 0;
-                int last = 0;
-                int one = 1;
+                var lettersCount = 'A';
+                var first = 0;
+                var last = 0;
+                var one = 1;
 
                 if (Mask != one)
                 {
@@ -57,7 +58,7 @@ namespace zDrive.Services
                     }
                 }
 
-                return (char)(lettersCount + last);
+                return (char) (lettersCount + last);
             }
         }
 
@@ -68,11 +69,9 @@ namespace zDrive.Services
         private string GetVolume(IntPtr lParam)
         {
             DevBroadcastVolume? volume = null;
-            int devType = Marshal.ReadInt32(lParam, 4);
+            var devType = Marshal.ReadInt32(lParam, 4);
             if (devType == DbtDevtypVolume)
-            {
-                volume = (DevBroadcastVolume)Marshal.PtrToStructure(lParam, typeof(DevBroadcastVolume));
-            }
+                volume = (DevBroadcastVolume) Marshal.PtrToStructure(lParam, typeof(DevBroadcastVolume));
             return volume.HasValue ? volume.Value.GetLetter() + ":\\" : "";
         }
 
@@ -109,12 +108,11 @@ namespace zDrive.Services
                         OnDeviceRemoval(GetVolume(lParam));
                         break;
                 }
-
             }
+
             return IntPtr.Zero;
         }
 
         #endregion
-        
     }
 }

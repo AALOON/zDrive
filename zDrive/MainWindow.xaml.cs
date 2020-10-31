@@ -3,12 +3,11 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
 using zDrive.Interfaces;
-using zDrive.ViewModels;
 
 namespace zDrive
 {
     /// <summary>
-    /// MainWindow.xaml code
+    ///     MainWindow.xaml code
     /// </summary>
     public partial class MainWindow
     {
@@ -18,12 +17,12 @@ namespace zDrive
         }
 
         #region < Detect Flash Mesage Hook >
-        
+
         protected override void OnSourceInitialized(EventArgs e)
         {
             base.OnSourceInitialized(e);
 
-            if(PresentationSource.FromVisual(this) is HwndSource source && DataContext is IMainViewModel context)
+            if (PresentationSource.FromVisual(this) is HwndSource source && DataContext is IMainViewModel context)
                 source.AddHook(context.WndProc);
         }
 

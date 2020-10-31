@@ -10,11 +10,8 @@ namespace zDrive.Services
 {
     internal class DriveInfoService : IDriveInfoService
     {
-        private readonly Func<DriveInfo, string> _keyFunc = x => x.Name;
         private readonly IInfoFormatService _infoFormatter;
-
-
-        protected IDictionary<string, IDriveViewModel> Drives { get; set; }
+        private readonly Func<DriveInfo, string> _keyFunc = x => x.Name;
 
 
         public DriveInfoService(IDictionary<string, IDriveViewModel> dictionary, IInfoFormatService infoFormatter)
@@ -25,26 +22,7 @@ namespace zDrive.Services
         }
 
 
-        private DriveInfo[] GetDrives()
-        {
-            return DriveInfo.GetDrives();
-        }
-
-        private void Insert(DriveInfo driveInfo)
-        {
-            Drives.Add(_keyFunc(driveInfo), new DriveViewModel(driveInfo, _infoFormatter));
-        }
-
-        private void Initialize()
-        {
-            foreach (var driveInfo in GetDrives())
-            {
-                if (driveInfo.IsReady || ShowUnavailable)
-                {
-                    Insert(driveInfo);
-                }
-            }
-        }
+        protected IDictionary<string, IDriveViewModel> Drives { get; set; }
 
 
         public bool ShowUnavailable { get; set; }
@@ -61,7 +39,7 @@ namespace zDrive.Services
                 }
             }
         }
-        
+
         public void Update()
         {
             foreach (var infoViewModel in Drives)
@@ -79,10 +57,25 @@ namespace zDrive.Services
         {
             Debug.Assert(!string.IsNullOrEmpty(label), "!string.IsNullOrEmpty(label)");
 
-            if (Drives.ContainsKey(label))
-            {
-                Drives.Remove(label);
-            }
+            if (Drives.ContainsKey(label)) Drives.Remove(label);
+        }
+
+
+        private DriveInfo[] GetDrives()
+        {
+            return DriveInfo.GetDrives();
+        }
+
+        private void Insert(DriveInfo driveInfo)
+        {
+            Drives.Add(_keyFunc(driveInfo), new DriveViewModel(driveInfo, _infoFormatter));
+        }
+
+        private void Initialize()
+        {
+            foreach (var driveInfo in GetDrives())
+                if (driveInfo.IsReady || ShowUnavailable)
+                    Insert(driveInfo);
         }
     }
 }

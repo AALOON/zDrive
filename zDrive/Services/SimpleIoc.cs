@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using zDrive.Helpers;
+using zDrive.Extensions;
 
 namespace zDrive.Services
 {
@@ -22,7 +22,6 @@ namespace zDrive.Services
             if (obj is TypeKey b)
                 return Equals(b);
             return false;
-
         }
 
         public bool Equals(TypeKey b)
@@ -42,7 +41,7 @@ namespace zDrive.Services
     }
 
     /// <summary>
-    /// Simple implementation of Inversion of control
+    ///     Simple implementation of Inversion of control
     /// </summary>
     public static class SimpleIoc
     {
@@ -58,18 +57,15 @@ namespace zDrive.Services
             var types = ctor.GetParameters();
             var parametrs = new object[types.Length];
 
-            for (var i = 0; i < types.Length; i++)
-            {
-                parametrs[i] = Resolve(types[i].ParameterType);
-            }
+            for (var i = 0; i < types.Length; i++) parametrs[i] = Resolve(types[i].ParameterType);
 
 
             return ctor.Invoke(parametrs);
         }
 
         public static void RegisterType<TBase, TDelivery>(Func<TBase> func = null, string key = null)
-                                        where TDelivery : TBase
-                                        where TBase : class
+            where TDelivery : TBase
+            where TBase : class
         {
             var baseType = typeof(TBase);
             var diliveryType = typeof(TDelivery);
@@ -80,7 +76,7 @@ namespace zDrive.Services
                 throw new ArgumentException("Already exists!");
 
             if (func == null)
-                func = () => (TBase)CtorResolver(diliveryType);
+                func = () => (TBase) CtorResolver(diliveryType);
 
             Initilizers.Add(typeKey, func);
         }
@@ -102,7 +98,7 @@ namespace zDrive.Services
                 throw new ArgumentException("Already exists!");
 
             if (func == null)
-                func = () => (TBase)CtorResolver(baseType);
+                func = () => (TBase) CtorResolver(baseType);
 
 
             Initilizers.Add(typeKey, func);
@@ -116,7 +112,7 @@ namespace zDrive.Services
         public static TBase Resolve<TBase>(string key = null) where TBase : class
         {
             var baseType = typeof(TBase);
-            return (TBase)Resolve(baseType, key);
+            return (TBase) Resolve(baseType, key);
         }
 
         public static object Resolve(Type type, string key = null)
@@ -130,7 +126,7 @@ namespace zDrive.Services
             if (!Initilizers.ContainsKey(typeKey))
                 throw new ArgumentException("There not such intializers");
 
-            object instance = Initilizers[typeKey].Invoke();
+            var instance = Initilizers[typeKey].Invoke();
             Objects.Add(typeKey, instance);
 
             return instance;

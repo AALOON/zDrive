@@ -1,14 +1,14 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 
-namespace zDrive.Helpers
+namespace zDrive.Mvvm
 {
     /// <summary>
-    /// Class for DependencyProperty for handle Mouse events
+    ///     Class for DependencyProperty for handle Mouse events
     /// </summary>
     public sealed class MouseBehaviour
     {
-        #region < MouseUp > 
+        #region < MouseUp >
 
         public static readonly DependencyProperty MouseUpCommandProperty =
             DependencyProperty.RegisterAttached("MouseUpCommand", typeof(ICommand),
@@ -16,16 +16,16 @@ namespace zDrive.Helpers
 
         private static void MouseUpCommandChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            FrameworkElement element = (FrameworkElement)d;
+            var element = (FrameworkElement) d;
 
             element.MouseUp += element_MouseUp;
         }
 
         private static void element_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            FrameworkElement element = (FrameworkElement)sender;
+            var element = (FrameworkElement) sender;
 
-            ICommand command = GetMouseUpCommand(element);
+            var command = GetMouseUpCommand(element);
 
             command.Execute(e);
         }
@@ -37,7 +37,7 @@ namespace zDrive.Helpers
 
         internal static ICommand GetMouseUpCommand(UIElement element)
         {
-            return (ICommand)element.GetValue(MouseUpCommandProperty);
+            return (ICommand) element.GetValue(MouseUpCommandProperty);
         }
 
         #endregion
@@ -50,16 +50,16 @@ namespace zDrive.Helpers
 
         private static void MouseDownCommandChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            FrameworkElement element = (FrameworkElement)d;
+            var element = (FrameworkElement) d;
 
             element.PreviewMouseDown += element_MouseDown;
         }
 
         private static void element_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            FrameworkElement element = (FrameworkElement)sender;
+            var element = (FrameworkElement) sender;
 
-            ICommand command = GetMouseDownCommand(element);
+            var command = GetMouseDownCommand(element);
 
             command.Execute(e);
         }
@@ -71,7 +71,7 @@ namespace zDrive.Helpers
 
         internal static ICommand GetMouseDownCommand(UIElement element)
         {
-            return (ICommand)element.GetValue(MouseDownCommandProperty);
+            return (ICommand) element.GetValue(MouseDownCommandProperty);
         }
 
         #endregion

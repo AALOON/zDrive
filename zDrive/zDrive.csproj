@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>zDrive</RootNamespace>
     <AssemblyName>zDrive</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -37,6 +37,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -54,15 +55,24 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Helpers\Extensions.cs" />
+    <Compile Include="Collections\ExtendedObservableCollection.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Extensions\TaskExtensions.cs" />
+    <Compile Include="Interfaces\IErrorHandler.cs" />
     <Compile Include="Interfaces\IInfosService.cs" />
+    <Compile Include="Interfaces\InfoWidget.cs" />
     <Compile Include="Interfaces\ITimerService.cs" />
-    <Compile Include="OtherCollections\ObservableDictionary.cs" />
+    <Compile Include="Collections\ObservableDictionary.cs" />
     <Compile Include="Converters\BadPercentToBoolConvert.cs" />
     <Compile Include="Converters\FlagToPathConverter .cs" />
     <Compile Include="Converters\InfoFormat.cs" />
-    <Compile Include="Helpers\MouseBehaviour.cs" />
+    <Compile Include="Mvvm\AsyncRelayCommand.cs" />
+    <Compile Include="Mvvm\IAsyncCommand.cs" />
+    <Compile Include="Mvvm\MouseBehaviour.cs" />
     <Compile Include="Interfaces\IDriveInfoService.cs" />
+    <Compile Include="Native\MonitorInfo.cs" />
+    <Compile Include="Native\MonitorsService.cs" />
+    <Compile Include="Native\MonitorChanger.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -80,7 +90,7 @@
     <Compile Include="Services\InfoFormatService.cs" />
     <Compile Include="Services\InfosService.cs" />
     <Compile Include="Services\RegistryService.cs" />
-    <Compile Include="Helpers\RelayCommand.cs" />
+    <Compile Include="Mvvm\RelayCommand.cs" />
     <Compile Include="Interfaces\IRegistryService.cs" />
     <Compile Include="Services\SimpleIoc.cs" />
     <Compile Include="Services\TimerService.cs" />
@@ -89,6 +99,7 @@
     <Compile Include="Interfaces\IInfoViewModel.cs" />
     <Compile Include="Interfaces\IMainViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\DisplaysViewModel.cs" />
     <Compile Include="ViewModels\RamInfoViewModel.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
     <Compile Include="WpfSingleInstance.cs" />

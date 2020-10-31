@@ -1,27 +1,28 @@
 ﻿using System;
 using System.Globalization;
+using zDrive.Properties;
 
 namespace zDrive.Converters
 {
     public enum InfoFormat
     {
         Free = 1,
-        FreeMax = 4,
+        FreeMax = 4
     }
 
     public static class InfoFormatExtensions
     {
-        private static readonly string Un = Properties.Resources.Size_bytes_Unvailable;
-        private static readonly string B = Properties.Resources.Size_bytes_Short;
-        private static readonly string Kb = Properties.Resources.Size_Kilobytes_Short;
-        private static readonly string Mb = Properties.Resources.Size_Megabytes_Short;
-        private static readonly string Gb = Properties.Resources.Size_Gigabytes_Short;
-        private static readonly string Tb = Properties.Resources.Size_Terabytes_Short;
-        private static readonly string Pb = Properties.Resources.Size_Petabytes_Short;
+        private static readonly string Un = Resources.Size_bytes_Unvailable;
+        private static readonly string B = Resources.Size_bytes_Short;
+        private static readonly string Kb = Resources.Size_Kilobytes_Short;
+        private static readonly string Mb = Resources.Size_Megabytes_Short;
+        private static readonly string Gb = Resources.Size_Gigabytes_Short;
+        private static readonly string Tb = Resources.Size_Terabytes_Short;
+        private static readonly string Pb = Resources.Size_Petabytes_Short;
 
 
-        private static readonly string Free = Properties.Resources.InfoFormat_Free;
-        private static readonly string FreeMax = Properties.Resources.InfoFormat_FreeMax;
+        private static readonly string Free = Resources.InfoFormat_Free;
+        private static readonly string FreeMax = Resources.InfoFormat_FreeMax;
 
         public static string PrepareDouble(ref double d)
         {
@@ -66,8 +67,8 @@ namespace zDrive.Converters
                 return Un;
 
             return string.Format(CultureInfo.CurrentCulture, formatString,
-                                max, free, 
-                                strSizeMax, strSizeFree);
+                max, free,
+                strSizeMax, strSizeFree);
         }
     }
 }

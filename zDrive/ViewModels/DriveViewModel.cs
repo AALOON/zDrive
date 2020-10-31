@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
-using zDrive.Helpers;
 using zDrive.Interfaces;
+using zDrive.Mvvm;
 
 namespace zDrive.ViewModels
 {
@@ -36,7 +37,7 @@ namespace zDrive.ViewModels
         public string Format => _driveInfo.IsReady ? _driveInfo.DriveFormat : "";
         public DriveType Type => _driveInfo.IsReady ? _driveInfo.DriveType : DriveType.Unknown;
         public long TotalSize => _driveInfo.IsReady ? _driveInfo.TotalSize : 0L;
-        public long TotalFreeSpace => _driveInfo.IsReady ? _driveInfo.AvailableFreeSpace: 0L;
+        public long TotalFreeSpace => _driveInfo.IsReady ? _driveInfo.AvailableFreeSpace : 0L;
 
 
         public string Info => _infoFormatter.GetFormatedString(TotalSize, TotalFreeSpace);
@@ -61,9 +62,9 @@ namespace zDrive.ViewModels
 
         public RelayCommand OpenCommand { get; }
 
-        void Open(object param)
+        private void Open(object param)
         {
-            System.Diagnostics.Process.Start(Name);
+            Process.Start(Name);
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace zDrive.Interfaces
 {
-    interface ITimerService
+    internal interface ITimerService
     {
         event EventHandler<EventArgs> Tick;
     }

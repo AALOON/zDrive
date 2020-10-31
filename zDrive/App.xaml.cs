@@ -3,7 +3,7 @@
 namespace zDrive
 {
     /// <summary>
-    /// Логика взаимодействия для App.xaml
+    ///     Логика взаимодействия для App.xaml
     /// </summary>
     public partial class App : Application
     {

@@ -8,26 +8,26 @@
         xmlns:system="clr-namespace:System;assembly=mscorlib"
         xmlns:converters="clr-namespace:zDrive.Converters"
         mc:Ignorable="d"
-        
+
         Title="{x:Static p:Resources.AppTitle_Text}"
-        
-        AllowsTransparency="True" ShowInTaskbar="False" 
-        WindowStyle="None" ResizeMode="NoResize" 
-        SizeToContent="WidthAndHeight"    
-        
-        TextOptions.TextFormattingMode="Ideal"       
+
+        AllowsTransparency="True" ShowInTaskbar="False"
+        WindowStyle="None" ResizeMode="NoResize"
+        SizeToContent="WidthAndHeight"
+
+        TextOptions.TextFormattingMode="Ideal"
         TextOptions.TextRenderingMode="ClearType"
-        
+
         SnapsToDevicePixels="True"
-        RenderOptions.BitmapScalingMode="HighQuality" 
+        RenderOptions.BitmapScalingMode="HighQuality"
         UseLayoutRounding="True"
-        
+
         Background="{x:Null}"
-        
-        Topmost="{Binding Topmost}" 
-        Left="{Binding X, Mode=TwoWay}" 
+
+        Topmost="{Binding Topmost}"
+        Left="{Binding X, Mode=TwoWay}"
         Top="{Binding Y,Mode=TwoWay}"
-        
+
         Deactivated="MainWindow_OnDeactivated">
 
     <Window.DataContext>
@@ -41,31 +41,32 @@
             <ObjectDataProvider x:Key="InfoFormatList" MethodName="GetValues"
                                 ObjectType="{x:Type system:Enum}">
                 <ObjectDataProvider.MethodParameters>
-                    <x:Type TypeName="converters:InfoFormat"/>
+                    <x:Type TypeName="converters:InfoFormat" />
                 </ObjectDataProvider.MethodParameters>
             </ObjectDataProvider>
         </ResourceDictionary>
     </Window.Resources>
     <Grid HorizontalAlignment="Left">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <StackPanel Orientation="Vertical">
-            <ListBox ItemsSource="{Binding Infos}" FontSize="11" Background="{x:Null}" BorderBrush="{x:Null}" Padding="-1, -2">
+            <ListBox ItemsSource="{Binding Infos}" FontSize="11" Background="{x:Null}" BorderBrush="{x:Null}"
+                     Padding="-1, -2">
                 <ListBox.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListBoxItem}" >
+                    <Style TargetType="{x:Type ListBoxItem}">
                         <Style.Resources>
                         </Style.Resources>
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="ListBoxItem">
-                                    <Border Name="Border"  SnapsToDevicePixels="true">
-                                        <ContentPresenter/>
+                                    <Border Name="Border" SnapsToDevicePixels="true">
+                                        <ContentPresenter />
                                     </Border>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsSelected" Value="true">
-                                            <Setter TargetName="Border" Property="Background" Value="Transparent"/>
+                                            <Setter TargetName="Border" Property="Background" Value="Transparent" />
                                         </Trigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>
@@ -74,21 +75,22 @@
                     </Style>
                 </ListBox.ItemContainerStyle>
             </ListBox>
-            <ListBox ItemsSource="{Binding Drives}" FontSize="11" Background="{x:Null}" BorderBrush="{x:Null}" Padding="-1, -2">
+            <ListBox ItemsSource="{Binding Drives}" FontSize="11" Background="{x:Null}" BorderBrush="{x:Null}"
+                     Padding="-1, -2">
                 <ListBox.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListBoxItem}" >
+                    <Style TargetType="{x:Type ListBoxItem}">
                         <Style.Resources>
                         </Style.Resources>
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="ListBoxItem">
-                                    <Border Name="Border"  SnapsToDevicePixels="true">
+                                    <Border Name="Border" SnapsToDevicePixels="true">
                                         <!-- ReSharper disable once Xaml.BindingWithContextNotResolved -->
                                         <ContentPresenter Content="{Binding Value}" d:DataContext="{d:DesignData}" />
                                     </Border>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsSelected" Value="true">
-                                            <Setter TargetName="Border" Property="Background" Value="Transparent"/>
+                                            <Setter TargetName="Border" Property="Background" Value="Transparent" />
                                         </Trigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>
@@ -99,23 +101,23 @@
             </ListBox>
         </StackPanel>
         <Grid Name="PartProperties"
-            Grid.Column="1" Width="25" MouseDown="Grid_MouseDown">
+              Grid.Column="1" Width="25" MouseDown="Grid_MouseDown">
             <Grid.Style>
                 <Style TargetType="Grid">
                     <Style.Triggers>
                         <EventTrigger RoutedEvent="MouseEnter">
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <DoubleAnimation To="1" Duration="0:0:0.1" 
-                                        Storyboard.TargetProperty="Opacity" />
+                                    <DoubleAnimation To="1" Duration="0:0:0.1"
+                                                     Storyboard.TargetProperty="Opacity" />
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
                         <EventTrigger RoutedEvent="MouseLeave">
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <DoubleAnimation To="0.1" Duration="0:0:0.1" 
-                                        Storyboard.TargetProperty="Opacity" />
+                                    <DoubleAnimation To="0.1" Duration="0:0:0.1"
+                                                     Storyboard.TargetProperty="Opacity" />
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
@@ -123,50 +125,50 @@
                 </Style>
             </Grid.Style>
             <Popup x:Name="PropertiesPopup" Placement="Right"
-                   PopupAnimation="Slide" AllowsTransparency="True" 
-                   HorizontalAlignment="Center" VerticalAlignment="Center" 
-                   PlacementTarget="{Binding ElementName=PartProperties}"
-                   >
-                <Grid >
+                   PopupAnimation="Slide" AllowsTransparency="True"
+                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                   PlacementTarget="{Binding ElementName=PartProperties}">
+                <Grid>
                     <Grid>
-                        <ContentControl Template="{StaticResource PropertiesBackround}"/>
+                        <ContentControl Template="{StaticResource PropertiesBackground}" />
                     </Grid>
                     <StackPanel Margin="4">
                         <CheckBox Name="TopmostCheckbox"
                                   IsChecked="{Binding Topmost}"
                                   FontSize="{StaticResource MenuFontSize}"
                                   Foreground="{StaticResource Foreground}"
-                                  Content="{x:Static p:Resources.TopmostCheckbox_Text}"/>
+                                  Content="{x:Static p:Resources.TopmostCheckbox_Text}" />
                         <CheckBox Name="HideUnavailableCheckbox"
                                   IsChecked="{Binding ShowUnavailable}"
                                   FontSize="{StaticResource MenuFontSize}"
                                   Foreground="{StaticResource Foreground}"
-                                  Content="{x:Static p:Resources.HideUnavailableCheckbox_Text}"/>
+                                  Content="{x:Static p:Resources.HideUnavailableCheckbox_Text}" />
                         <CheckBox Name="AutorunCheckbox"
                                   IsChecked="{Binding AutoRun}"
                                   FontSize="{StaticResource MenuFontSize}"
                                   Foreground="{StaticResource Foreground}"
-                                  Content="{x:Static p:Resources.AutorunCheckbox_Text}"/>
+                                  Content="{x:Static p:Resources.AutorunCheckbox_Text}" />
                         <ComboBox ItemsSource="{Binding Source={StaticResource InfoFormatList}}"
-                                  SelectedItem="{Binding InfoFormat}"/>
+                                  SelectedItem="{Binding InfoFormat}" />
                         <Button Name="CloseButton"
-                                Background="{x:Null}" Margin="2" 
-                                Command="{Binding CloseCommnad}" CommandParameter="{Binding ElementName=Window}"
+                                Background="{x:Null}" Margin="2"
+                                Command="{Binding CloseCommand}" CommandParameter="{Binding ElementName=Window}"
                                 FontSize="{StaticResource MenuFontSize}"
                                 Foreground="{StaticResource Foreground}"
-                                Content="{x:Static p:Resources.CloseButton_Text}"/>
+                                Content="{x:Static p:Resources.CloseButton_Text}" />
                     </StackPanel>
 
                 </Grid>
             </Popup>
-            <Rectangle Fill="{StaticResource WhiteBrush}" Width="24" Height="22" 
-                       VerticalAlignment="Top" HorizontalAlignment="Left" 
-                       RadiusX="3" RadiusY="3" Opacity="0.03"></Rectangle>
-            <Path Data="M14 4v-0.5c0-0.825-0.675-1.5-1.5-1.5h-5c-0.825 0-1.5 0.675-1.5 1.5v0.5h-6v4h6v0.5c0 0.825 0.675 1.5 1.5 1.5h5c0.825 0 1.5-0.675 1.5-1.5v-0.5h18v-4h-18zM8 8v-4h4v4h-4zM26 13.5c0-0.825-0.675-1.5-1.5-1.5h-5c-0.825 0-1.5 0.675-1.5 1.5v0.5h-18v4h18v0.5c0 0.825 0.675 1.5 1.5 1.5h5c0.825 0 1.5-0.675 1.5-1.5v-0.5h6v-4h-6v-0.5zM20 18v-4h4v4h-4zM14 23.5c0-0.825-0.675-1.5-1.5-1.5h-5c-0.825 0-1.5 0.675-1.5 1.5v0.5h-6v4h6v0.5c0 0.825 0.675 1.5 1.5 1.5h5c0.825 0 1.5-0.675 1.5-1.5v-0.5h18v-4h-18v-0.5zM8 28v-4h4v4h-4z" 
-                  Fill="#444444" OpacityMask="Black">
+            <Rectangle Fill="{StaticResource WhiteBrush}" Width="24" Height="22"
+                       VerticalAlignment="Top" HorizontalAlignment="Left"
+                       RadiusX="3" RadiusY="3" Opacity="0.03" />
+            <Path
+                Data="M14 4v-0.5c0-0.825-0.675-1.5-1.5-1.5h-5c-0.825 0-1.5 0.675-1.5 1.5v0.5h-6v4h6v0.5c0 0.825 0.675 1.5 1.5 1.5h5c0.825 0 1.5-0.675 1.5-1.5v-0.5h18v-4h-18zM8 8v-4h4v4h-4zM26 13.5c0-0.825-0.675-1.5-1.5-1.5h-5c-0.825 0-1.5 0.675-1.5 1.5v0.5h-18v4h18v0.5c0 0.825 0.675 1.5 1.5 1.5h5c0.825 0 1.5-0.675 1.5-1.5v-0.5h6v-4h-6v-0.5zM20 18v-4h4v4h-4zM14 23.5c0-0.825-0.675-1.5-1.5-1.5h-5c-0.825 0-1.5 0.675-1.5 1.5v0.5h-6v4h6v0.5c0 0.825 0.675 1.5 1.5 1.5h5c0.825 0 1.5-0.675 1.5-1.5v-0.5h18v-4h-18v-0.5zM8 28v-4h4v4h-4z"
+                Fill="#7F444444" OpacityMask="Black">
                 <Path.LayoutTransform>
                     <TransformGroup>
-                        <ScaleTransform ScaleX="0.6" ScaleY="0.6"/>
+                        <ScaleTransform ScaleX="0.6" ScaleY="0.6" />
                     </TransformGroup>
                 </Path.LayoutTransform>
             </Path>

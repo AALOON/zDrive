@@ -1,16 +1,18 @@
 ﻿using System;
+using System.Linq;
+using System.Security.Principal;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
-using System.Linq;
-using System.Security.Principal;
 
 namespace zDrive
 {
     public static class WpfSingleInstance
     {
+        private static DispatcherTimer _autoExitAplicationIfStartupDeadlock;
+
         /// <summary>
-        /// Processing single instance.
+        ///     Processing single instance.
         /// </summary>
         /// <param name="singleInstanceModes"></param>
         internal static void Make(SingleInstanceModes singleInstanceModes = SingleInstanceModes.ForEveryUser)
@@ -44,69 +46,61 @@ namespace zDrive
                 // Register EventWaitHandle.
                 using (var eventWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset, eventWaitHandleName))
                 {
-                    ThreadPool.RegisterWaitForSingleObject(eventWaitHandle, OtherInstanceAttemptedToStart, null, Timeout.Infinite, false);
+                    ThreadPool.RegisterWaitForSingleObject(eventWaitHandle, OtherInstanceAttemptedToStart, null,
+                        Timeout.Infinite, false);
                 }
 
                 RemoveApplicationsStartupDeadlockForStartupCrushedWindows();
             }
         }
 
-        private static void OtherInstanceAttemptedToStart(Object state, Boolean timedOut)
+        private static void OtherInstanceAttemptedToStart(object state, bool timedOut)
         {
             RemoveApplicationsStartupDeadlockForStartupCrushedWindows();
             Application.Current.Dispatcher.BeginInvoke(new Action(() =>
             {
-                try
-                {
-                    if (Application.Current.MainWindow != null) Application.Current.MainWindow.Activate();
-                }
-                catch
-                {
-                    throw;
-                }
+                if (Application.Current.MainWindow != null) Application.Current.MainWindow.Activate();
             }));
         }
 
-        private static DispatcherTimer _autoExitAplicationIfStartupDeadlock;
-
         /// <summary>
-        /// Бывают случаи, когда при старте произошла ошибка и ни одно окно не появилось.
-        /// При этом второй инстанс приложения уже не запустить, а этот не закрыть, кроме как через панель задач. Deedlock своего рода получился.
+        ///     Бывают случаи, когда при старте произошла ошибка и ни одно окно не появилось.
+        ///     При этом второй инстанс приложения уже не запустить, а этот не закрыть, кроме как через панель задач. Deedlock
+        ///     своего рода получился.
         /// </summary>
         private static void RemoveApplicationsStartupDeadlockForStartupCrushedWindows()
         {
             Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-            {
-                _autoExitAplicationIfStartupDeadlock =
-                    new DispatcherTimer(
-                        TimeSpan.FromSeconds(6),
-                        DispatcherPriority.ApplicationIdle,
-                        (o, args) =>
-                        {
-                            if (Application.Current.Windows.Cast<Window>().Count(window => !Double.IsNaN(window.Left)) == 0)
+                {
+                    _autoExitAplicationIfStartupDeadlock =
+                        new DispatcherTimer(
+                            TimeSpan.FromSeconds(6),
+                            DispatcherPriority.ApplicationIdle,
+                            (o, args) =>
                             {
-                                // For that exit no interceptions.
-                                Environment.Exit(0);
-                            }
-                        },
-                        Application.Current.Dispatcher
-                    );
-            }),
+                                if (Application.Current.Windows.Cast<Window>()
+                                        .Count(window => !double.IsNaN(window.Left)) == 0)
+                                    // For that exit no interceptions.
+                                    Environment.Exit(0);
+                            },
+                            Application.Current.Dispatcher
+                        );
+                }),
                 DispatcherPriority.ApplicationIdle
-                );
+            );
         }
     }
 
     public enum SingleInstanceModes
     {
         /// <summary>
-        /// Do nothing.
+        ///     Do nothing.
         /// </summary>
-        NotInited = 0,
+        Default = 0,
 
         /// <summary>
-        /// Every user can have own single instance.
+        ///     Every user can have own single instance.
         /// </summary>
-        ForEveryUser,
+        ForEveryUser
     }
 }

@@ -1,11 +1,13 @@
-﻿using Microsoft.Win32;
+﻿using System;
+using System.Windows;
+using Microsoft.Win32;
 using zDrive.Interfaces;
 
 namespace zDrive.Services
 {
     /// <summary>
-    /// Class for writing data for current application
-    /// Software\\(Application.ProductName)
+    ///     Class for writing data for current application
+    ///     Software\\(Application.ProductName)
     /// </summary>
     internal class RegistryService : IRegistryService
     {
@@ -15,7 +17,7 @@ namespace zDrive.Services
 
         public RegistryService()
         {
-            _programName = System.Windows.Application.ResourceAssembly.GetName().Name;
+            _programName = Application.ResourceAssembly.GetName().Name;
             _keyName = "Software\\" + _programName;
         }
 
@@ -29,13 +31,13 @@ namespace zDrive.Services
         {
             try
             {
-                using (RegistryKey key = Registry.CurrentUser.CreateSubKey(path, RegistryKeyPermissionCheck.ReadWriteSubTree))
+                using (var key = Registry.CurrentUser.CreateSubKey(path, RegistryKeyPermissionCheck.ReadWriteSubTree))
                 {
                     key?.SetValue(name, value);
                     return true;
                 }
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 //TODO: check particular exceptions
                 return false;
@@ -47,22 +49,17 @@ namespace zDrive.Services
             return Write(_keyName, name, value);
         }
 
-        public bool Write(object value)
-        {
-            return Write(_keyName, _programName, value);
-        }
-
         public bool Remove(string path, string name)
         {
             try
             {
-                using (RegistryKey key = Registry.CurrentUser.CreateSubKey(path, RegistryKeyPermissionCheck.ReadWriteSubTree))
+                using (var key = Registry.CurrentUser.CreateSubKey(path, RegistryKeyPermissionCheck.ReadWriteSubTree))
                 {
                     key?.DeleteValue(name, false);
                     return true;
                 }
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 return false;
             }
@@ -78,23 +75,17 @@ namespace zDrive.Services
             return Remove(_keyName, _programName);
         }
 
-        public object Read(string path, string name, object defaultvalue)
+        public object Read(string path, string name, object defaultValue)
         {
-            using (RegistryKey key = Registry.CurrentUser.CreateSubKey(path, RegistryKeyPermissionCheck.ReadSubTree))
+            using (var key = Registry.CurrentUser.CreateSubKey(path, RegistryKeyPermissionCheck.ReadSubTree))
             {
-                return key?.GetValue(name, defaultvalue);
+                return key?.GetValue(name, defaultValue);
             }
         }
 
-        public object Read(string name, object defaultvalue)
+        public object Read(string name, object defaultValue)
         {
-            return Read(_keyName, name, defaultvalue);
-
-        }
-
-        public object Read(object defaultvalue)
-        {
-            return Read(_keyName, _programName, defaultvalue);
+            return Read(_keyName, name, defaultValue);
         }
 
         public object ReadAutoRun()
@@ -110,6 +101,16 @@ namespace zDrive.Services
         public object RemoveAutoRun()
         {
             return Remove(AutoRunPath);
+        }
+
+        public bool Write(object value)
+        {
+            return Write(_keyName, _programName, value);
+        }
+
+        public object Read(object defaultValue)
+        {
+            return Read(_keyName, _programName, defaultValue);
         }
     }
 }

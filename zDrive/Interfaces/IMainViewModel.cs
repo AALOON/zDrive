@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using zDrive.Converters;
-using zDrive.Helpers;
+using zDrive.Mvvm;
 
 namespace zDrive.Interfaces
 {
     internal interface IMainViewModel
     {
-        IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled);
-
-        RelayCommand CloseCommnad { get; set; }
+        RelayCommand CloseCommand { get; set; }
 
         ICollection<IInfoViewModel> Infos { get; }
         IDictionary<string, IDriveViewModel> Drives { get; }
@@ -25,5 +23,6 @@ namespace zDrive.Interfaces
         bool AutoRun { get; set; }
 
         InfoFormat InfoFormat { get; set; }
+        IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled);
     }
 }

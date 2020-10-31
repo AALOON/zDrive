@@ -4,10 +4,14 @@ using zDrive.Properties;
 
 namespace zDrive.Converters
 {
+    /// <summary>
+    /// Disk/Ram usage formats.
+    /// </summary>
     public enum InfoFormat
     {
-        Free = 1,
-        FreeMax = 4
+        Free = 0,
+        FreeMax = 1,
+        UsedMax = 2,
     }
 
     public static class InfoFormatExtensions
@@ -23,6 +27,7 @@ namespace zDrive.Converters
 
         private static readonly string Free = Resources.InfoFormat_Free;
         private static readonly string FreeMax = Resources.InfoFormat_FreeMax;
+        private static readonly string UsedMax = Resources.InfoFormat_UsedMax;
 
         public static string PrepareDouble(ref double d)
         {
@@ -52,23 +57,28 @@ namespace zDrive.Converters
                     return Free;
                 case InfoFormat.FreeMax:
                     return FreeMax;
+                case InfoFormat.UsedMax:
+                    return UsedMax;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(infoFormat), infoFormat, null);
+                    return Free;
             }
         }
 
         public static string ToFormatedString(this InfoFormat infoFormat, double max, double free)
         {
+            var used = max - free;
             var strSizeMax = PrepareDouble(ref max);
             var strSizeFree = PrepareDouble(ref free);
+            var strSizeUsed = PrepareDouble(ref used);
             var formatString = infoFormat.PrepareInfoFormat();
 
-            if (strSizeMax == Un || strSizeFree == Un)
+            if (strSizeMax == Un || strSizeFree == Un || strSizeUsed == Un)
                 return Un;
 
             return string.Format(CultureInfo.CurrentCulture, formatString,
-                max, free,
-                strSizeMax, strSizeFree);
+                max, strSizeMax,
+                free, strSizeFree,
+                used, strSizeUsed);
         }
     }
 }

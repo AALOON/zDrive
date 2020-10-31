@@ -97,7 +97,7 @@ namespace zDrive.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {1:F2}{3} Свободно.
+        ///   Looks up a localized string similar to {2:F2}{3} Свободно.
         /// </summary>
         public static string InfoFormat_Free {
             get {
@@ -106,11 +106,20 @@ namespace zDrive.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {1:F2}{3}/{0:F2}{2}.
+        ///   Looks up a localized string similar to {2:F2}{3}/{0:F2}{1}.
         /// </summary>
         public static string InfoFormat_FreeMax {
             get {
                 return ResourceManager.GetString("InfoFormat_FreeMax", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {4:F2}{5}/{0:F2}{1}.
+        /// </summary>
+        public static string InfoFormat_UsedMax {
+            get {
+                return ResourceManager.GetString("InfoFormat_UsedMax", resourceCulture);
             }
         }
         

@@ -166,7 +166,7 @@
     <value>Hide unavailable</value>
   </data>
   <data name="InfoFormat_Free" xml:space="preserve">
-    <value>{1:F2}{3} Free</value>
+    <value>{2:F2}{3} Free</value>
   </data>
   <data name="Size_bytes_Unvailable" xml:space="preserve">
     <value>Unvailable</value>
@@ -178,6 +178,9 @@
     <value>Topmost</value>
   </data>
   <data name="InfoFormat_FreeMax" xml:space="preserve">
-    <value>{1:F2}{3}/{0:F2}{2}</value>
+    <value>{2:F2}{3}/{0:F2}{1}</value>
+  </data>
+  <data name="InfoFormat_UsedMax" xml:space="preserve">
+    <value>{4:F2}{5}/{0:F2}{1}</value>
   </data>
 </root>

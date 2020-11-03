@@ -8,8 +8,9 @@ namespace zDrive.Services
     /// <summary>
     ///     Class for writing data for current application
     ///     Software\\(Application.ProductName)
+    ///     Represents a key-level node in the Windows registry. This class is a registry encapsulation.
     /// </summary>
-    internal class RegistryService : IRegistryService
+    internal sealed class RegistryService : IRegistryService
     {
         private const string AutoRunPath = @"Software\Microsoft\Windows\CurrentVersion\Run\";
         private readonly string _keyName;
@@ -27,7 +28,8 @@ namespace zDrive.Services
             _keyName = "Software\\" + programName;
         }
 
-        public bool Write(string path, string name, object value)
+        /// <inheritdoc />
+        public bool Write<TValue>(string path, string name, TValue value)
         {
             try
             {
@@ -44,11 +46,13 @@ namespace zDrive.Services
             }
         }
 
-        public bool Write(string name, object value)
+        /// <inheritdoc />
+        public bool Write<TValue>(string name, TValue value)
         {
             return Write(_keyName, name, value);
         }
 
+        /// <inheritdoc />
         public bool Remove(string path, string name)
         {
             try
@@ -65,52 +69,49 @@ namespace zDrive.Services
             }
         }
 
+        /// <inheritdoc />
         public bool Remove(string name)
         {
             return Remove(_keyName, name);
         }
 
+        /// <inheritdoc />
         public bool Remove()
         {
             return Remove(_keyName, _programName);
         }
 
-        public object Read(string path, string name, object defaultValue)
+        /// <inheritdoc />
+        public TValue Read<TValue>(string path, string name, TValue defaultValue)
         {
             using (var key = Registry.CurrentUser.CreateSubKey(path, RegistryKeyPermissionCheck.ReadSubTree))
             {
-                return key?.GetValue(name, defaultValue);
+                return (TValue)key?.GetValue(name, defaultValue);
             }
         }
 
-        public object Read(string name, object defaultValue)
+        /// <inheritdoc />
+        public TValue Read<TValue>(string name, TValue defaultValue)
         {
             return Read(_keyName, name, defaultValue);
         }
 
-        public object ReadAutoRun()
+        /// <inheritdoc />
+        public string ReadAutoRun()
         {
-            return Read(AutoRunPath, null);
+            return Read(AutoRunPath, _programName, (string)null);
         }
 
-        public object WriteAutoRun(object value)
+        /// <inheritdoc />
+        public bool WriteAutoRun(string value)
         {
-            return Write(AutoRunPath, value);
+            return Write(AutoRunPath, _programName, value);
         }
 
-        public object RemoveAutoRun()
+        /// <inheritdoc />
+        public bool RemoveAutoRun()
         {
-            return Remove(AutoRunPath);
-        }
-
-        public bool Write(object value)
-        {
-            return Write(_keyName, _programName, value);
-        }
-
-        public object Read(object defaultValue)
-        {
-            return Read(_keyName, _programName, defaultValue);
+            return Remove(AutoRunPath, _programName);
         }
     }
 }

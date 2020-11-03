@@ -86,7 +86,15 @@ namespace zDrive.Services
         {
             using (var key = Registry.CurrentUser.CreateSubKey(path, RegistryKeyPermissionCheck.ReadSubTree))
             {
-                return (TValue)key?.GetValue(name, defaultValue);
+                var value = key?.GetValue(name, defaultValue);
+                var type = typeof(TValue);
+                switch (true)
+                {
+                    case true when type.BaseType == typeof(Enum):
+                        return (TValue)Convert.ChangeType(value, Enum.GetUnderlyingType(type));
+                    default:
+                        return (TValue)Convert.ChangeType(value, type);
+                }
             }
         }
 

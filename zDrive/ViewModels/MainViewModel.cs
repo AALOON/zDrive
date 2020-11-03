@@ -129,12 +129,12 @@ namespace zDrive.ViewModels
         private void Initialize()
         {
             // initialize settings from registry
-            _topmost = Convert.ToBoolean(_registryService.Read(nameof(Topmost), false));
-            _showUnavailable = Convert.ToBoolean(_registryService.Read(nameof(ShowUnavailable), false));
-            InfoFormat = (InfoFormat) Convert.ToInt32(_registryService.Read(nameof(InfoFormat), InfoFormat.Free));
+            _topmost = _registryService.Read(nameof(Topmost), false);
+            _showUnavailable = _registryService.Read(nameof(ShowUnavailable), false);
+            InfoFormat = _registryService.Read(nameof(InfoFormat), InfoFormat.Free);
 
-            X = Convert.ToDouble(_registryService.Read(nameof(X), 0D));
-            Y = Convert.ToDouble(_registryService.Read(nameof(Y), 0D));
+            X = _registryService.Read(nameof(X), 0D);
+            Y = _registryService.Read(nameof(Y), 0D);
 
             if (Math.Abs(X) < 0.1)
                 X = SystemParameters.WorkArea.Width - 180;

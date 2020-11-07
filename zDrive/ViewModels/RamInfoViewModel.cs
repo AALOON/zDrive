@@ -22,6 +22,9 @@ namespace zDrive.ViewModels
 
         public string Key => "RamInfo";
         public string Name => "Ram usage";
+
+        public string DisplayString => Name;
+
         public string Info { get; private set; }
 
         public double Value

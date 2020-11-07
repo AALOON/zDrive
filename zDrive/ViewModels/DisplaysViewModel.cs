@@ -29,6 +29,7 @@ namespace zDrive.ViewModels
 
         public string Key => "Displays";
         public string Name => "Displays";
+        public string DisplayString => "Displays";
         public string Info { get; }
         public double Value => 0;
 

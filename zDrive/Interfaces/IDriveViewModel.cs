@@ -8,6 +8,8 @@ namespace zDrive.Interfaces
 
         string Format { get; }
 
+        string DisplayString { get; }
+
         DriveType Type { get; }
 
         long TotalSize { get; }

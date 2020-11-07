@@ -10,6 +10,8 @@ namespace zDrive.Interfaces
 
         string Name { get; }
 
+        string DisplayString { get; }
+
         string Info { get; }
 
         double Value { get; }

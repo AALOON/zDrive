@@ -20,6 +20,7 @@ namespace zDrive.ViewModels
 
         public void RaiseChanges()
         {
+            RaisePropertyChanged(nameof(DisplayString));
             RaisePropertyChanged(nameof(Label));
             RaisePropertyChanged(nameof(Format));
             RaisePropertyChanged(nameof(Type));
@@ -32,6 +33,7 @@ namespace zDrive.ViewModels
         public string Key => _driveInfo.Name;
         public string Name => _driveInfo.Name;
 
+        public string DisplayString => Name + Label;
 
         public string Label => _driveInfo.IsReady ? _driveInfo.VolumeLabel : "";
         public string Format => _driveInfo.IsReady ? _driveInfo.DriveFormat : "";

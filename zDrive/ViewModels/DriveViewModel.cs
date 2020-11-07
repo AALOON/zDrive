@@ -64,7 +64,7 @@ namespace zDrive.ViewModels
 
         private void Open(object param)
         {
-            Process.Start(Name);
+            Process.Start("explorer.exe", Name);
         }
     }
 }

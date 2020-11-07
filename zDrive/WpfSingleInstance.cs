@@ -14,7 +14,6 @@ namespace zDrive
         /// <summary>
         ///     Processing single instance.
         /// </summary>
-        /// <param name="singleInstanceModes"></param>
         internal static void Make(SingleInstanceModes singleInstanceModes = SingleInstanceModes.ForEveryUser)
         {
             var appName = Application.Current.GetType().Assembly.ManifestModule.ScopeName;

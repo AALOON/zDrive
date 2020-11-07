@@ -3,7 +3,7 @@
     /// <summary>
     ///     Info widgets service manager.
     /// </summary>
-    public interface IInfosService
+    public interface IWidgetsService
     {
         /// <summary>
         ///     Adds new widget.

@@ -2,46 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using zDrive.Extensions;
 
 namespace zDrive.Services
 {
-    public struct TypeKey
-    {
-        public TypeKey(Type type, string key)
-        {
-            Type = type;
-            Key = key;
-        }
-
-        public Type Type { get; }
-        public string Key { get; }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is TypeKey b)
-                return Equals(b);
-            return false;
-        }
-
-        public bool Equals(TypeKey b)
-        {
-            return Type == b.Type && Key.Compare(b.Key);
-        }
-
-        public override int GetHashCode()
-        {
-            return Type.GetHashCode() ^ (Key?.GetHashCode() ?? 0);
-        }
-
-        public override string ToString()
-        {
-            return Type + Key;
-        }
-    }
-
     /// <summary>
-    ///     Simple implementation of Inversion of control
+    ///     Simple implementation of Inversion of control.
     /// </summary>
     public static class SimpleIoc
     {
@@ -55,12 +20,12 @@ namespace zDrive.Services
             if (ctor == null)
                 throw new NullReferenceException("There no constructotrs for " + type.Name);
             var types = ctor.GetParameters();
-            var parametrs = new object[types.Length];
+            var parameters = new object[types.Length];
 
-            for (var i = 0; i < types.Length; i++) parametrs[i] = Resolve(types[i].ParameterType);
+            for (var i = 0; i < types.Length; i++) parameters[i] = Resolve(types[i].ParameterType);
 
 
-            return ctor.Invoke(parametrs);
+            return ctor.Invoke(parameters);
         }
 
         public static void RegisterType<TBase, TDelivery>(Func<TBase> func = null, string key = null)
@@ -68,7 +33,7 @@ namespace zDrive.Services
             where TBase : class
         {
             var baseType = typeof(TBase);
-            var diliveryType = typeof(TDelivery);
+            var deliveryType = typeof(TDelivery);
 
             var typeKey = new TypeKey(baseType, key);
 
@@ -76,7 +41,7 @@ namespace zDrive.Services
                 throw new ArgumentException("Already exists!");
 
             if (func == null)
-                func = () => (TBase) CtorResolver(diliveryType);
+                func = () => (TBase) CtorResolver(deliveryType);
 
             Initilizers.Add(typeKey, func);
         }
@@ -95,7 +60,7 @@ namespace zDrive.Services
             var typeKey = new TypeKey(baseType, key);
 
             if (Initilizers.ContainsKey(typeKey))
-                throw new ArgumentException("Already exists!");
+                throw new ArgumentException($"Already exists {typeKey}!");
 
             if (func == null)
                 func = () => (TBase) CtorResolver(baseType);
@@ -124,7 +89,7 @@ namespace zDrive.Services
                 return Objects[typeKey];
 
             if (!Initilizers.ContainsKey(typeKey))
-                throw new ArgumentException("There not such intializers");
+                throw new ArgumentException($"Cannot resolve type {typeKey}");
 
             var instance = Initilizers[typeKey].Invoke();
             Objects.Add(typeKey, instance);

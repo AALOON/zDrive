@@ -1,17 +1,16 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using zDrive.Properties;
 
 namespace zDrive.Converters
 {
     /// <summary>
-    /// Disk/Ram usage formats.
+    ///     Disk/Ram usage formats.
     /// </summary>
     public enum InfoFormat
     {
         Free = 0,
         FreeMax = 1,
-        UsedMax = 2,
+        UsedMax = 2
     }
 
     public static class InfoFormatExtensions

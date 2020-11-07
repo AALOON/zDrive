@@ -25,17 +25,16 @@ namespace zDrive.ViewModels
         public MainViewModel(IRegistryService registryService,
             IDriveInfoService driveInfoService,
             IDriveDetectionService detectionService,
-            IInfosService infosService,
-            IInfoFormatService infoFormatService,
+            IWidgetsService widgetsService,
             ITimerService timerService,
             IDictionary<string, IDriveViewModel> drives,
-            ICollection<IInfoViewModel> infos)
+            IDictionary<string, IInfoViewModel> widgets)
         {
             _registryService = registryService;
             _driveInfoService = driveInfoService;
             _detectionService = detectionService;
             Drives = drives;
-            Infos = infos;
+            Widgets = widgets;
 
             _detectionService.DeviceAdded += DeviceAdded;
             _detectionService.DeviceRemoved += DeviceRemoved;
@@ -46,13 +45,17 @@ namespace zDrive.ViewModels
 
             Initialize();
 
-            infosService.Add(InfoWidget.RamDisk);
-            if (Screen.AllScreens.Length > 1) infosService.Add(InfoWidget.Displays);
+            widgetsService.Add(InfoWidget.RamDisk);
+            if (Screen.AllScreens.Length > 1) widgetsService.Add(InfoWidget.Displays);
         }
 
-        public ICollection<IInfoViewModel> Infos { get; }
+        /// <inheritdoc />
+        public IDictionary<string, IInfoViewModel> Widgets { get; }
+
+        /// <inheritdoc />
         public IDictionary<string, IDriveViewModel> Drives { get; }
 
+        /// <inheritdoc />
         public bool ShowUnavailable
         {
             get => _showUnavailable;
@@ -66,6 +69,7 @@ namespace zDrive.ViewModels
             }
         }
 
+        /// <inheritdoc />
         public bool Topmost
         {
             get => _topmost;
@@ -76,6 +80,7 @@ namespace zDrive.ViewModels
             }
         }
 
+        /// <inheritdoc />
         public double X
         {
             get => _x;
@@ -86,6 +91,7 @@ namespace zDrive.ViewModels
             }
         }
 
+        /// <inheritdoc />
         public double Y
         {
             get => _y;
@@ -96,6 +102,7 @@ namespace zDrive.ViewModels
             }
         }
 
+        /// <inheritdoc />
         public bool AutoRun
         {
             get => _registryService.ReadAutoRun() != null;
@@ -109,6 +116,7 @@ namespace zDrive.ViewModels
             }
         }
 
+        /// <inheritdoc />
         public InfoFormat InfoFormat
         {
             get => _driveInfoService.InfoFormat;
@@ -121,6 +129,7 @@ namespace zDrive.ViewModels
             }
         }
 
+        /// <inheritdoc />
         public IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             return _detectionService.WndProc(hwnd, msg, wParam, lParam, ref handled);
@@ -154,7 +163,7 @@ namespace zDrive.ViewModels
 
         private void TimerTick(object sender, EventArgs e)
         {
-            foreach (var infoViewModel in Infos) infoViewModel.RaiseChanges();
+            foreach (var infoViewModel in Widgets) infoViewModel.Value.RaiseChanges();
 
             _driveInfoService.Update();
         }

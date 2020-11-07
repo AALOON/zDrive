@@ -1,44 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using zDrive.Interfaces;
 using zDrive.ViewModels;
 
 namespace zDrive.Services
 {
-    internal class InfosService : IInfosService
+    /// <inheritdoc />
+    internal sealed class WidgetsService : IWidgetsService
     {
         private readonly IInfoFormatService _infoFormatService;
-        private readonly ICollection<IInfoViewModel> _infos;
+        private readonly IDictionary<string, IInfoViewModel> _infos;
 
-        public InfosService(ICollection<IInfoViewModel> infos, IInfoFormatService infoFormatService)
+        public WidgetsService(IDictionary<string, IInfoViewModel> infos, IInfoFormatService infoFormatService)
         {
             _infos = infos;
             _infoFormatService = infoFormatService;
         }
 
+        /// <inheritdoc />
         public void Add(InfoWidget widget, params object[] param)
         {
             switch (widget)
             {
                 case InfoWidget.RamDisk:
                 {
-                    var exists = _infos.FirstOrDefault(info => info is RamInfoViewModel);
-                    if (exists != null)
+                    var key = nameof(RamInfoViewModel);
+                    var exists = _infos.TryGetValue(key, out _);
+                    if (exists)
                         throw new ArgumentException(nameof(InfoWidget.RamDisk) + " already exists!");
-                    var t = new RamInfoViewModel(_infoFormatService);
-                    _infos.Add(t);
-                    t.RaiseChanges();
+                    var viewModel = new RamInfoViewModel(_infoFormatService);
+                    _infos.Add(key, viewModel);
+                    viewModel.RaiseChanges();
                 }
                     break;
                 case InfoWidget.Displays:
                 {
-                    var exists = _infos.FirstOrDefault(info => info is DisplaysViewModel);
-                    if (exists != null)
+                    var key = nameof(DisplayViewModel);
+                    var exists = _infos.TryGetValue(key, out _);
+                    if (exists)
                         throw new ArgumentException(nameof(InfoWidget.Displays) + " already exists!");
-                    var t = new DisplaysViewModel(_infoFormatService);
-                    _infos.Add(t);
-                    t.RaiseChanges();
+                    var viewModel = new DisplaysViewModel(_infoFormatService);
+                    _infos.Add(key, viewModel);
+                    viewModel.RaiseChanges();
                 }
                     break;
                 default:

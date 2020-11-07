@@ -91,9 +91,9 @@ namespace zDrive.Services
                 switch (true)
                 {
                     case true when type.BaseType == typeof(Enum):
-                        return (TValue)Convert.ChangeType(value, Enum.GetUnderlyingType(type));
+                        return (TValue) Convert.ChangeType(value, Enum.GetUnderlyingType(type));
                     default:
-                        return (TValue)Convert.ChangeType(value, type);
+                        return (TValue) Convert.ChangeType(value, type);
                 }
             }
         }
@@ -107,7 +107,7 @@ namespace zDrive.Services
         /// <inheritdoc />
         public string ReadAutoRun()
         {
-            return Read(AutoRunPath, _programName, (string)null);
+            return Read(AutoRunPath, _programName, (string) null);
         }
 
         /// <inheritdoc />

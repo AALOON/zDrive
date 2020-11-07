@@ -5,7 +5,7 @@ using zDrive.Interfaces;
 namespace zDrive.Extensions
 {
     /// <summary>
-    /// Extensions of  <see cref="Task"/>
+    ///     Extensions of  <see cref="Task" />
     /// </summary>
     public static class TaskExtensions
     {

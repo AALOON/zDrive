@@ -7,11 +7,9 @@
 
     <SolidColorBrush x:Key="IconBrush" Color="#107dac" />
     <SolidColorBrush x:Key="IconBrushSelected" Color="#FF103BAC" />
-
     <SolidColorBrush x:Key="ColorMaskGray1" Color="#338B8B8B" />
-    <SolidColorBrush x:Key="ColorMaskGray2" Color="#338B8B8B" />
+    <SolidColorBrush x:Key="ColorMaskGray2" Color="#FF8B8B8B" />
     <SolidColorBrush x:Key="ColorMaskGray3" Color="#E5EEEEEE" />
-    <!--<SolidColorBrush x:Key="ColorMaskGray3" Color="#998B8B8B"/>-->
 
     <SolidColorBrush x:Key="Stroke" Color="#35FFFFFF" />
     <SolidColorBrush x:Key="Foreground" Color="#005073" />
@@ -22,339 +20,262 @@
     <SolidColorBrush x:Key="SpaceEnough" Color="#1ebbd7" />
     <SolidColorBrush x:Key="SpaceNotEnough" Color="#FFEC7A4F" />
 
+    <SolidColorBrush x:Key="SettingsFillBrush" Color="#1ebbd7" />
+
     <system:Double x:Key="MenuFontSize">11</system:Double>
+
+    <FontFamily x:Key="ContentFontFamily">Verdana</FontFamily>
+    <FontWeight x:Key="ContentFontWeight">DemiBold</FontWeight>
+    <FontStretch x:Key="ContentFontStretch">UltraExpanded</FontStretch>
+    <system:Double x:Key="ContentFontSize">11</system:Double>
+
+    <FontFamily x:Key="ContentFontFamilyL2">Verdana</FontFamily>
+    <FontWeight x:Key="ContentFontWeightL2">Normal</FontWeight>
+    <FontStretch x:Key="ContentFontStretchL2">UltraExpanded</FontStretch>
+    <system:Double x:Key="ContentFontSizeL2">8.5</system:Double>
+
+    <Style TargetType="TextBlock" x:Key="TextBlockL1">
+        <Setter Property="FontFamily" Value="{StaticResource ContentFontFamily}" />
+        <Setter Property="FontWeight" Value="{StaticResource ContentFontWeight}" />
+        <Setter Property="FontStretch" Value="{StaticResource ContentFontStretch}" />
+        <Setter Property="FontSize" Value="{StaticResource ContentFontSize}" />
+    </Style>
+
+    <Style TargetType="TextBlock" x:Key="TextBlockL2">
+        <Setter Property="FontFamily" Value="{StaticResource ContentFontFamilyL2}" />
+        <Setter Property="FontWeight" Value="{StaticResource ContentFontWeightL2}" />
+        <Setter Property="FontStretch" Value="{StaticResource ContentFontStretchL2}" />
+        <Setter Property="FontSize" Value="{StaticResource ContentFontSizeL2}" />
+    </Style>
 
     <ControlTemplate x:Key="PropertiesBackground">
         <Grid>
-            <Rectangle Fill="{StaticResource ColorMaskGray1}" RadiusX="3" RadiusY="3" Margin="-3" StrokeThickness="0" />
-            <Rectangle Fill="{StaticResource ColorMaskGray2}" RadiusX="2" RadiusY="2" Margin="-2" StrokeThickness="0" />
-            <Rectangle Fill="{StaticResource ColorMaskGray3}" RadiusX="1" RadiusY="1" Margin="-1" StrokeThickness="0" />
-            <Rectangle Stroke="{StaticResource Stroke}" StrokeThickness="0.8" />
+            <Border Background="{StaticResource ColorMaskGray3}" BorderBrush="{StaticResource ColorMaskGray2}"
+                    BorderThickness="0.55" CornerRadius="0.3" SnapsToDevicePixels="False" />
         </Grid>
     </ControlTemplate>
 
-    <!--<Rectangle Fill="#198B8B8B" RadiusX="3" RadiusY="3" Margin="-3" StrokeThickness="0"/>
-                        <Rectangle Fill="#198B8B8B" RadiusX="2" RadiusY="2" Margin="-2" StrokeThickness="0"/>
-                        <Rectangle Fill="#7F8B8B8B" RadiusX="1" RadiusY="1" Margin="-1" StrokeThickness="0"/>
-                        <Rectangle Stroke="#35FFFFFF"/>-->
+    <ControlTemplate x:Key="ItemsBackground">
+        <Grid HorizontalAlignment="Stretch">
+            <Border Background="{StaticResource ColorMaskGray3}" BorderBrush="{StaticResource ColorMaskGray2}"
+                    BorderThickness="0.55" CornerRadius="0.3" SnapsToDevicePixels="True" />
+        </Grid>
+    </ControlTemplate>
+
+    <Thickness x:Key="ItemsMargin">0.26</Thickness>
+    <Thickness x:Key="ItemContentMargin">1</Thickness>
+
+    <Style TargetType="ProgressBar" x:Key="ProgressBarStyle">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ProgressBar">
+                    <Border BorderBrush="{StaticResource ProgressBarBorderBrush}"
+                            BorderThickness="0.6" SnapsToDevicePixels="True" Margin="0,0,1,0" Padding="1"
+                            ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                        <Grid x:Name="PART_Track">
+                            <Rectangle x:Name="PART_Indicator" HorizontalAlignment="Left">
+                                <Rectangle.Style>
+                                    <Style TargetType="Rectangle">
+                                        <Setter Property="Fill" Value="{StaticResource SpaceEnough}" />
+                                        <Style.Triggers>
+                                            <DataTrigger
+                                                Binding="{Binding Path=Value, Converter={StaticResource PercentToBoolConverter}}"
+                                                Value="True">
+                                                <Setter Property="Rectangle.Fill"
+                                                        Value="{StaticResource SpaceNotEnough}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Rectangle.Style>
+                            </Rectangle>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <DataTemplate x:Key="BaseTemplate" DataType="{x:Type interfaces:IInfoViewModel}">
-        <Grid Margin="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="36" />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="10" />
-                <RowDefinition />
-            </Grid.RowDefinitions>
+        <Grid Margin="{StaticResource ItemsMargin}">
             <Grid Name="Part_Background"
-                  Grid.Row="0" Grid.Column="0"
-                  Grid.RowSpan="3" Grid.ColumnSpan="2"
-                  Margin="2">
-                <Rectangle Fill="{StaticResource ColorMaskGray1}" RadiusX="3" RadiusY="3" Margin="-3"
-                           StrokeThickness="0" />
-                <Rectangle Fill="{StaticResource ColorMaskGray2}" RadiusX="2" RadiusY="2" Margin="-2"
-                           StrokeThickness="0" />
-                <Rectangle Fill="{StaticResource ColorMaskGray3}" RadiusX="1" RadiusY="1" Margin="-1"
-                           StrokeThickness="0" />
-                <Rectangle Stroke="{StaticResource Stroke}" StrokeThickness="0.8" />
+                  Grid.Row="0" Grid.Column="0">
+                <ContentControl Template="{StaticResource ItemsBackground}" />
             </Grid>
-            <Grid Name="Part_Icon"
-                  Grid.Row="0" Grid.Column="0"
-                  Grid.RowSpan="3"
-                  Width="35" Height="35" Margin="1"
-                  mvvm:MouseBehaviour.MouseDownCommand="{Binding OpenCommand}"
-                  Background="#02A4A4A4" Cursor="Hand">
-                <Grid>
-                    <Grid.LayoutTransform>
-                        <TransformGroup>
-                            <ScaleTransform ScaleX="0.8" ScaleY="0.8" />
-                            <SkewTransform />
-                            <RotateTransform />
-                            <TranslateTransform />
-                        </TransformGroup>
-                    </Grid.LayoutTransform>
-                    <Path Data="{Binding Type, Converter={StaticResource DriveConverter}}"
-                          Fill="{StaticResource IconBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            <Grid Name="Part_Content" Margin="{StaticResource ItemContentMargin}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="36" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="10" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid Name="Part_Icon"
+                      Grid.Row="0" Grid.Column="0"
+                      Grid.RowSpan="3"
+                      Width="35" Height="35"
+                      mvvm:MouseBehaviour.MouseDownCommand="{Binding OpenCommand}"
+                      Background="#02A4A4A4" Cursor="Hand">
+                    <Grid>
+                        <Grid.LayoutTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="0.8" ScaleY="0.8" />
+                                <SkewTransform />
+                                <RotateTransform />
+                                <TranslateTransform />
+                            </TransformGroup>
+                        </Grid.LayoutTransform>
+                        <Path Data="{Binding Type, Converter={StaticResource DriveConverter}}"
+                              Fill="{StaticResource IconBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
                 </Grid>
+                <StackPanel Name="Part_Name"
+                            Grid.Row="0" Grid.Column="1"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Top" Width="90" MaxWidth="90">
+                    <TextBlock Text="{Binding Name}" Style="{StaticResource TextBlockL1}" />
+                </StackPanel>
+                <TextBlock Name="Part_Info"
+                           Grid.Column="1" Grid.Row="1"
+                           Foreground="{StaticResource ForegroundInfo}"
+                           Text="{Binding Info}" Style="{StaticResource TextBlockL2}" />
+                <ProgressBar Name="Part_ProgressBar"
+                             Grid.Column="1" Grid.Row="2"
+                             VerticalAlignment="Top"
+                             Height="10" Value="{Binding Value, Mode=OneWay}" Style="{StaticResource ProgressBarStyle}" />
             </Grid>
-            <StackPanel Name="Part_Name"
-                        Grid.Row="0" Grid.Column="1"
-                        Orientation="Horizontal" Margin="2,2,3,1"
-                        VerticalAlignment="Top" Width="90" MaxWidth="90">
-                <TextBlock Text="{Binding Name}"
-                           Foreground="{StaticResource ForegroundName}"
-                           FontFamily="Verdana"
-                           FontWeight="Bold"
-                           FontStretch="UltraExpanded" />
-            </StackPanel>
-            <TextBlock Name="Part_Info"
-                       Grid.Column="1" Grid.Row="1"
-                       FontFamily="Verdana"
-                       Foreground="{StaticResource ForegroundInfo}"
-                       Text="{Binding Info}"
-                       FontSize="8.5" Margin="2,0" />
-            <ProgressBar Name="Part_ProgressBar"
-                         Grid.Column="1" Grid.Row="2"
-                         Margin="2,2,4,3" VerticalAlignment="Top"
-                         Height="10" Value="{Binding Value, Mode=OneWay}">
-                <ProgressBar.Style>
-                    <Style TargetType="ProgressBar">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="ProgressBar">
-                                    <Border BorderBrush="{StaticResource ProgressBarBorderBrush}"
-                                            BorderThickness="0.8" Padding="1"
-                                            ScrollViewer.VerticalScrollBarVisibility="Disabled">
-                                        <Grid x:Name="PART_Track">
-                                            <Rectangle x:Name="PART_Indicator" HorizontalAlignment="Left">
-                                                <Rectangle.Style>
-                                                    <Style TargetType="Rectangle">
-                                                        <Setter Property="Fill" Value="{StaticResource SpaceEnough}" />
-                                                        <Style.Triggers>
-                                                            <DataTrigger
-                                                                Binding="{Binding Path=Value, Converter={StaticResource PercentToBoolConverter}}"
-                                                                Value="True">
-                                                                <Setter Property="Rectangle.Fill"
-                                                                        Value="{StaticResource SpaceNotEnough}" />
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </Rectangle.Style>
-                                            </Rectangle>
-                                        </Grid>
-                                    </Border>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ProgressBar.Style>
-            </ProgressBar>
         </Grid>
     </DataTemplate>
-
     <DataTemplate DataType="{x:Type vm:DriveViewModel}">
-        <Grid Margin="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="36" />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="10" />
-                <RowDefinition />
-            </Grid.RowDefinitions>
-            <Grid Name="Part_Backround"
-                  Grid.Row="0" Grid.Column="0"
-                  Grid.RowSpan="3" Grid.ColumnSpan="2"
-                  Margin="2">
-                <Rectangle Fill="{StaticResource ColorMaskGray1}" RadiusX="3" RadiusY="3" Margin="-3"
-                           StrokeThickness="0" />
-                <Rectangle Fill="{StaticResource ColorMaskGray2}" RadiusX="2" RadiusY="2" Margin="-2"
-                           StrokeThickness="0" />
-                <Rectangle Fill="{StaticResource ColorMaskGray3}" RadiusX="1" RadiusY="1" Margin="-1"
-                           StrokeThickness="0" />
-                <Rectangle Stroke="{StaticResource Stroke}" StrokeThickness="0.8" />
+        <Grid Margin="{StaticResource ItemsMargin}">
+            <Grid Name="Part_Background"
+                  Grid.Row="0" Grid.Column="0">
+                <ContentControl Template="{StaticResource ItemsBackground}" />
             </Grid>
-            <Grid Name="Part_Icon"
-                  Grid.Row="0" Grid.Column="0"
-                  Grid.RowSpan="3"
-                  Width="35" Height="35" Margin="1"
-                  mvvm:MouseBehaviour.MouseDownCommand="{Binding OpenCommand}"
-                  Background="#02A4A4A4" Cursor="Hand">
-                <Grid>
-                    <Grid.LayoutTransform>
-                        <TransformGroup>
-                            <ScaleTransform ScaleX="0.8" ScaleY="0.8" />
-                            <SkewTransform />
-                            <RotateTransform />
-                            <TranslateTransform />
-                        </TransformGroup>
-                    </Grid.LayoutTransform>
-                    <Path Data="{Binding Type, Converter={StaticResource DriveConverter}}"
-                          Fill="{StaticResource IconBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            <Grid Name="Part_Content" Margin="{StaticResource ItemContentMargin}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="36" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="10" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid Name="Part_Icon"
+                      Grid.Row="0" Grid.Column="0"
+                      Grid.RowSpan="3"
+                      Width="35" Height="35"
+                      mvvm:MouseBehaviour.MouseDownCommand="{Binding OpenCommand}"
+                      Background="#02A4A4A4" Cursor="Hand">
+                    <Grid>
+                        <Grid.LayoutTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="0.8" ScaleY="0.8" />
+                                <SkewTransform />
+                                <RotateTransform />
+                                <TranslateTransform />
+                            </TransformGroup>
+                        </Grid.LayoutTransform>
+                        <Path Data="{Binding Type, Converter={StaticResource DriveConverter}}"
+                              Fill="{StaticResource IconBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
                 </Grid>
+                <StackPanel Name="Part_Name"
+                            Grid.Row="0" Grid.Column="1"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Top" Width="90" MaxWidth="90">
+                    <TextBlock Text="{Binding Name}"
+                               Foreground="{StaticResource ForegroundName}" Style="{StaticResource TextBlockL1}" />
+                    <TextBlock Text="{Binding Label}"
+                               Foreground="{StaticResource ForegroundName}" Style="{StaticResource TextBlockL1}" />
+                </StackPanel>
+                <TextBlock Name="Part_Info"
+                           Grid.Column="1" Grid.Row="1"
+                           FontFamily="Verdana"
+                           Foreground="{StaticResource ForegroundInfo}"
+                           Text="{Binding Info}" Style="{StaticResource TextBlockL2}" />
+                <ProgressBar Name="Part_ProgressBar"
+                             Grid.Column="1" Grid.Row="2"
+                             VerticalAlignment="Top"
+                             Height="10" Value="{Binding Value, Mode=OneWay}" Style="{StaticResource ProgressBarStyle}" />
             </Grid>
-            <StackPanel Name="Part_Name"
-                        Grid.Row="0" Grid.Column="1"
-                        Orientation="Horizontal" Margin="2,2,3,1"
-                        VerticalAlignment="Top" Width="90" MaxWidth="90">
-                <TextBlock Text="{Binding Name}"
-                           Foreground="{StaticResource ForegroundName}"
-                           FontFamily="Verdana"
-                           FontWeight="Bold"
-                           FontStretch="UltraExpanded" />
-                <TextBlock Text="{Binding Label}"
-                           Foreground="{StaticResource ForegroundName}"
-                           FontWeight="Bold"
-                           FontFamily="Verdana"
-                           FontStretch="UltraExpanded" />
-            </StackPanel>
-            <TextBlock Name="Part_Info"
-                       Grid.Column="1" Grid.Row="1"
-                       FontFamily="Verdana"
-                       Foreground="{StaticResource ForegroundInfo}"
-                       Text="{Binding Info}"
-                       FontSize="8.5" Margin="2,0" />
-            <ProgressBar Name="Part_ProgressBar"
-                         Grid.Column="1" Grid.Row="2"
-                         Margin="2,2,4,3" VerticalAlignment="Top"
-                         Height="10" Value="{Binding Value, Mode=OneWay}">
-                <ProgressBar.Style>
-                    <Style TargetType="ProgressBar">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="ProgressBar">
-                                    <Border BorderBrush="{StaticResource ProgressBarBorderBrush}"
-                                            BorderThickness="0.8" Padding="1"
-                                            ScrollViewer.VerticalScrollBarVisibility="Disabled">
-                                        <Grid x:Name="PART_Track">
-                                            <Rectangle x:Name="PART_Indicator" HorizontalAlignment="Left">
-                                                <Rectangle.Style>
-                                                    <Style TargetType="Rectangle">
-                                                        <Setter Property="Fill" Value="{StaticResource SpaceEnough}" />
-                                                        <Style.Triggers>
-                                                            <DataTrigger
-                                                                Binding="{Binding Path=Value, Converter={StaticResource PercentToBoolConverter}}"
-                                                                Value="True">
-                                                                <Setter Property="Rectangle.Fill"
-                                                                        Value="{StaticResource SpaceNotEnough}" />
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </Rectangle.Style>
-                                            </Rectangle>
-                                        </Grid>
-                                    </Border>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ProgressBar.Style>
-            </ProgressBar>
         </Grid>
     </DataTemplate>
     <DataTemplate DataType="{x:Type vm:RamInfoViewModel}">
-        <Grid Margin="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="36" />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="10" />
-                <RowDefinition />
-            </Grid.RowDefinitions>
-            <Grid Name="Part_Backround"
-                  Grid.Row="0" Grid.Column="0"
-                  Grid.RowSpan="3" Grid.ColumnSpan="2"
-                  Margin="2">
-                <Rectangle Fill="{StaticResource ColorMaskGray1}" RadiusX="3" RadiusY="3" Margin="-3"
-                           StrokeThickness="0" />
-                <Rectangle Fill="{StaticResource ColorMaskGray2}" RadiusX="2" RadiusY="2" Margin="-2"
-                           StrokeThickness="0" />
-                <Rectangle Fill="{StaticResource ColorMaskGray3}" RadiusX="1" RadiusY="1" Margin="-1"
-                           StrokeThickness="0" />
-                <Rectangle Stroke="{StaticResource Stroke}" StrokeThickness="0.8" />
+        <Grid Margin="{StaticResource ItemsMargin}">
+            <Grid Name="Part_Background"
+                  Grid.Row="0" Grid.Column="0">
+                <ContentControl Template="{StaticResource ItemsBackground}" />
             </Grid>
-            <Grid Name="Part_Icon"
-                  Grid.Row="0" Grid.Column="0"
-                  Grid.RowSpan="3"
-                  Width="35" Height="35" Margin="1"
-                  mvvm:MouseBehaviour.MouseDownCommand="{Binding OpenCommand}"
-                  Background="#02A4A4A4" Cursor="Hand">
-                <Grid>
-                    <Grid.LayoutTransform>
-                        <TransformGroup>
-                            <ScaleTransform ScaleX="0.8" ScaleY="0.8" />
-                            <SkewTransform />
-                            <RotateTransform />
-                            <TranslateTransform />
-                        </TransformGroup>
-                    </Grid.LayoutTransform>
-                    <Path Data="{StaticResource Ram}"
-                          Fill="{StaticResource IconBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            <Grid Name="Part_Content" Margin="{StaticResource ItemContentMargin}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="36" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="10" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid Name="Part_Icon"
+                      Grid.Row="0" Grid.Column="0"
+                      Grid.RowSpan="3"
+                      Width="35" Height="35"
+                      mvvm:MouseBehaviour.MouseDownCommand="{Binding OpenCommand}"
+                      Background="#02A4A4A4" Cursor="Hand">
+                    <Grid>
+                        <Grid.LayoutTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="0.8" ScaleY="0.8" />
+                                <SkewTransform />
+                                <RotateTransform />
+                                <TranslateTransform />
+                            </TransformGroup>
+                        </Grid.LayoutTransform>
+                        <Path Data="{StaticResource Ram}"
+                              Fill="{StaticResource IconBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
                 </Grid>
+                <StackPanel Name="Part_Name"
+                            Grid.Row="0" Grid.Column="1"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Top" Width="90" MaxWidth="90">
+                    <TextBlock Text="{Binding Name}"
+                               Foreground="{StaticResource ForegroundName}" Style="{StaticResource TextBlockL1}" />
+                    <TextBlock Text="{Binding Label}"
+                               Foreground="{StaticResource ForegroundName}" Style="{StaticResource TextBlockL1}" />
+                </StackPanel>
+                <TextBlock Name="Part_Info"
+                           Grid.Column="1" Grid.Row="1"
+                           FontFamily="{StaticResource ContentFontFamily}"
+                           Foreground="{StaticResource ForegroundInfo}"
+                           Text="{Binding Info}" Style="{StaticResource TextBlockL2}" />
+                <ProgressBar Name="Part_ProgressBar"
+                             Grid.Column="1" Grid.Row="2"
+                             VerticalAlignment="Top"
+                             Height="10" Value="{Binding Value, Mode=OneWay}" Style="{StaticResource ProgressBarStyle}" />
             </Grid>
-            <StackPanel Name="Part_Name"
-                        Grid.Row="0" Grid.Column="1"
-                        Orientation="Horizontal" Margin="2,2,3,1"
-                        VerticalAlignment="Top" Width="90" MaxWidth="90">
-                <TextBlock Text="{Binding Name}"
-                           Foreground="{StaticResource ForegroundName}"
-                           FontFamily="Verdana"
-                           FontWeight="Bold"
-                           FontStretch="UltraExpanded" />
-                <TextBlock Text="{Binding Label}"
-                           Foreground="{StaticResource ForegroundName}"
-                           FontWeight="Bold"
-                           FontFamily="Verdana"
-                           FontStretch="UltraExpanded" />
-            </StackPanel>
-            <TextBlock Name="Part_Info"
-                       Grid.Column="1" Grid.Row="1"
-                       FontFamily="Verdana"
-                       Foreground="{StaticResource ForegroundInfo}"
-                       Text="{Binding Info}"
-                       FontSize="8.5" Margin="2,0" />
-            <ProgressBar Name="Part_ProgressBar"
-                         Grid.Column="1" Grid.Row="2"
-                         Margin="2,2,4,3" VerticalAlignment="Top"
-                         Height="10" Value="{Binding Value, Mode=OneWay}">
-                <ProgressBar.Style>
-                    <Style TargetType="ProgressBar">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="ProgressBar">
-                                    <Border BorderBrush="{StaticResource ProgressBarBorderBrush}"
-                                            BorderThickness="0.8" Padding="1"
-                                            ScrollViewer.VerticalScrollBarVisibility="Disabled">
-                                        <Grid x:Name="PART_Track">
-                                            <Rectangle x:Name="PART_Indicator" HorizontalAlignment="Left">
-                                                <Rectangle.Style>
-                                                    <Style TargetType="Rectangle">
-                                                        <Setter Property="Fill" Value="{StaticResource SpaceEnough}" />
-                                                        <Style.Triggers>
-                                                            <DataTrigger
-                                                                Binding="{Binding Path=Value, Converter={StaticResource PercentToBoolConverter}}"
-                                                                Value="True">
-                                                                <Setter Property="Rectangle.Fill"
-                                                                        Value="{StaticResource SpaceNotEnough}" />
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </Rectangle.Style>
-                                            </Rectangle>
-                                        </Grid>
-                                    </Border>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ProgressBar.Style>
-            </ProgressBar>
         </Grid>
     </DataTemplate>
     <DataTemplate DataType="{x:Type vm:DisplaysViewModel}">
-        <Grid>
-            <Grid Margin="1">
-                <Grid Name="Part_Background"
-                      Grid.Row="0" Grid.Column="0"
-                      Height="35"
-                      Margin="2">
-                    <Rectangle Fill="{StaticResource ColorMaskGray1}" RadiusX="3" RadiusY="3" Margin="-3"
-                               StrokeThickness="0" />
-                    <Rectangle Fill="{StaticResource ColorMaskGray2}" RadiusX="2" RadiusY="2" Margin="-2"
-                               StrokeThickness="0" />
-                    <Rectangle Fill="{StaticResource ColorMaskGray3}" RadiusX="1" RadiusY="1" Margin="-1"
-                               StrokeThickness="0" />
-                    <Rectangle Stroke="{StaticResource Stroke}" StrokeThickness="0.8" />
-                </Grid>
+        <Grid Margin="{StaticResource ItemsMargin}">
+            <Grid Name="Part_Background"
+                  Grid.Row="0" Grid.Column="0">
+                <ContentControl Template="{StaticResource ItemsBackground}" />
             </Grid>
-            <ListBox ItemsSource="{Binding Displays}" Background="{x:Null}" BorderBrush="{x:Null}"
+            <Grid Name="Part_Content" Margin="{StaticResource ItemContentMargin}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="10" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+            </Grid>
+            <ListBox Grid.Row="0" Grid.Column="0"
+                     ItemsSource="{Binding Displays}" Background="{x:Null}" BorderBrush="{x:Null}"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     ScrollViewer.VerticalScrollBarVisibility="Disabled"
                      HorizontalAlignment="Center">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -382,13 +303,13 @@
                 </ListBox.ItemContainerStyle>
             </ListBox>
         </Grid>
+
     </DataTemplate>
     <DataTemplate DataType="{x:Type vm:DisplayViewModel}">
-        <Grid Height="35" Margin="1" ToolTip="{Binding FriendlyName}">
+        <Grid ToolTip="{Binding FriendlyName}" Margin="3,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="10" />
-                <RowDefinition />
             </Grid.RowDefinitions>
             <Grid Name="Part_Icon"
                   Grid.Row="0"
@@ -403,7 +324,7 @@
                             <TranslateTransform />
                         </TransformGroup>
                     </Grid.LayoutTransform>
-                    <Path Data="{StaticResource Display}" Stretch="Fill" Width="22" Height="22">
+                    <Path Data="{StaticResource Display}" Stretch="Fill" Width="20" Height="20">
                         <Path.Style>
                             <Style TargetType="Path">
                                 <Style.Triggers>
@@ -426,10 +347,9 @@
                         Orientation="Horizontal"
                         VerticalAlignment="Top">
                 <TextBlock Name="Part_Info"
-                           FontFamily="Verdana"
+                           FontFamily="{StaticResource ContentFontFamily}"
                            Foreground="{StaticResource ForegroundInfo}"
-                           Text="{Binding DeviceName}"
-                           FontSize="8.5" Margin="2,0" />
+                           Text="{Binding DeviceName}" Style="{StaticResource TextBlockL2}" />
             </StackPanel>
         </Grid>
     </DataTemplate>

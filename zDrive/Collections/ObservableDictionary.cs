@@ -20,7 +20,7 @@ namespace zDrive.Collections
         private const string KeysName = "Keys";
         private const string ValuesName = "Values";
 
-        protected IDictionary<TKey, TValue> Dictionary { get; private set; }
+        private IDictionary<TKey, TValue> Dictionary { get; set; }
 
 
         #region IEnumerable<KeyValuePair<TKey,TValue>> Members
@@ -115,7 +115,7 @@ namespace zDrive.Collections
         }
 
 
-        protected void OnPropertyChanged(string propertyName)
+        private void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -201,11 +201,8 @@ namespace zDrive.Collections
         {
             if (key == null) throw new ArgumentNullException(nameof(key));
 
-            Dictionary.TryGetValue(key, out var value);
-
             var removed = Dictionary.Remove(key);
             if (removed)
-                //OnCollectionChanged(NotifyCollectionChangedAction.Remove, new KeyValuePair<TKey, TValue>(key, value));
                 OnCollectionChanged();
 
             return removed;

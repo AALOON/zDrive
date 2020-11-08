@@ -1,0 +1,202 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:vm="clr-namespace:zDrive.ViewModels"
+                    xmlns:mvvm="clr-namespace:zDrive.Mvvm">
+
+    <DataTemplate DataType="{x:Type vm:DriveViewModel}">
+        <Grid Margin="{DynamicResource ItemsMargin}" Height="{DynamicResource DefaultHeight}" Width="{DynamicResource DefaultWidth}">
+            <Grid Name="Part_Background"
+                  Grid.Row="0" Grid.Column="0">
+                <ContentControl Template="{DynamicResource ItemsBackground}" />
+            </Grid>
+            <Grid Name="Part_Content" Margin="{DynamicResource ItemContentMargin}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="{DynamicResource IconColumnWidth}" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid Name="Part_Icon"
+                      Grid.Row="0" Grid.Column="0"
+                      Grid.RowSpan="3"
+                      Width="{DynamicResource IconImageSize}" Height="{DynamicResource IconImageSize}"
+                      mvvm:MouseBehaviour.MouseDownCommand="{Binding OpenCommand}"
+                      Background="#02A4A4A4" Cursor="Hand">
+                    <Grid>
+                        <Grid.LayoutTransform>
+                            <TransformGroup>
+                                <ScaleTransform />
+                                <SkewTransform />
+                                <RotateTransform />
+                                <TranslateTransform />
+                            </TransformGroup>
+                        </Grid.LayoutTransform>
+                        <Path Data="{Binding Type, Converter={StaticResource DriveConverter}}"
+                              Fill="{DynamicResource IconBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
+                </Grid>
+                <TextBlock Name="Part_Name"
+                           Grid.Row="0" Grid.Column="1" 
+                           Text="{Binding DisplayString}"
+                           Foreground="{DynamicResource ForegroundName}"
+                           Style="{DynamicResource TextBlockL1}" />
+                <TextBlock Name="Part_Info"
+                           Grid.Column="1" Grid.Row="1"
+                           FontFamily="Verdana"
+                           Foreground="{DynamicResource ForegroundInfo}"
+                           Text="{Binding Info}"
+                           Style="{DynamicResource TextBlockL2}" />
+                <ProgressBar Name="Part_ProgressBar"
+                             Grid.Column="1" Grid.Row="2"
+                             VerticalAlignment="Top"
+                             Height="{DynamicResource DefaultProgressBarHeight}"
+                             Value="{Binding Value, Mode=OneWay}" Style="{DynamicResource ProgressBarStyle}" />
+            </Grid>
+        </Grid>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:RamInfoViewModel}">
+        <Grid Margin="{DynamicResource ItemsMargin}" Height="{DynamicResource DefaultHeight}" Width="{DynamicResource DefaultWidth}">
+            <Grid Name="Part_Background"
+                  Grid.Row="0" Grid.Column="0">
+                <ContentControl Template="{DynamicResource ItemsBackground}" />
+            </Grid>
+            <Grid Name="Part_Content" Margin="{DynamicResource ItemContentMargin}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition  Width="{DynamicResource IconColumnWidth}" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition  />
+                    <RowDefinition  />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid Name="Part_Icon"
+                      Grid.Row="0" Grid.Column="0"
+                      Grid.RowSpan="3"
+                      Width="{DynamicResource IconImageSize}" Height="{DynamicResource IconImageSize}"
+                      mvvm:MouseBehaviour.MouseDownCommand="{Binding OpenCommand}"
+                      Background="#02A4A4A4" Cursor="Hand">
+                    <Grid>
+                        <Grid.LayoutTransform>
+                            <TransformGroup>
+                                <ScaleTransform/>
+                                <SkewTransform />
+                                <RotateTransform />
+                                <TranslateTransform />
+                            </TransformGroup>
+                        </Grid.LayoutTransform>
+                        <Path Data="{DynamicResource Ram}"
+                              Fill="{DynamicResource IconBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
+                </Grid>
+                <TextBlock Name="Part_Name"
+                           Grid.Row="0" Grid.Column="1" 
+                           Text="{Binding DisplayString}"
+                           Foreground="{DynamicResource ForegroundName}"
+                           Style="{DynamicResource TextBlockL1}" />
+                <TextBlock Name="Part_Info"
+                           Grid.Column="1" Grid.Row="1"
+                           FontFamily="{DynamicResource ContentFontFamily}"
+                           Foreground="{DynamicResource ForegroundInfo}"
+                           Text="{Binding Info}" Style="{DynamicResource TextBlockL2}" />
+                <ProgressBar Name="Part_ProgressBar"
+                             Grid.Column="1" Grid.Row="2"
+                             VerticalAlignment="Top"
+                             Height="{DynamicResource DefaultProgressBarHeight}"
+                             Value="{Binding Value, Mode=OneWay}" Style="{DynamicResource ProgressBarStyle}" />
+            </Grid>
+        </Grid>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:DisplaysViewModel}">
+        <Grid Margin="{DynamicResource ItemsMargin}"  Height="{DynamicResource DefaultHeight}" Width="{DynamicResource DefaultWidth}">
+            <Grid Name="Part_Background"
+                  Grid.Row="0" Grid.Column="0">
+                <ContentControl Template="{DynamicResource ItemsBackground}" />
+            </Grid>
+            <Grid Name="Part_Content" Margin="{DynamicResource ItemContentMargin}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+            </Grid>
+            <ListBox Grid.Row="0" Grid.Column="0"
+                     ItemsSource="{Binding Displays}" Background="{x:Null}" BorderBrush="{x:Null}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                     HorizontalAlignment="Center">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel IsItemsHost="True" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListBoxItem">
+                                    <Border Name="Border" SnapsToDevicePixels="true">
+                                        <ContentPresenter />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsSelected" Value="true">
+                                            <Setter TargetName="Border" Property="Background" Value="Transparent" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+            </ListBox>
+        </Grid>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:DisplayViewModel}">
+        <Grid ToolTip="{Binding FriendlyName}" Margin="3,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid Name="Part_Icon"
+                  Grid.Row="0"
+                  mvvm:MouseBehaviour.MouseDownCommand="{Binding SelectCommand}"
+                  Background="#02A4A4A4" Cursor="Hand">
+                <Grid>
+                    <Grid.LayoutTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform />
+                            <RotateTransform />
+                            <TranslateTransform />
+                        </TransformGroup>
+                    </Grid.LayoutTransform>
+                    <Path Data="{DynamicResource Display}" Stretch="Fill" Width="{DynamicResource IconImageSize}" Height="{DynamicResource IconImageSize}">
+                        <Path.Style>
+                            <Style TargetType="Path">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPrimary}" Value="true">
+                                        <Setter Property="Fill" Value="{DynamicResource IconBrushSelected}" />
+                                        <Setter Property="Stroke" Value="{DynamicResource IconBrushSelected}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsPrimary}" Value="false">
+                                        <Setter Property="Fill" Value="{DynamicResource IconBrush}" />
+                                        <Setter Property="Stroke" Value="Transparent" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Path.Style>
+                    </Path>
+                </Grid>
+            </Grid>
+            <TextBlock Name="Part_Name"
+                       Grid.Row="1"
+                       Text="{Binding DeviceName}"
+                       Foreground="{DynamicResource ForegroundName}"
+                       Style="{DynamicResource TextBlockL2}" />
+        </Grid>
+    </DataTemplate>
+</ResourceDictionary>

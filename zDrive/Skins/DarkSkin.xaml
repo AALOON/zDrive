@@ -3,23 +3,23 @@
                     xmlns:system="clr-namespace:System;assembly=mscorlib">
 
     <SolidColorBrush x:Key="IconBrush" Color="#107dac" />
-    <SolidColorBrush x:Key="IconBrushSelected" Color="#FF103BAC" />
+    <SolidColorBrush x:Key="IconBrushSelected" Color="#FF3399FF" />
     <!--<SolidColorBrush x:Key="ColorMaskGray1" Color="#338B8B8B" />-->
-    <SolidColorBrush x:Key="ColorMaskGray2" Color="#FF8B8B8B" />
-    <SolidColorBrush x:Key="ColorMaskGray3" Color="#E5EEEEEE" />
+    <SolidColorBrush x:Key="ColorMaskGray2" Color="#FF103BAC" />
+    <SolidColorBrush x:Key="ColorMaskGray3" Color="#CC000000" />
 
     <SolidColorBrush x:Key="Stroke" Color="#35FFFFFF" />
-    <SolidColorBrush x:Key="Foreground" Color="#005073" />
-    <SolidColorBrush x:Key="ForegroundName" Color="#005073" />
-    <SolidColorBrush x:Key="ForegroundInfo" Color="#005073" />
+    <SolidColorBrush x:Key="Foreground" Color="#99FFFFFF" />
+    <SolidColorBrush x:Key="ForegroundName" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="ForegroundInfo" Color="#99FFFFFF" />
 
-    <SolidColorBrush x:Key="ProgressBarBorderBrush" Color="#1ebbd7" />
-    <SolidColorBrush x:Key="SpaceEnough" Color="#1ebbd7" />
+    <SolidColorBrush x:Key="ProgressBarBorderBrush" Color="#FF3399FF" />
+    <SolidColorBrush x:Key="SpaceEnough" Color="#FF3399FF" />
     <SolidColorBrush x:Key="SpaceNotEnough" Color="#FFEC7A4F" />
 
     <SolidColorBrush x:Key="SettingsFillBrush" Color="#1ebbd7" />
 
-    <system:Double x:Key="MenuFontSize">11</system:Double>
+    <system:Double x:Key="MenuFontSize">12</system:Double>
 
     <FontFamily x:Key="ContentFontFamily">Verdana</FontFamily>
     <FontWeight x:Key="ContentFontWeight">DemiBold</FontWeight>

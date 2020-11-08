@@ -56,6 +56,11 @@ namespace zDrive.Interfaces
         InfoFormat InfoFormat { get; set; }
 
         /// <summary>
+        ///     Get or set theme skin.
+        /// </summary>
+        Theme Theme { get; set; }
+
+        /// <summary>
         ///     Windows proc.
         /// </summary>
         IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled);

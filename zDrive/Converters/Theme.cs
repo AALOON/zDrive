@@ -3,10 +3,11 @@
     /// <summary>
     ///     Disk/Ram usage formats.
     /// </summary>
-    public enum InfoFormat
+    public enum Theme
     {
-        Free = 0,
-        FreeMax = 1,
-        UsedMax = 2
+        Default = 0,
+
+        Gray = 1,
+        Dark = 2
     }
 }

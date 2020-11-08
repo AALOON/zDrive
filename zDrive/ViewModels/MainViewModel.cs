@@ -21,6 +21,7 @@ namespace zDrive.ViewModels
         private bool _showUnavailable;
         private bool _topmost;
         private double _x, _y;
+        private Theme _theme;
 
         public MainViewModel(IRegistryService registryService,
             IDriveInfoService driveInfoService,
@@ -139,6 +140,26 @@ namespace zDrive.ViewModels
         }
 
         /// <inheritdoc />
+        public Theme Theme
+        {
+            get => _theme;
+            set
+            {
+                if (_theme == value)
+                    return;
+
+                var app = (App)System.Windows.Application.Current;
+                var nonDefault = value;
+                if (nonDefault == Theme.Default)
+                    nonDefault = Theme.Gray;
+                app.ChangeSkin(new Uri($"/Skins/{nonDefault}Skin.xaml", UriKind.RelativeOrAbsolute));
+                _theme = value;
+                _registryService.Write(nameof(Theme), (int)value);
+                RaisePropertyChanged(nameof(Theme));
+            }
+        }
+
+        /// <inheritdoc />
         public IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             return _detectionService.WndProc(hwnd, msg, wParam, lParam, ref handled);
@@ -150,6 +171,7 @@ namespace zDrive.ViewModels
             _topmost = _registryService.Read(nameof(Topmost), false);
             _showUnavailable = _registryService.Read(nameof(ShowUnavailable), false);
             InfoFormat = _registryService.Read(nameof(InfoFormat), InfoFormat.Free);
+            Theme = _registryService.Read(nameof(Theme), Theme.Default);
 
             X = _registryService.Read(nameof(X), 0D);
             Y = _registryService.Read(nameof(Y), 0D);

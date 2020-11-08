@@ -109,7 +109,16 @@ namespace zDrive.ViewModels
             set
             {
                 if (value)
-                    _registryService.WriteAutoRun(Assembly.GetExecutingAssembly().Location);
+                {
+                    const string dll = ".dll";
+                    const string exe = ".exe";
+
+                    var location = Assembly.GetExecutingAssembly().Location;
+                    if (location.EndsWith(dll))
+                        location = location.Substring(0, location.Length - dll.Length) + exe;
+
+                    _registryService.WriteAutoRun(location);
+                }
                 else
                     _registryService.RemoveAutoRun();
                 RaisePropertyChanged(nameof(AutoRun));
@@ -124,7 +133,7 @@ namespace zDrive.ViewModels
             {
                 _driveInfoService.InfoFormat = value;
 
-                _registryService.Write(nameof(InfoFormat), (int) value);
+                _registryService.Write(nameof(InfoFormat), (int)value);
                 RaisePropertyChanged(nameof(InfoFormat));
             }
         }

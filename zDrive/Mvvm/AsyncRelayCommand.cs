@@ -8,61 +8,51 @@ namespace zDrive.Mvvm
 {
     public class AsyncRelayCommand : IAsyncCommand
     {
-        private readonly Func<bool> _canExecute;
-        private readonly IErrorHandler _errorHandler;
-        private readonly Func<Task> _execute;
+        private readonly Func<bool> canExecute;
+        private readonly IErrorHandler errorHandler;
+        private readonly Func<Task> execute;
 
-        private bool _isExecuting;
+        private bool isExecuting;
 
         public AsyncRelayCommand(
             Func<Task> execute,
             Func<bool> canExecute = null,
             IErrorHandler errorHandler = null)
         {
-            _execute = execute;
-            _canExecute = canExecute;
-            _errorHandler = errorHandler;
+            this.execute = execute;
+            this.canExecute = canExecute;
+            this.errorHandler = errorHandler;
         }
 
         public event EventHandler CanExecuteChanged;
 
-        public bool CanExecute()
-        {
-            return !_isExecuting && (_canExecute?.Invoke() ?? true);
-        }
+        public bool CanExecute() => !this.isExecuting && (this.canExecute?.Invoke() ?? true);
 
         public async Task ExecuteAsync()
         {
-            if (CanExecute())
+            if (this.CanExecute())
+            {
                 try
                 {
-                    _isExecuting = true;
-                    await _execute();
+                    this.isExecuting = true;
+                    await this.execute();
                 }
                 finally
                 {
-                    _isExecuting = false;
+                    this.isExecuting = false;
                 }
+            }
 
-            RaiseCanExecuteChanged();
+            this.RaiseCanExecuteChanged();
         }
 
-        public void RaiseCanExecuteChanged()
-        {
-            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
-        }
+        public void RaiseCanExecuteChanged() => this.CanExecuteChanged?.Invoke(this, EventArgs.Empty);
 
         #region Explicit implementations
 
-        bool ICommand.CanExecute(object parameter)
-        {
-            return CanExecute();
-        }
+        bool ICommand.CanExecute(object parameter) => this.CanExecute();
 
-        void ICommand.Execute(object parameter)
-        {
-            ExecuteAsync().FireAndForgetSafeAsync(_errorHandler);
-        }
+        void ICommand.Execute(object parameter) => this.ExecuteAsync().FireAndForgetSafeAsync(this.errorHandler);
 
         #endregion
     }

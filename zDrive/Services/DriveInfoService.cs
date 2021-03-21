@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using zDrive.Converters;
 using zDrive.Interfaces;
@@ -10,15 +9,15 @@ namespace zDrive.Services
 {
     internal class DriveInfoService : IDriveInfoService
     {
-        private readonly IInfoFormatService _infoFormatter;
-        private readonly Func<DriveInfo, string> _keyFunc = x => x.Name;
+        private readonly IInfoFormatService infoFormatter;
+        private readonly Func<DriveInfo, string> keyFunc = x => x.Name;
 
 
         public DriveInfoService(IDictionary<string, IDriveViewModel> dictionary, IInfoFormatService infoFormatter)
         {
-            _infoFormatter = infoFormatter;
-            Drives = dictionary;
-            Initialize();
+            this.infoFormatter = infoFormatter;
+            this.Drives = dictionary;
+            this.Initialize();
         }
 
 
@@ -29,53 +28,55 @@ namespace zDrive.Services
 
         public InfoFormat InfoFormat
         {
-            get => _infoFormatter.Format;
+            get => this.infoFormatter.Format;
             set
             {
-                if (_infoFormatter.Format != value)
+                if (this.infoFormatter.Format != value)
                 {
-                    _infoFormatter.Format = value;
-                    Update();
+                    this.infoFormatter.Format = value;
+                    this.Update();
                 }
             }
         }
 
         public void Update()
         {
-            foreach (var infoViewModel in Drives)
+            foreach (var infoViewModel in this.Drives)
+            {
                 infoViewModel.Value.RaiseChanges();
+            }
         }
 
         public void UpdateAddition(string label)
         {
-            UpdateRemoval(label);
+            this.UpdateRemoval(label);
             var driveInfo = new DriveInfo(label);
-            Insert(driveInfo);
+            this.Insert(driveInfo);
         }
 
         public void UpdateRemoval(string label)
         {
-            Debug.Assert(!string.IsNullOrEmpty(label), "!string.IsNullOrEmpty(label)");
-
-            if (Drives.ContainsKey(label)) Drives.Remove(label);
+            if (!string.IsNullOrEmpty(label) && this.Drives.ContainsKey(label))
+            {
+                this.Drives.Remove(label);
+            }
         }
 
 
-        private DriveInfo[] GetDrives()
-        {
-            return DriveInfo.GetDrives();
-        }
-
-        private void Insert(DriveInfo driveInfo)
-        {
-            Drives.Add(_keyFunc(driveInfo), new DriveViewModel(driveInfo, _infoFormatter));
-        }
+        private static DriveInfo[] GetDrives() => DriveInfo.GetDrives();
 
         private void Initialize()
         {
             foreach (var driveInfo in GetDrives())
-                if (driveInfo.IsReady || ShowUnavailable)
-                    Insert(driveInfo);
+            {
+                if (driveInfo.IsReady || this.ShowUnavailable)
+                {
+                    this.Insert(driveInfo);
+                }
+            }
         }
+
+        private void Insert(DriveInfo driveInfo) =>
+            this.Drives.Add(this.keyFunc(driveInfo), new DriveViewModel(driveInfo, this.infoFormatter));
     }
 }

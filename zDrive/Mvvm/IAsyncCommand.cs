@@ -5,7 +5,8 @@ namespace zDrive.Mvvm
 {
     public interface IAsyncCommand : ICommand
     {
-        Task ExecuteAsync();
         bool CanExecute();
+
+        Task ExecuteAsync();
     }
 }

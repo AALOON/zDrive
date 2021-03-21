@@ -6,20 +6,17 @@ namespace zDrive.Services
 {
     internal class TimerService : ITimerService
     {
-        private readonly TimeSpan _interval = TimeSpan.FromSeconds(2d);
+        private readonly TimeSpan interval = TimeSpan.FromSeconds(2d);
 
         public TimerService()
         {
-            var timer = new DispatcherTimer {Interval = _interval};
-            timer.Tick += Timer_Tick;
+            var timer = new DispatcherTimer { Interval = this.interval };
+            timer.Tick += this.Timer_Tick;
             timer.Start();
         }
 
         public event EventHandler<EventArgs> Tick;
 
-        private void Timer_Tick(object sender, EventArgs e)
-        {
-            Tick?.Invoke(this, e);
-        }
+        private void Timer_Tick(object sender, EventArgs e) => this.Tick?.Invoke(this, e);
     }
 }

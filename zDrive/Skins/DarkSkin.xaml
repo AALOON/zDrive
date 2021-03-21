@@ -62,7 +62,7 @@
     <Thickness x:Key="ItemsMargin">0.26</Thickness>
     <Thickness x:Key="ItemContentMargin">2</Thickness>
 
-    <GridLength  x:Key="IconColumnWidth">35</GridLength>
+    <GridLength x:Key="IconColumnWidth">35</GridLength>
     <system:Double x:Key="IconImageSize">25</system:Double>
     <system:Double x:Key="DefaultHeight">45</system:Double>
     <system:Double x:Key="DefaultWidth">155</system:Double>

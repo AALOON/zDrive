@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Windows;
 using Microsoft.Win32;
 using zDrive.Interfaces;
@@ -6,26 +7,26 @@ using zDrive.Interfaces;
 namespace zDrive.Services
 {
     /// <summary>
-    ///     Class for writing data for current application
-    ///     Software\\(Application.ProductName)
-    ///     Represents a key-level node in the Windows registry. This class is a registry encapsulation.
+    /// Class for writing data for current application
+    /// Software\\(Application.ProductName)
+    /// Represents a key-level node in the Windows registry. This class is a registry encapsulation.
     /// </summary>
     internal sealed class RegistryService : IRegistryService
     {
         private const string AutoRunPath = @"Software\Microsoft\Windows\CurrentVersion\Run\";
-        private readonly string _keyName;
-        private readonly string _programName;
+        private readonly string keyName;
+        private readonly string programName;
 
         public RegistryService()
         {
-            _programName = Application.ResourceAssembly.GetName().Name;
-            _keyName = "Software\\" + _programName;
+            this.programName = Application.ResourceAssembly.GetName().Name;
+            this.keyName = "Software\\" + this.programName;
         }
 
         public RegistryService(string programName)
         {
-            _programName = programName;
-            _keyName = "Software\\" + programName;
+            this.programName = programName;
+            this.keyName = "Software\\" + programName;
         }
 
         /// <inheritdoc />
@@ -33,11 +34,9 @@ namespace zDrive.Services
         {
             try
             {
-                using (var key = Registry.CurrentUser.CreateSubKey(path, RegistryKeyPermissionCheck.ReadWriteSubTree))
-                {
-                    key?.SetValue(name, value);
-                    return true;
-                }
+                using var key = Registry.CurrentUser.CreateSubKey(path, RegistryKeyPermissionCheck.ReadWriteSubTree);
+                key?.SetValue(name, value);
+                return true;
             }
             catch (Exception)
             {
@@ -47,21 +46,16 @@ namespace zDrive.Services
         }
 
         /// <inheritdoc />
-        public bool Write<TValue>(string name, TValue value)
-        {
-            return Write(_keyName, name, value);
-        }
+        public bool Write<TValue>(string name, TValue value) => this.Write(this.keyName, name, value);
 
         /// <inheritdoc />
         public bool Remove(string path, string name)
         {
             try
             {
-                using (var key = Registry.CurrentUser.CreateSubKey(path, RegistryKeyPermissionCheck.ReadWriteSubTree))
-                {
-                    key?.DeleteValue(name, false);
-                    return true;
-                }
+                using var key = Registry.CurrentUser.CreateSubKey(path, RegistryKeyPermissionCheck.ReadWriteSubTree);
+                key?.DeleteValue(name, false);
+                return true;
             }
             catch (Exception)
             {
@@ -70,56 +64,36 @@ namespace zDrive.Services
         }
 
         /// <inheritdoc />
-        public bool Remove(string name)
-        {
-            return Remove(_keyName, name);
-        }
+        public bool Remove(string name) => this.Remove(this.keyName, name);
 
         /// <inheritdoc />
-        public bool Remove()
-        {
-            return Remove(_keyName, _programName);
-        }
+        public bool Remove() => this.Remove(this.keyName, this.programName);
 
         /// <inheritdoc />
         public TValue Read<TValue>(string path, string name, TValue defaultValue)
         {
-            using (var key = Registry.CurrentUser.CreateSubKey(path, RegistryKeyPermissionCheck.ReadSubTree))
+            using var key = Registry.CurrentUser.CreateSubKey(path, RegistryKeyPermissionCheck.ReadSubTree);
+            var value = key?.GetValue(name, defaultValue);
+            var type = typeof(TValue);
+
+            if (type.BaseType == typeof(Enum))
             {
-                var value = key?.GetValue(name, defaultValue);
-                var type = typeof(TValue);
-                switch (true)
-                {
-                    case true when type.BaseType == typeof(Enum):
-                        return (TValue) Convert.ChangeType(value, Enum.GetUnderlyingType(type));
-                    default:
-                        return (TValue) Convert.ChangeType(value, type);
-                }
+                return (TValue)Convert.ChangeType(value, Enum.GetUnderlyingType(type), CultureInfo.CurrentCulture);
             }
+
+            return (TValue)Convert.ChangeType(value, type, CultureInfo.CurrentCulture);
         }
 
         /// <inheritdoc />
-        public TValue Read<TValue>(string name, TValue defaultValue)
-        {
-            return Read(_keyName, name, defaultValue);
-        }
+        public TValue Read<TValue>(string name, TValue defaultValue) => this.Read(this.keyName, name, defaultValue);
 
         /// <inheritdoc />
-        public string ReadAutoRun()
-        {
-            return Read(AutoRunPath, _programName, (string) null);
-        }
+        public string ReadAutoRun() => this.Read(AutoRunPath, this.programName, (string)null);
 
         /// <inheritdoc />
-        public bool WriteAutoRun(string value)
-        {
-            return Write(AutoRunPath, _programName, value);
-        }
+        public bool WriteAutoRun(string value) => this.Write(AutoRunPath, this.programName, value);
 
         /// <inheritdoc />
-        public bool RemoveAutoRun()
-        {
-            return Remove(AutoRunPath, _programName);
-        }
+        public bool RemoveAutoRun() => this.Remove(AutoRunPath, this.programName);
     }
 }

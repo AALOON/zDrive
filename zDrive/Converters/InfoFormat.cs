@@ -1,7 +1,7 @@
 ﻿namespace zDrive.Converters
 {
     /// <summary>
-    ///     Disk/Ram usage formats.
+    /// Disk/Ram usage formats.
     /// </summary>
     public enum InfoFormat
     {

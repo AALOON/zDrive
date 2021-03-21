@@ -9,21 +9,23 @@ namespace zDrive.ViewModels
     internal class RamInfoViewModel : ViewModelBase, IInfoViewModel
     {
         private const string TaskManager = "Taskmgr";
-        private readonly IInfoFormatter _format;
+        private readonly IInfoFormatter format;
 
         internal RamInfoViewModel(IInfoFormatter format)
         {
-            _format = format;
-            OpenCommand = new RelayCommand(Open);
+            this.format = format;
+            this.OpenCommand = new RelayCommand(this.Open);
         }
 
         public long Total { get; private set; }
+
         public long Free { get; private set; }
 
         public string Key => "RamInfo";
+
         public string Name => "Ram usage";
 
-        public string DisplayString => Name;
+        public string DisplayString => this.Name;
 
         public string Info { get; private set; }
 
@@ -31,11 +33,13 @@ namespace zDrive.ViewModels
         {
             get
             {
-                var free = Free;
-                var total = Total;
+                var free = this.Free;
+                var total = this.Total;
 
                 if (total == 0L)
+                {
                     return 0d;
+                }
 
                 return (total - free) / (total / 100d);
             }
@@ -43,23 +47,20 @@ namespace zDrive.ViewModels
 
         public void RaiseChanges()
         {
-            Free = PerformanceInfo.GetPhysicalAvailableMemory();
-            Total = PerformanceInfo.GetTotalMemory();
+            this.Free = PerformanceInfo.GetPhysicalAvailableMemory();
+            this.Total = PerformanceInfo.GetTotalMemory();
 
-            Info = _format.GetFormatedString(Total, Free);
+            this.Info = this.format.GetFormatedString(this.Total, this.Free);
 
-            RaisePropertyChanged(nameof(Total));
-            RaisePropertyChanged(nameof(Free));
-            RaisePropertyChanged(nameof(Info));
-            RaisePropertyChanged(nameof(Value));
+            this.RaisePropertyChanged(nameof(this.Total));
+            this.RaisePropertyChanged(nameof(this.Free));
+            this.RaisePropertyChanged(nameof(this.Info));
+            this.RaisePropertyChanged(nameof(this.Value));
         }
 
         public RelayCommand OpenCommand { get; }
 
-        private void Open(object param)
-        {
-            Process.Start(TaskManager);
-        }
+        private void Open(object param) => Process.Start(TaskManager);
 
         public static class PerformanceInfo
         {
@@ -72,7 +73,10 @@ namespace zDrive.ViewModels
             {
                 var pi = new PerformanceInformation();
                 if (GetPerformanceInfo(out pi, Marshal.SizeOf(pi)))
+                {
                     return Convert.ToInt64(pi.PhysicalAvailable.ToInt64() * pi.PageSize.ToInt64());
+                }
+
                 return -1;
             }
 
@@ -80,7 +84,10 @@ namespace zDrive.ViewModels
             {
                 var pi = new PerformanceInformation();
                 if (GetPerformanceInfo(out pi, Marshal.SizeOf(pi)))
+                {
                     return Convert.ToInt64(pi.PhysicalTotal.ToInt64() * pi.PageSize.ToInt64());
+                }
+
                 return -1;
             }
 

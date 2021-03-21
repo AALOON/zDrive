@@ -10,9 +10,6 @@ namespace zDrive.Services
         public InfoFormat Format { get; set; }
 
         /// <inheritdoc />
-        public string GetFormatedString(double max, double free)
-        {
-            return Format.ToFormatedString(max, free);
-        }
+        public string GetFormatedString(double max, double free) => this.Format.ToFormatedString(max, free);
     }
 }

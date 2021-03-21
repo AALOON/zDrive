@@ -1,7 +1,7 @@
 ﻿namespace zDrive.Interfaces
 {
     /// <summary>
-    ///     Info widgets.
+    /// Info widgets.
     /// </summary>
     public enum InfoWidget
     {

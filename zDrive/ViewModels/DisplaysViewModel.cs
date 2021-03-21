@@ -9,67 +9,73 @@ using zDrive.Native;
 namespace zDrive.ViewModels
 {
     /// <summary>
-    ///     VM for displays
+    /// VM for displays
     /// </summary>
     internal sealed class DisplaysViewModel : ViewModelBase, IInfoViewModel
     {
-        private readonly IInfoFormatter _format;
+        private readonly IInfoFormatter format;
 
         internal DisplaysViewModel(IInfoFormatter format)
         {
-            _format = format;
+            this.format = format;
 
-            ReloadMonitor();
+            this.ReloadMonitor();
         }
 
         public ExtendedObservableCollection<DisplayViewModel> Displays { get; set; } =
-            new ExtendedObservableCollection<DisplayViewModel>();
+            new();
 
         public RelayCommand OpenCommand { get; } = null;
 
         public string Key => "Displays";
+
         public string Name => "Displays";
+
         public string DisplayString => "Displays";
+
         public string Info { get; }
+
         public double Value => 0;
 
         public void RaiseChanges()
         {
-            RaisePropertyChanged(nameof(Info));
-            RaisePropertyChanged(nameof(Value));
-            RaisePropertyChanged(nameof(Displays));
+            this.RaisePropertyChanged(nameof(this.Info));
+            this.RaisePropertyChanged(nameof(this.Value));
+            this.RaisePropertyChanged(nameof(this.Displays));
         }
 
         private void ReloadMonitor()
         {
-            Displays.SuppressNotification = true;
-            Displays.Clear();
+            this.Displays.SuppressNotification = true;
+            this.Displays.Clear();
             foreach (var screen in MonitorsService.AllMonitorDevices())
-                Displays.Add(new DisplayViewModel(ReloadMonitor)
+            {
+                this.Displays.Add(new DisplayViewModel(this.ReloadMonitor)
                 {
                     DeviceName = screen.DeviceName.Replace(@"\\.\", ""),
                     FriendlyName = screen.FriendlyName,
                     IsPrimary = screen.IsPrimary,
                     DisplayId = screen.Index
                 });
+            }
 
-            Displays.SuppressNotification = false;
-            Displays.RaiseChanged();
-            RaiseChanges();
+            this.Displays.SuppressNotification = false;
+            this.Displays.RaiseChanged();
+            this.RaiseChanges();
         }
     }
 
     /// <summary>
-    ///     VM for one display.
+    /// VM for one display.
     /// </summary>
     public sealed class DisplayViewModel : ViewModelBase
     {
-        private readonly Action _updateDisplays;
+        private readonly Action updateDisplays;
 
         public DisplayViewModel(Action updateDisplays)
         {
-            _updateDisplays = updateDisplays;
-            SelectCommand = new AsyncRelayCommand(SelectMonitorAsync);
+            this.updateDisplays = updateDisplays;
+            this.SelectCommand = new AsyncRelayCommand(this.SelectMonitorAsync);
         }
 
         public string DeviceName { get; set; }
@@ -84,18 +90,21 @@ namespace zDrive.ViewModels
 
         public void RaiseChanges()
         {
-            RaisePropertyChanged(nameof(IsPrimary));
-            RaisePropertyChanged(nameof(DeviceName));
-            RaisePropertyChanged(nameof(FriendlyName));
+            this.RaisePropertyChanged(nameof(this.IsPrimary));
+            this.RaisePropertyChanged(nameof(this.DeviceName));
+            this.RaisePropertyChanged(nameof(this.FriendlyName));
         }
 
         private async Task SelectMonitorAsync()
         {
-            MonitorChanger.SetAsPrimaryMonitor(DisplayId);
+            MonitorChanger.SetAsPrimaryMonitor(this.DisplayId);
             var sw = Stopwatch.StartNew();
-            while (!MonitorChanger.IsPrime(DisplayId) && sw.Elapsed < TimeSpan.FromSeconds(5)) await Task.Delay(50);
+            while (!MonitorChanger.IsPrime(this.DisplayId) && sw.Elapsed < TimeSpan.FromSeconds(5))
+            {
+                await Task.Delay(50);
+            }
 
-            _updateDisplays();
+            this.updateDisplays();
         }
     }
 }

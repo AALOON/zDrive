@@ -1,35 +1,37 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using zDrive.Collections;
 using zDrive.Interfaces;
 using zDrive.Services;
+using zDrive.Services.Ioc;
 
 namespace zDrive.ViewModels
 {
     /// <summary>
-    ///     View model locator.
+    /// View model locator.
     /// </summary>
     internal sealed class ViewModelLocator
     {
         static ViewModelLocator()
         {
-            SimpleIoc.RegisterType<IDictionary<string, IDriveViewModel>, ObservableDictionary<string, IDriveViewModel>>(
+            Ioc.RegisterSingleton<IDictionary<string, IDriveViewModel>, ObservableDictionary<string, IDriveViewModel>>(
                 () => new ObservableDictionary<string, IDriveViewModel>());
-            SimpleIoc.RegisterType<IDictionary<string, IInfoViewModel>, ObservableDictionary<string, IInfoViewModel>>(
-                () =>
-                    new ObservableDictionary<string, IInfoViewModel>());
-            SimpleIoc.RegisterType<IRegistryService, RegistryService>();
-            SimpleIoc.RegisterType<IDriveDetectionService, DriveDetectionService>();
-            SimpleIoc.RegisterType<IWidgetsService, WidgetsService>();
-            SimpleIoc.RegisterType<IInfoFormatService, InfoFormatService>();
-            SimpleIoc.RegisterType<IDriveInfoService, DriveInfoService>();
-            SimpleIoc.RegisterType<ITimerService, TimerService>();
-            SimpleIoc.RegisterType<MainViewModel>();
+            Ioc.RegisterSingleton<IDictionary<string, IInfoViewModel>, ObservableDictionary<string, IInfoViewModel>>(
+                () => new ObservableDictionary<string, IInfoViewModel>());
+            Ioc.RegisterSingleton<IRegistryService, RegistryService>();
+            Ioc.RegisterSingleton<IDriveDetectionService, IWndProc, DriveDetectionService>();
+            Ioc.RegisterSingleton<IWidgetsService, WidgetsService>();
+            Ioc.RegisterSingleton<IInfoFormatService, InfoFormatService>();
+            Ioc.RegisterSingleton<IDriveInfoService, DriveInfoService>();
+            Ioc.RegisterSingleton<ITimerService, TimerService>();
+            Ioc.RegisterSingleton<MainViewModel>();
         }
 
+        public static SimpleIoc Ioc { get; } = new();
+
         /// <summary>
-        ///     Main window.
+        /// Main window.
         /// </summary>
-        public IMainViewModel Main => SimpleIoc.Resolve<MainViewModel>();
+        public static IMainViewModel Main => Ioc.Resolve<MainViewModel>();
 
         public static void Cleanup()
         {

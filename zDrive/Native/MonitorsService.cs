@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -9,62 +9,7 @@ namespace zDrive.Native
 {
     public static class MonitorsService
     {
-        public const int ERROR_SUCCESS = 0;
-
-        private static string MonitorFriendlyName(LUID adapterId, uint targetId)
-        {
-            var deviceName = new DISPLAYCONFIG_TARGET_DEVICE_NAME
-            {
-                header =
-                {
-                    size = (uint) Marshal.SizeOf(typeof(DISPLAYCONFIG_TARGET_DEVICE_NAME)),
-                    adapterId = adapterId,
-                    id = targetId,
-                    type = DISPLAYCONFIG_DEVICE_INFO_TYPE.DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_NAME
-                }
-            };
-            var error = DisplayConfigGetDeviceInfo(ref deviceName);
-            if (error != ERROR_SUCCESS)
-                throw new Win32Exception(error);
-            return deviceName.monitorFriendlyDeviceName;
-        }
-
-        private static IEnumerable<string> GetAllMonitorsFriendlyNames()
-        {
-            uint pathCount, modeCount;
-            var error = GetDisplayConfigBufferSizes(QUERY_DEVICE_CONFIG_FLAGS.QDC_ONLY_ACTIVE_PATHS, out pathCount,
-                out modeCount);
-            if (error != ERROR_SUCCESS)
-                throw new Win32Exception(error);
-
-            var displayPaths = new DISPLAYCONFIG_PATH_INFO[pathCount];
-            var displayModes = new DISPLAYCONFIG_MODE_INFO[modeCount];
-            error = QueryDisplayConfig(QUERY_DEVICE_CONFIG_FLAGS.QDC_ONLY_ACTIVE_PATHS,
-                ref pathCount, displayPaths, ref modeCount, displayModes, IntPtr.Zero);
-            if (error != ERROR_SUCCESS)
-                throw new Win32Exception(error);
-
-            for (var i = 0; i < modeCount; i++)
-                if (displayModes[i].infoType == DISPLAYCONFIG_MODE_INFO_TYPE.DISPLAYCONFIG_MODE_INFO_TYPE_TARGET)
-                    yield return MonitorFriendlyName(displayModes[i].adapterId, displayModes[i].id);
-        }
-
-        public static string DeviceFriendlyName(this Screen screen)
-        {
-            var allFriendlyNames = GetAllMonitorsFriendlyNames();
-            for (var index = 0; index < Screen.AllScreens.Length; index++)
-                if (Equals(screen, Screen.AllScreens[index]))
-                    return allFriendlyNames.ToArray()[index];
-            return null;
-        }
-
-        public static string DeviceFriendlyName(this uint screenId)
-        {
-            var allFriendlyNames = GetAllMonitorsFriendlyNames().ToArray();
-            if (allFriendlyNames.Length <= screenId) throw new IndexOutOfRangeException();
-
-            return allFriendlyNames[screenId];
-        }
+        private const int ErrorSuccess = 0;
 
         public static IEnumerable<MonitorInfo> AllMonitorDevices()
         {
@@ -73,97 +18,170 @@ namespace zDrive.Native
             for (var i = 0; i < screens.Length; i++)
             {
                 var screen = screens[i];
-                yield return new MonitorInfo((uint) i, screen.Primary, screen.DeviceName, allFriendlyNames[i]);
+                yield return new MonitorInfo((uint)i, screen.Primary, screen.DeviceName, allFriendlyNames[i]);
             }
+        }
+
+        public static string DeviceFriendlyName(this Screen screen)
+        {
+            var allFriendlyNames = GetAllMonitorsFriendlyNames();
+            for (var index = 0; index < Screen.AllScreens.Length; index++)
+            {
+                if (Equals(screen, Screen.AllScreens[index]))
+                {
+                    return allFriendlyNames.ToArray()[index];
+                }
+            }
+
+            return null;
+        }
+
+        public static string DeviceFriendlyName(this uint screenId)
+        {
+            var allFriendlyNames = GetAllMonitorsFriendlyNames().ToArray();
+            if (allFriendlyNames.Length <= screenId)
+            {
+                throw new ArgumentOutOfRangeException(nameof(screenId));
+            }
+
+            return allFriendlyNames[screenId];
+        }
+
+        private static IEnumerable<string> GetAllMonitorsFriendlyNames()
+        {
+            var error = GetDisplayConfigBufferSizes(QueryDeviceConfigFlags.QdcOnlyActivePaths, out var pathCount,
+                out var modeCount);
+            if (error != ErrorSuccess)
+            {
+                throw new Win32Exception(error);
+            }
+
+            var displayPaths = new DisplayconfigPathInfo[pathCount];
+            var displayModes = new DisplayconfigModeInfo[modeCount];
+            error = QueryDisplayConfig(QueryDeviceConfigFlags.QdcOnlyActivePaths,
+                ref pathCount, displayPaths, ref modeCount, displayModes, IntPtr.Zero);
+            if (error != ErrorSuccess)
+            {
+                throw new Win32Exception(error);
+            }
+
+            for (var i = 0; i < modeCount; i++)
+            {
+                if (displayModes[i].infoType == DisplayConfigModeInfoType.Target)
+                {
+                    yield return MonitorFriendlyName(displayModes[i].adapterId, displayModes[i].id);
+                }
+            }
+        }
+
+        private static string MonitorFriendlyName(Luid adapterId, uint targetId)
+        {
+            var deviceName = new DisplayconfigTargetDeviceName
+            {
+                header =
+                {
+                    size = (uint)Marshal.SizeOf(typeof(DisplayconfigTargetDeviceName)),
+                    adapterId = adapterId,
+                    id = targetId,
+                    type = DisplayConfigDeviceInfoType.GetTargetName
+                }
+            };
+            var error = DisplayConfigGetDeviceInfo(ref deviceName);
+            if (error != ErrorSuccess)
+            {
+                throw new Win32Exception(error);
+            }
+
+            return deviceName.monitorFriendlyDeviceName;
         }
 
         #region Enums
 
-        private enum QUERY_DEVICE_CONFIG_FLAGS : uint
+        private enum QueryDeviceConfigFlags : uint
         {
-            QDC_ALL_PATHS = 0x00000001,
-            QDC_ONLY_ACTIVE_PATHS = 0x00000002,
-            QDC_DATABASE_CURRENT = 0x00000004
+            QdcAllPaths = 0x00000001,
+            QdcOnlyActivePaths = 0x00000002,
+            QdcDatabaseCurrent = 0x00000004
         }
 
-        private enum DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY : uint
+        private enum DisplayconfigVideoOutputTechnology : uint
         {
-            DISPLAYCONFIG_OUTPUT_TECHNOLOGY_OTHER = 0xFFFFFFFF,
-            DISPLAYCONFIG_OUTPUT_TECHNOLOGY_HD15 = 0,
-            DISPLAYCONFIG_OUTPUT_TECHNOLOGY_SVIDEO = 1,
-            DISPLAYCONFIG_OUTPUT_TECHNOLOGY_COMPOSITE_VIDEO = 2,
-            DISPLAYCONFIG_OUTPUT_TECHNOLOGY_COMPONENT_VIDEO = 3,
-            DISPLAYCONFIG_OUTPUT_TECHNOLOGY_DVI = 4,
-            DISPLAYCONFIG_OUTPUT_TECHNOLOGY_HDMI = 5,
-            DISPLAYCONFIG_OUTPUT_TECHNOLOGY_LVDS = 6,
-            DISPLAYCONFIG_OUTPUT_TECHNOLOGY_D_JPN = 8,
-            DISPLAYCONFIG_OUTPUT_TECHNOLOGY_SDI = 9,
-            DISPLAYCONFIG_OUTPUT_TECHNOLOGY_DISPLAYPORT_EXTERNAL = 10,
-            DISPLAYCONFIG_OUTPUT_TECHNOLOGY_DISPLAYPORT_EMBEDDED = 11,
-            DISPLAYCONFIG_OUTPUT_TECHNOLOGY_UDI_EXTERNAL = 12,
-            DISPLAYCONFIG_OUTPUT_TECHNOLOGY_UDI_EMBEDDED = 13,
-            DISPLAYCONFIG_OUTPUT_TECHNOLOGY_SDTVDONGLE = 14,
-            DISPLAYCONFIG_OUTPUT_TECHNOLOGY_MIRACAST = 15,
-            DISPLAYCONFIG_OUTPUT_TECHNOLOGY_INTERNAL = 0x80000000,
-            DISPLAYCONFIG_OUTPUT_TECHNOLOGY_FORCE_UINT32 = 0xFFFFFFFF
+            DisplayconfigOutputTechnologyOther = 0xFFFFFFFF,
+            DisplayconfigOutputTechnologyHd15 = 0,
+            DisplayconfigOutputTechnologySvideo = 1,
+            DisplayconfigOutputTechnologyCompositeVideo = 2,
+            DisplayconfigOutputTechnologyComponentVideo = 3,
+            DisplayconfigOutputTechnologyDvi = 4,
+            DisplayconfigOutputTechnologyHdmi = 5,
+            DisplayconfigOutputTechnologyLvds = 6,
+            DisplayconfigOutputTechnologyDJpn = 8,
+            DisplayconfigOutputTechnologySdi = 9,
+            DisplayconfigOutputTechnologyDisplayportExternal = 10,
+            DisplayconfigOutputTechnologyDisplayportEmbedded = 11,
+            DisplayconfigOutputTechnologyUdiExternal = 12,
+            DisplayconfigOutputTechnologyUdiEmbedded = 13,
+            DisplayconfigOutputTechnologySdtvdongle = 14,
+            DisplayconfigOutputTechnologyMiracast = 15,
+            DisplayconfigOutputTechnologyInternal = 0x80000000,
+            DisplayconfigOutputTechnologyForceUint32 = 0xFFFFFFFF
         }
 
-        private enum DISPLAYCONFIG_SCANLINE_ORDERING : uint
+        private enum DisplayconfigScanlineOrdering : uint
         {
-            DISPLAYCONFIG_SCANLINE_ORDERING_UNSPECIFIED = 0,
-            DISPLAYCONFIG_SCANLINE_ORDERING_PROGRESSIVE = 1,
-            DISPLAYCONFIG_SCANLINE_ORDERING_INTERLACED = 2,
-            DISPLAYCONFIG_SCANLINE_ORDERING_INTERLACED_UPPERFIELDFIRST = DISPLAYCONFIG_SCANLINE_ORDERING_INTERLACED,
-            DISPLAYCONFIG_SCANLINE_ORDERING_INTERLACED_LOWERFIELDFIRST = 3,
-            DISPLAYCONFIG_SCANLINE_ORDERING_FORCE_UINT32 = 0xFFFFFFFF
+            DisplayconfigScanlineOrderingUnspecified = 0,
+            DisplayconfigScanlineOrderingProgressive = 1,
+            DisplayconfigScanlineOrderingInterlaced = 2,
+            DisplayconfigScanlineOrderingInterlacedUpperfieldfirst = DisplayconfigScanlineOrderingInterlaced,
+            DisplayconfigScanlineOrderingInterlacedLowerfieldfirst = 3,
+            DisplayconfigScanlineOrderingForceUint32 = 0xFFFFFFFF
         }
 
-        private enum DISPLAYCONFIG_ROTATION : uint
+        private enum DisplayconfigRotation : uint
         {
-            DISPLAYCONFIG_ROTATION_IDENTITY = 1,
-            DISPLAYCONFIG_ROTATION_ROTATE90 = 2,
-            DISPLAYCONFIG_ROTATION_ROTATE180 = 3,
-            DISPLAYCONFIG_ROTATION_ROTATE270 = 4,
-            DISPLAYCONFIG_ROTATION_FORCE_UINT32 = 0xFFFFFFFF
+            DisplayconfigRotationIdentity = 1,
+            DisplayconfigRotationRotate90 = 2,
+            DisplayconfigRotationRotate180 = 3,
+            DisplayconfigRotationRotate270 = 4,
+            DisplayconfigRotationForceUint32 = 0xFFFFFFFF
         }
 
-        private enum DISPLAYCONFIG_SCALING : uint
+        private enum DisplayConfigScaling : uint
         {
-            DISPLAYCONFIG_SCALING_IDENTITY = 1,
-            DISPLAYCONFIG_SCALING_CENTERED = 2,
-            DISPLAYCONFIG_SCALING_STRETCHED = 3,
-            DISPLAYCONFIG_SCALING_ASPECTRATIOCENTEREDMAX = 4,
-            DISPLAYCONFIG_SCALING_CUSTOM = 5,
-            DISPLAYCONFIG_SCALING_PREFERRED = 128,
-            DISPLAYCONFIG_SCALING_FORCE_UINT32 = 0xFFFFFFFF
+            Identity = 1,
+            Centered = 2,
+            Stretched = 3,
+            Aspectratiocenteredmax = 4,
+            Custom = 5,
+            Preferred = 128,
+            ForceUint32 = 0xFFFFFFFF
         }
 
-        private enum DISPLAYCONFIG_PIXELFORMAT : uint
+        private enum DisplayConfigPixelFormat : uint
         {
-            DISPLAYCONFIG_PIXELFORMAT_8BPP = 1,
-            DISPLAYCONFIG_PIXELFORMAT_16BPP = 2,
-            DISPLAYCONFIG_PIXELFORMAT_24BPP = 3,
-            DISPLAYCONFIG_PIXELFORMAT_32BPP = 4,
-            DISPLAYCONFIG_PIXELFORMAT_NONGDI = 5,
-            DISPLAYCONFIG_PIXELFORMAT_FORCE_UINT32 = 0xffffffff
+            Format8Bpp = 1,
+            Format16Bpp = 2,
+            Format24Bpp = 3,
+            Format32Bpp = 4,
+            FormatNongdi = 5,
+            FormatForceUint32 = 0xffffffff
         }
 
-        private enum DISPLAYCONFIG_MODE_INFO_TYPE : uint
+        private enum DisplayConfigModeInfoType : uint
         {
-            DISPLAYCONFIG_MODE_INFO_TYPE_SOURCE = 1,
-            DISPLAYCONFIG_MODE_INFO_TYPE_TARGET = 2,
-            DISPLAYCONFIG_MODE_INFO_TYPE_FORCE_UINT32 = 0xFFFFFFFF
+            Source = 1,
+            Target = 2,
+            ForceUint32 = 0xFFFFFFFF
         }
 
-        private enum DISPLAYCONFIG_DEVICE_INFO_TYPE : uint
+        private enum DisplayConfigDeviceInfoType : uint
         {
-            DISPLAYCONFIG_DEVICE_INFO_GET_SOURCE_NAME = 1,
-            DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_NAME = 2,
-            DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_PREFERRED_MODE = 3,
-            DISPLAYCONFIG_DEVICE_INFO_GET_ADAPTER_NAME = 4,
-            DISPLAYCONFIG_DEVICE_INFO_SET_TARGET_PERSISTENCE = 5,
-            DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_BASE_TYPE = 6,
-            DISPLAYCONFIG_DEVICE_INFO_FORCE_UINT32 = 0xFFFFFFFF
+            FormatGetSourceName = 1,
+            GetTargetName = 2,
+            FormatGetTargetPreferredMode = 3,
+            FormatGetAdapterName = 4,
+            FormatSetTargetPersistence = 5,
+            FormatGetTargetBaseType = 6,
+            FormatForceUint32 = 0xFFFFFFFF
         }
 
         #endregion
@@ -171,130 +189,132 @@ namespace zDrive.Native
         #region Structs
 
         [StructLayout(LayoutKind.Sequential)]
-        private struct LUID
+        private struct Luid
         {
             public readonly uint LowPart;
             public readonly int HighPart;
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        private struct DISPLAYCONFIG_PATH_SOURCE_INFO
+        private struct DisplayconfigPathSourceInfo
         {
-            public readonly LUID adapterId;
+            public readonly Luid adapterId;
             public readonly uint id;
             public readonly uint modeInfoIdx;
             public readonly uint statusFlags;
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        private struct DISPLAYCONFIG_PATH_TARGET_INFO
+        private struct DisplayconfigPathTargetInfo
         {
-            public readonly LUID adapterId;
+            public readonly Luid adapterId;
             public readonly uint id;
             public readonly uint modeInfoIdx;
-            private readonly DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY outputTechnology;
-            private readonly DISPLAYCONFIG_ROTATION rotation;
-            private readonly DISPLAYCONFIG_SCALING scaling;
-            private readonly DISPLAYCONFIG_RATIONAL refreshRate;
-            private readonly DISPLAYCONFIG_SCANLINE_ORDERING scanLineOrdering;
+            private readonly DisplayconfigVideoOutputTechnology outputTechnology;
+            private readonly DisplayconfigRotation rotation;
+            private readonly DisplayConfigScaling scaling;
+            private readonly DisplayconfigRational refreshRate;
+            private readonly DisplayconfigScanlineOrdering scanLineOrdering;
             public readonly bool targetAvailable;
             public readonly uint statusFlags;
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        private struct DISPLAYCONFIG_RATIONAL
+        private struct DisplayconfigRational
         {
             public readonly uint Numerator;
             public readonly uint Denominator;
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        private struct DISPLAYCONFIG_PATH_INFO
+        private struct DisplayconfigPathInfo
         {
-            public readonly DISPLAYCONFIG_PATH_SOURCE_INFO sourceInfo;
-            public readonly DISPLAYCONFIG_PATH_TARGET_INFO targetInfo;
+            public readonly DisplayconfigPathSourceInfo sourceInfo;
+            public readonly DisplayconfigPathTargetInfo targetInfo;
             public readonly uint flags;
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        private struct DISPLAYCONFIG_2DREGION
+        private struct Displayconfig2Dregion
         {
             public readonly uint cx;
             public readonly uint cy;
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        private struct DISPLAYCONFIG_VIDEO_SIGNAL_INFO
+        private struct DisplayconfigVideoSignalInfo
         {
             public readonly ulong pixelRate;
-            public readonly DISPLAYCONFIG_RATIONAL hSyncFreq;
-            public readonly DISPLAYCONFIG_RATIONAL vSyncFreq;
-            public readonly DISPLAYCONFIG_2DREGION activeSize;
-            public readonly DISPLAYCONFIG_2DREGION totalSize;
+            public readonly DisplayconfigRational hSyncFreq;
+            public readonly DisplayconfigRational vSyncFreq;
+            public readonly Displayconfig2Dregion activeSize;
+            public readonly Displayconfig2Dregion totalSize;
             public readonly uint videoStandard;
-            public readonly DISPLAYCONFIG_SCANLINE_ORDERING scanLineOrdering;
+            public readonly DisplayconfigScanlineOrdering scanLineOrdering;
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        private struct DISPLAYCONFIG_TARGET_MODE
+        private struct DisplayconfigTargetMode
         {
-            public readonly DISPLAYCONFIG_VIDEO_SIGNAL_INFO targetVideoSignalInfo;
+            public readonly DisplayconfigVideoSignalInfo targetVideoSignalInfo;
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        private struct POINTL
+        private struct Pointl
         {
             private readonly int x;
             private readonly int y;
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        private struct DISPLAYCONFIG_SOURCE_MODE
+        private struct DisplayconfigSourceMode
         {
             public readonly uint width;
             public readonly uint height;
-            public readonly DISPLAYCONFIG_PIXELFORMAT pixelFormat;
-            public readonly POINTL position;
+            public readonly DisplayConfigPixelFormat pixelFormat;
+            public readonly Pointl position;
         }
 
         [StructLayout(LayoutKind.Explicit)]
-        private struct DISPLAYCONFIG_MODE_INFO_UNION
+        private struct DisplayconfigModeInfoUnion
         {
-            [FieldOffset(0)] public readonly DISPLAYCONFIG_TARGET_MODE targetMode;
+            [FieldOffset(0)]
+            public readonly DisplayconfigTargetMode targetMode;
 
-            [FieldOffset(0)] public readonly DISPLAYCONFIG_SOURCE_MODE sourceMode;
+            [FieldOffset(0)]
+            public readonly DisplayconfigSourceMode sourceMode;
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        private struct DISPLAYCONFIG_MODE_INFO
+        private struct DisplayconfigModeInfo
         {
-            public readonly DISPLAYCONFIG_MODE_INFO_TYPE infoType;
+            public readonly DisplayConfigModeInfoType infoType;
             public readonly uint id;
-            public readonly LUID adapterId;
-            public readonly DISPLAYCONFIG_MODE_INFO_UNION modeInfo;
+            public readonly Luid adapterId;
+            public readonly DisplayconfigModeInfoUnion modeInfo;
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        private struct DISPLAYCONFIG_TARGET_DEVICE_NAME_FLAGS
+        private struct DisplayconfigTargetDeviceNameFlags
         {
             public readonly uint value;
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        private struct DISPLAYCONFIG_DEVICE_INFO_HEADER
+        private struct FormatHeader
         {
-            public DISPLAYCONFIG_DEVICE_INFO_TYPE type;
+            public DisplayConfigDeviceInfoType type;
             public uint size;
-            public LUID adapterId;
+            public Luid adapterId;
             public uint id;
         }
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        private struct DISPLAYCONFIG_TARGET_DEVICE_NAME
+        private struct DisplayconfigTargetDeviceName
         {
-            public DISPLAYCONFIG_DEVICE_INFO_HEADER header;
-            public readonly DISPLAYCONFIG_TARGET_DEVICE_NAME_FLAGS flags;
-            public readonly DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY outputTechnology;
+            public FormatHeader header;
+            public readonly DisplayconfigTargetDeviceNameFlags flags;
+            public readonly DisplayconfigVideoOutputTechnology outputTechnology;
             public readonly ushort edidManufactureId;
             public readonly ushort edidProductCodeId;
             public readonly uint connectorInstance;
@@ -312,18 +332,18 @@ namespace zDrive.Native
 
         [DllImport("user32.dll")]
         private static extern int GetDisplayConfigBufferSizes(
-            QUERY_DEVICE_CONFIG_FLAGS flags, out uint numPathArrayElements, out uint numModeInfoArrayElements);
+            QueryDeviceConfigFlags flags, out uint numPathArrayElements, out uint numModeInfoArrayElements);
 
         [DllImport("user32.dll")]
         private static extern int QueryDisplayConfig(
-            QUERY_DEVICE_CONFIG_FLAGS flags,
-            ref uint numPathArrayElements, [Out] DISPLAYCONFIG_PATH_INFO[] PathInfoArray,
-            ref uint numModeInfoArrayElements, [Out] DISPLAYCONFIG_MODE_INFO[] ModeInfoArray,
+            QueryDeviceConfigFlags flags,
+            ref uint numPathArrayElements, [Out] DisplayconfigPathInfo[] pathInfoArray,
+            ref uint numModeInfoArrayElements, [Out] DisplayconfigModeInfo[] modeInfoArray,
             IntPtr currentTopologyId
         );
 
         [DllImport("user32.dll")]
-        private static extern int DisplayConfigGetDeviceInfo(ref DISPLAYCONFIG_TARGET_DEVICE_NAME deviceName);
+        private static extern int DisplayConfigGetDeviceInfo(ref DisplayconfigTargetDeviceName deviceName);
 
         #endregion
     }

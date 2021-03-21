@@ -15,15 +15,15 @@ namespace zDrive.Converters
             {
                 var driveType = Enum.GetName(typeof(DriveType), value);
                 if (!string.IsNullOrEmpty(driveType) && Application.Current.Resources.Contains(driveType))
+                {
                     return Application.Current.Resources[driveType];
+                }
             }
 
             return "";
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
             throw new NotSupportedException();
-        }
     }
 }

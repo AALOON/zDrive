@@ -9,14 +9,15 @@ namespace zDrive.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value != null && (double) value > 90D)
+            if (value != null && (double)value > 90D)
+            {
                 return true;
+            }
+
             return false;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
             throw new NotSupportedException();
-        }
     }
 }

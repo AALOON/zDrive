@@ -22,18 +22,34 @@ namespace zDrive.Extensions
         public static string PrepareDouble(ref double d)
         {
             if (d < 0.0d)
+            {
                 return Un;
+            }
 
             if (d < 1024d)
+            {
                 return B;
+            }
+
             if ((d /= 1024d) < 1024d)
+            {
                 return Kb;
+            }
+
             if ((d /= 1024d) < 1024d)
+            {
                 return Mb;
+            }
+
             if ((d /= 1024d) < 1024d)
+            {
                 return Gb;
+            }
+
             if ((d /= 1024d) < 1024d)
+            {
                 return Tb;
+            }
 
             d /= 1024d;
             return Pb;
@@ -63,7 +79,9 @@ namespace zDrive.Extensions
             var formatString = infoFormat.PrepareInfoFormat();
 
             if (strSizeMax == Un || strSizeFree == Un || strSizeUsed == Un)
+            {
                 return Un;
+            }
 
             return string.Format(CultureInfo.CurrentCulture, formatString,
                 max, strSizeMax,

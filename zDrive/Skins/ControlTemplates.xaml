@@ -4,7 +4,8 @@
                     xmlns:mvvm="clr-namespace:zDrive.Mvvm">
 
     <DataTemplate DataType="{x:Type vm:DriveViewModel}">
-        <Grid Margin="{DynamicResource ItemsMargin}" Height="{DynamicResource DefaultHeight}" Width="{DynamicResource DefaultWidth}">
+        <Grid Margin="{DynamicResource ItemsMargin}" Height="{DynamicResource DefaultHeight}"
+              Width="{DynamicResource DefaultWidth}">
             <Grid Name="Part_Background"
                   Grid.Row="0" Grid.Column="0">
                 <ContentControl Template="{DynamicResource ItemsBackground}" />
@@ -35,11 +36,12 @@
                             </TransformGroup>
                         </Grid.LayoutTransform>
                         <Path Data="{Binding Type, Converter={StaticResource DriveConverter}}"
-                              Fill="{DynamicResource IconBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                              Fill="{DynamicResource IconBrush}" HorizontalAlignment="Center"
+                              VerticalAlignment="Center" />
                     </Grid>
                 </Grid>
                 <TextBlock Name="Part_Name"
-                           Grid.Row="0" Grid.Column="1" 
+                           Grid.Row="0" Grid.Column="1"
                            Text="{Binding DisplayString}"
                            Foreground="{DynamicResource ForegroundName}"
                            Style="{DynamicResource TextBlockL1}" />
@@ -58,19 +60,20 @@
         </Grid>
     </DataTemplate>
     <DataTemplate DataType="{x:Type vm:RamInfoViewModel}">
-        <Grid Margin="{DynamicResource ItemsMargin}" Height="{DynamicResource DefaultHeight}" Width="{DynamicResource DefaultWidth}">
+        <Grid Margin="{DynamicResource ItemsMargin}" Height="{DynamicResource DefaultHeight}"
+              Width="{DynamicResource DefaultWidth}">
             <Grid Name="Part_Background"
                   Grid.Row="0" Grid.Column="0">
                 <ContentControl Template="{DynamicResource ItemsBackground}" />
             </Grid>
             <Grid Name="Part_Content" Margin="{DynamicResource ItemContentMargin}">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition  Width="{DynamicResource IconColumnWidth}" />
+                    <ColumnDefinition Width="{DynamicResource IconColumnWidth}" />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition  />
-                    <RowDefinition  />
+                    <RowDefinition />
+                    <RowDefinition />
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <Grid Name="Part_Icon"
@@ -82,18 +85,19 @@
                     <Grid>
                         <Grid.LayoutTransform>
                             <TransformGroup>
-                                <ScaleTransform/>
+                                <ScaleTransform />
                                 <SkewTransform />
                                 <RotateTransform />
                                 <TranslateTransform />
                             </TransformGroup>
                         </Grid.LayoutTransform>
                         <Path Data="{DynamicResource Ram}"
-                              Fill="{DynamicResource IconBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                              Fill="{DynamicResource IconBrush}" HorizontalAlignment="Center"
+                              VerticalAlignment="Center" />
                     </Grid>
                 </Grid>
                 <TextBlock Name="Part_Name"
-                           Grid.Row="0" Grid.Column="1" 
+                           Grid.Row="0" Grid.Column="1"
                            Text="{Binding DisplayString}"
                            Foreground="{DynamicResource ForegroundName}"
                            Style="{DynamicResource TextBlockL1}" />
@@ -111,7 +115,8 @@
         </Grid>
     </DataTemplate>
     <DataTemplate DataType="{x:Type vm:DisplaysViewModel}">
-        <Grid Margin="{DynamicResource ItemsMargin}"  Height="{DynamicResource DefaultHeight}" Width="{DynamicResource DefaultWidth}">
+        <Grid Margin="{DynamicResource ItemsMargin}" Height="{DynamicResource DefaultHeight}"
+              Width="{DynamicResource DefaultWidth}">
             <Grid Name="Part_Background"
                   Grid.Row="0" Grid.Column="0">
                 <ContentControl Template="{DynamicResource ItemsBackground}" />
@@ -168,13 +173,14 @@
                 <Grid>
                     <Grid.LayoutTransform>
                         <TransformGroup>
-                            <ScaleTransform/>
+                            <ScaleTransform />
                             <SkewTransform />
                             <RotateTransform />
                             <TranslateTransform />
                         </TransformGroup>
                     </Grid.LayoutTransform>
-                    <Path Data="{DynamicResource Display}" Stretch="Fill" Width="{DynamicResource IconImageSize}" Height="{DynamicResource IconImageSize}">
+                    <Path Data="{DynamicResource Display}" Stretch="Fill" Width="{DynamicResource IconImageSize}"
+                          Height="{DynamicResource IconImageSize}">
                         <Path.Style>
                             <Style TargetType="Path">
                                 <Style.Triggers>

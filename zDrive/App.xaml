@@ -29,12 +29,12 @@
                 </ResourceDictionary>
                 <ResourceDictionary x:Uid="SkinResourceDictionary">
                     <ResourceDictionary.MergedDictionaries>
-                        <ResourceDictionary Source="/Skins/GraySkin.xaml"/>
+                        <ResourceDictionary Source="/Skins/GraySkin.xaml" />
                     </ResourceDictionary.MergedDictionaries>
                 </ResourceDictionary>
                 <ResourceDictionary x:Uid="TemplatesResourceDictionary">
                     <ResourceDictionary.MergedDictionaries>
-                        <ResourceDictionary Source="/Skins/ControlTemplates.xaml"/>
+                        <ResourceDictionary Source="/Skins/ControlTemplates.xaml" />
                     </ResourceDictionary.MergedDictionaries>
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>

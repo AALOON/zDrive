@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Windows;
@@ -6,22 +6,22 @@ using System.Windows.Forms;
 using zDrive.Converters;
 using zDrive.Interfaces;
 using zDrive.Mvvm;
+using Application = System.Windows.Application;
 
 namespace zDrive.ViewModels
 {
     /// <summary>
-    ///     VM for main windows.
+    /// VM for main windows.
     /// </summary>
     internal sealed class MainViewModel : ViewModelBase, IMainViewModel
     {
-        private readonly IDriveDetectionService _detectionService;
-        private readonly IDriveInfoService _driveInfoService;
-        private readonly IRegistryService _registryService;
+        private readonly IDriveInfoService driveInfoService;
+        private readonly IRegistryService registryService;
 
-        private bool _showUnavailable;
-        private bool _topmost;
-        private double _x, _y;
-        private Theme _theme;
+        private bool showUnavailable;
+        private Theme theme;
+        private bool topmost;
+        private double x, y;
 
         public MainViewModel(IRegistryService registryService,
             IDriveInfoService driveInfoService,
@@ -31,23 +31,25 @@ namespace zDrive.ViewModels
             IDictionary<string, IDriveViewModel> drives,
             IDictionary<string, IInfoViewModel> widgets)
         {
-            _registryService = registryService;
-            _driveInfoService = driveInfoService;
-            _detectionService = detectionService;
-            Drives = drives;
-            Widgets = widgets;
+            this.registryService = registryService;
+            this.driveInfoService = driveInfoService;
+            this.Drives = drives;
+            this.Widgets = widgets;
 
-            _detectionService.DeviceAdded += DeviceAdded;
-            _detectionService.DeviceRemoved += DeviceRemoved;
+            detectionService.DeviceAdded += this.DeviceAdded;
+            detectionService.DeviceRemoved += this.DeviceRemoved;
 
-            timerService.Tick += TimerTick;
+            timerService.Tick += this.TimerTick;
 
-            InitRelay();
+            this.InitRelay();
 
-            Initialize();
+            this.Initialize();
 
             widgetsService.Add(InfoWidget.RamDisk);
-            if (Screen.AllScreens.Length > 1) widgetsService.Add(InfoWidget.Displays);
+            if (Screen.AllScreens.Length > 1)
+            {
+                widgetsService.Add(InfoWidget.Displays);
+            }
         }
 
         /// <inheritdoc />
@@ -59,13 +61,13 @@ namespace zDrive.ViewModels
         /// <inheritdoc />
         public bool ShowUnavailable
         {
-            get => _showUnavailable;
+            get => this.showUnavailable;
             set
             {
-                if (Set(ref _showUnavailable, value))
+                if (this.Set(ref this.showUnavailable, value))
                 {
-                    _driveInfoService.ShowUnavailable = value;
-                    _registryService.Write("ShowUnavailable", value);
+                    this.driveInfoService.ShowUnavailable = value;
+                    this.registryService.Write("ShowUnavailable", value);
                 }
             }
         }
@@ -73,40 +75,46 @@ namespace zDrive.ViewModels
         /// <inheritdoc />
         public bool Topmost
         {
-            get => _topmost;
+            get => this.topmost;
             set
             {
-                if (Set(ref _topmost, value))
-                    _registryService.Write("Topmost", value);
+                if (this.Set(ref this.topmost, value))
+                {
+                    this.registryService.Write("Topmost", value);
+                }
             }
         }
 
         /// <inheritdoc />
         public double X
         {
-            get => _x;
+            get => this.x;
             set
             {
-                if (Set(ref _x, value))
-                    _registryService.Write(nameof(X), value);
+                if (this.Set(ref this.x, value))
+                {
+                    this.registryService.Write(nameof(this.X), value);
+                }
             }
         }
 
         /// <inheritdoc />
         public double Y
         {
-            get => _y;
+            get => this.y;
             set
             {
-                if (Set(ref _y, value))
-                    _registryService.Write(nameof(Y), value);
+                if (this.Set(ref this.y, value))
+                {
+                    this.registryService.Write(nameof(this.Y), value);
+                }
             }
         }
 
         /// <inheritdoc />
         public bool AutoRun
         {
-            get => _registryService.ReadAutoRun() != null;
+            get => this.registryService.ReadAutoRun() != null;
             set
             {
                 if (value)
@@ -115,96 +123,101 @@ namespace zDrive.ViewModels
                     const string exe = ".exe";
 
                     var location = Assembly.GetExecutingAssembly().Location;
-                    if (location.EndsWith(dll))
+                    if (location.EndsWith(dll, StringComparison.OrdinalIgnoreCase))
+                    {
                         location = location.Substring(0, location.Length - dll.Length) + exe;
+                    }
 
-                    _registryService.WriteAutoRun(location);
+                    this.registryService.WriteAutoRun(location);
                 }
                 else
-                    _registryService.RemoveAutoRun();
-                RaisePropertyChanged(nameof(AutoRun));
+                {
+                    this.registryService.RemoveAutoRun();
+                }
+
+                this.RaisePropertyChanged(nameof(this.AutoRun));
             }
         }
 
         /// <inheritdoc />
         public InfoFormat InfoFormat
         {
-            get => _driveInfoService.InfoFormat;
+            get => this.driveInfoService.InfoFormat;
             set
             {
-                _driveInfoService.InfoFormat = value;
+                this.driveInfoService.InfoFormat = value;
 
-                _registryService.Write(nameof(InfoFormat), (int)value);
-                RaisePropertyChanged(nameof(InfoFormat));
+                this.registryService.Write(nameof(this.InfoFormat), (int)value);
+                this.RaisePropertyChanged(nameof(this.InfoFormat));
             }
         }
 
         /// <inheritdoc />
         public Theme Theme
         {
-            get => _theme;
+            get => this.theme;
             set
             {
-                if (_theme == value)
+                if (this.theme == value)
+                {
                     return;
+                }
 
-                var app = (App)System.Windows.Application.Current;
+                var app = (App)Application.Current;
                 var nonDefault = value;
                 if (nonDefault == Theme.Default)
+                {
                     nonDefault = Theme.Gray;
+                }
+
                 app.ChangeSkin(new Uri($"/Skins/{nonDefault}Skin.xaml", UriKind.RelativeOrAbsolute));
-                _theme = value;
-                _registryService.Write(nameof(Theme), (int)value);
-                RaisePropertyChanged(nameof(Theme));
+                this.theme = value;
+                this.registryService.Write(nameof(this.Theme), (int)value);
+                this.RaisePropertyChanged(nameof(this.Theme));
             }
         }
 
-        /// <inheritdoc />
-        public IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
-        {
-            return _detectionService.WndProc(hwnd, msg, wParam, lParam, ref handled);
-        }
+        private void DeviceAdded(object sender, DeviceArrivalEventArgs e) =>
+            this.driveInfoService.UpdateAddition(e.Volume);
+
+        private void DeviceRemoved(object sender, DeviceRemovalEventArgs e) =>
+            this.driveInfoService.UpdateRemoval(e.Volume);
 
         private void Initialize()
         {
             // initialize settings from registry
-            _topmost = _registryService.Read(nameof(Topmost), false);
-            _showUnavailable = _registryService.Read(nameof(ShowUnavailable), false);
-            InfoFormat = _registryService.Read(nameof(InfoFormat), InfoFormat.Free);
-            Theme = _registryService.Read(nameof(Theme), Theme.Default);
+            this.topmost = this.registryService.Read(nameof(this.Topmost), false);
+            this.showUnavailable = this.registryService.Read(nameof(this.ShowUnavailable), false);
+            this.InfoFormat = this.registryService.Read(nameof(this.InfoFormat), InfoFormat.Free);
+            this.Theme = this.registryService.Read(nameof(this.Theme), Theme.Default);
 
-            X = _registryService.Read(nameof(X), 0D);
-            Y = _registryService.Read(nameof(Y), 0D);
+            this.X = this.registryService.Read(nameof(this.X), 0D);
+            this.Y = this.registryService.Read(nameof(this.Y), 0D);
 
-            if (Math.Abs(X) < 0.1)
-                X = SystemParameters.WorkArea.Width - 180;
-            if (Math.Abs(Y) < 0.1)
-                Y = 0D;
-        }
+            if (Math.Abs(this.X) < 0.1)
+            {
+                this.X = SystemParameters.WorkArea.Width - 180;
+            }
 
-        private void DeviceAdded(object sender, DeviceArrivalEventArgs e)
-        {
-            _driveInfoService.UpdateAddition(e.Volume);
-        }
-
-        private void DeviceRemoved(object sender, DeviceRemovalEventArgs e)
-        {
-            _driveInfoService.UpdateRemoval(e.Volume);
+            if (Math.Abs(this.Y) < 0.1)
+            {
+                this.Y = 0D;
+            }
         }
 
         private void TimerTick(object sender, EventArgs e)
         {
-            foreach (var infoViewModel in Widgets) infoViewModel.Value.RaiseChanges();
+            foreach (var infoViewModel in this.Widgets)
+            {
+                infoViewModel.Value.RaiseChanges();
+            }
 
-            _driveInfoService.Update();
+            this.driveInfoService.Update();
         }
 
         #region < Relay Commands >
 
-        private void InitRelay()
-        {
-            CloseCommand = new RelayCommand(Close);
-        }
+        private void InitRelay() => this.CloseCommand = new RelayCommand(this.Close);
 
         private void Close(object param)
         {

@@ -5,18 +5,15 @@ namespace zDrive.Interfaces
     public interface IDriveDetectionService
     {
         event EventHandler<DeviceArrivalEventArgs> DeviceAdded;
+
         event EventHandler<DeviceRemovalEventArgs> DeviceRemoved;
-        IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled);
     }
 
     #region DriveDetectionService EventArgs classes
 
     public abstract class DriveDetectionServiceEventArgs : EventArgs
     {
-        protected DriveDetectionServiceEventArgs(string volume)
-        {
-            Volume = volume;
-        }
+        protected DriveDetectionServiceEventArgs(string volume) => this.Volume = volume;
 
         public string Volume { get; }
     }

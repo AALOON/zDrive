@@ -1,68 +1,62 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using zDrive.Converters;
 using zDrive.Mvvm;
 
 namespace zDrive.Interfaces
 {
     /// <summary>
-    ///     Main view model.
+    /// Main view model.
     /// </summary>
     internal interface IMainViewModel
     {
         /// <summary>
-        ///     Close window command.
+        /// Close window command.
         /// </summary>
         RelayCommand CloseCommand { get; set; }
 
         /// <summary>
-        ///     Widgets collection.
+        /// Widgets collection.
         /// </summary>
         IDictionary<string, IInfoViewModel> Widgets { get; }
 
         /// <summary>
-        ///     Drives collection.
+        /// Drives collection.
         /// </summary>
         IDictionary<string, IDriveViewModel> Drives { get; }
 
         /// <summary>
-        ///     Show unavailable disks
+        /// Show unavailable disks
         /// </summary>
         bool ShowUnavailable { get; set; }
 
         /// <summary>
-        ///     Windows on top of all windows.
+        /// Windows on top of all windows.
         /// </summary>
         bool Topmost { get; set; }
 
         /// <summary>
-        ///     Location of X of window.
+        /// Location of X of window.
         /// </summary>
         double X { get; set; }
 
         /// <summary>
-        ///     Location of Y of window.
+        /// Location of Y of window.
         /// </summary>
         double Y { get; set; }
 
         /// <summary>
-        ///     Auto run app on windows start.
+        /// Auto run app on windows start.
         /// </summary>
         bool AutoRun { get; set; }
 
         /// <summary>
-        ///     Format of info.
+        /// Format of info.
         /// </summary>
         InfoFormat InfoFormat { get; set; }
 
         /// <summary>
-        ///     Get or set theme skin.
+        /// Get or set theme skin.
         /// </summary>
         Theme Theme { get; set; }
-
-        /// <summary>
-        ///     Windows proc.
-        /// </summary>
-        IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled);
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using zDrive.Collections;
@@ -13,19 +13,11 @@ namespace zDrive.ViewModels
     /// </summary>
     internal sealed class DisplaysViewModel : ViewModelBase, IInfoViewModel
     {
-        private readonly IInfoFormatter format;
+        internal DisplaysViewModel() => this.ReloadMonitor();
 
-        internal DisplaysViewModel(IInfoFormatter format)
-        {
-            this.format = format;
+        public ExtendedObservableCollection<DisplayViewModel> Displays { get; set; } = new();
 
-            this.ReloadMonitor();
-        }
-
-        public ExtendedObservableCollection<DisplayViewModel> Displays { get; set; } =
-            new();
-
-        public RelayCommand OpenCommand { get; } = null;
+        public RelayCommand OpenCommand { get; } = RelayCommand.Empty;
 
         public string Key => "Displays";
 

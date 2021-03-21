@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using zDrive.Interfaces;
 using zDrive.ViewModels;
@@ -18,38 +18,37 @@ namespace zDrive.Services
         }
 
         /// <inheritdoc />
-        /// c
         public void Add(InfoWidget widget, params object[] param)
         {
             switch (widget)
             {
                 case InfoWidget.RamDisk:
-                {
-                    var key = nameof(RamInfoViewModel);
-                    var exists = this.infos.TryGetValue(key, out _);
-                    if (exists)
                     {
-                        throw new ArgumentException(nameof(InfoWidget.RamDisk) + " already exists!");
-                    }
+                        var key = nameof(RamInfoViewModel);
+                        var exists = this.infos.TryGetValue(key, out _);
+                        if (exists)
+                        {
+                            throw new ArgumentException(nameof(InfoWidget.RamDisk) + " already exists!");
+                        }
 
-                    var viewModel = new RamInfoViewModel(this.infoFormatService);
-                    this.infos.Add(key, viewModel);
-                    viewModel.RaiseChanges();
-                }
+                        var viewModel = new RamInfoViewModel(this.infoFormatService);
+                        this.infos.Add(key, viewModel);
+                        viewModel.RaiseChanges();
+                    }
                     break;
                 case InfoWidget.Displays:
-                {
-                    var key = nameof(DisplayViewModel);
-                    var exists = this.infos.TryGetValue(key, out _);
-                    if (exists)
                     {
-                        throw new ArgumentException(nameof(InfoWidget.Displays) + " already exists!");
-                    }
+                        var key = nameof(DisplayViewModel);
+                        var exists = this.infos.TryGetValue(key, out _);
+                        if (exists)
+                        {
+                            throw new ArgumentException(nameof(InfoWidget.Displays) + " already exists!");
+                        }
 
-                    var viewModel = new DisplaysViewModel(this.infoFormatService);
-                    this.infos.Add(key, viewModel);
-                    viewModel.RaiseChanges();
-                }
+                        var viewModel = new DisplaysViewModel();
+                        this.infos.Add(key, viewModel);
+                        viewModel.RaiseChanges();
+                    }
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(widget), widget, null);

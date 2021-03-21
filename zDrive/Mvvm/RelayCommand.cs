@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Windows.Input;
 
@@ -20,6 +20,8 @@ namespace zDrive.Mvvm
         }
 
         #endregion Constructors
+
+        public static RelayCommand Empty { get; } = new(_ => { });
 
         #region Fields
 

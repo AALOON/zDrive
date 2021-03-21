@@ -2,6 +2,8 @@ using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
+// ReSharper disable FieldCanBeMadeReadOnly.Global
+
 namespace zDrive.Native
 {
     /// <summary>
@@ -22,10 +24,10 @@ namespace zDrive.Native
 
             NativeMethods.EnumDisplayDevices(null, id, ref device, 0);
             NativeMethods.EnumDisplaySettings(device.DeviceName, -1, ref deviceMode);
-            var offsetX = deviceMode.dmPosition.x;
-            var offsetY = deviceMode.dmPosition.y;
-            deviceMode.dmPosition.x = 0;
-            deviceMode.dmPosition.y = 0;
+            var offsetX = deviceMode.DmPosition.x;
+            var offsetY = deviceMode.DmPosition.y;
+            deviceMode.DmPosition.x = 0;
+            deviceMode.DmPosition.y = 0;
 
             NativeMethods.ChangeDisplaySettingsEx(
                 device.DeviceName,
@@ -48,8 +50,8 @@ namespace zDrive.Native
 
                     NativeMethods.EnumDisplaySettings(device.DeviceName, -1, ref otherDeviceMode);
 
-                    otherDeviceMode.dmPosition.x -= offsetX;
-                    otherDeviceMode.dmPosition.y -= offsetY;
+                    otherDeviceMode.DmPosition.x -= offsetX;
+                    otherDeviceMode.DmPosition.y -= offsetY;
 
                     NativeMethods.ChangeDisplaySettingsEx(
                         device.DeviceName,
@@ -76,22 +78,22 @@ namespace zDrive.Native
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = Cchdevicename)]
         [FieldOffset(0)]
-        public string dmDeviceName;
+        public string DmDeviceName;
 
         [FieldOffset(32)]
-        public short dmSpecVersion;
+        public short DmSpecVersion;
 
         [FieldOffset(34)]
-        public short dmDriverVersion;
+        public short DmDriverVersion;
 
         [FieldOffset(36)]
-        public short dmSize;
+        public short DmSize;
 
         [FieldOffset(38)]
-        public short dmDriverExtra;
+        public short DmDriverExtra;
 
         [FieldOffset(40)]
-        public uint dmFields;
+        public uint DmFields;
 
         [FieldOffset(44)]
         private readonly short dmOrientation;
@@ -118,53 +120,53 @@ namespace zDrive.Native
         private readonly short dmPrintQuality;
 
         [FieldOffset(44)]
-        public Pointl dmPosition;
+        public Pointl DmPosition;
 
         [FieldOffset(52)]
-        public int dmDisplayOrientation;
+        public int DmDisplayOrientation;
 
         [FieldOffset(56)]
-        public int dmDisplayFixedOutput;
+        public int DmDisplayFixedOutput;
 
         [FieldOffset(60)]
-        public short dmColor; // See note below!
+        public short DmColor; // See note below!
 
         [FieldOffset(62)]
-        public short dmDuplex; // See note below!
+        public short DmDuplex; // See note below!
 
         [FieldOffset(64)]
-        public short dmYResolution;
+        public short DmYResolution;
 
         [FieldOffset(66)]
-        public short dmTTOption;
+        public short DmTTOption;
 
         [FieldOffset(68)]
-        public short dmCollate; // See note below!
+        public short DmCollate; // See note below!
 
         [FieldOffset(72)]
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = Cchformname)]
-        public string dmFormName;
+        public string DmFormName;
 
         [FieldOffset(102)]
-        public short dmLogPixels;
+        public short DmLogPixels;
 
         [FieldOffset(104)]
-        public int dmBitsPerPel;
+        public int DmBitsPerPel;
 
         [FieldOffset(108)]
-        public int dmPelsWidth;
+        public int DmPelsWidth;
 
         [FieldOffset(112)]
-        public int dmPelsHeight;
+        public int DmPelsHeight;
 
         [FieldOffset(116)]
-        public int dmDisplayFlags;
+        public int DmDisplayFlags;
 
         [FieldOffset(116)]
-        public int dmNup;
+        public int DmNup;
 
         [FieldOffset(120)]
-        public int dmDisplayFrequency;
+        public int DmDisplayFrequency;
     }
 
     public enum DispChange

@@ -104,29 +104,7 @@ namespace zDrive.Native
             QdcDatabaseCurrent = 0x00000004
         }
 
-        private enum DisplayconfigVideoOutputTechnology : uint
-        {
-            DisplayconfigOutputTechnologyOther = 0xFFFFFFFF,
-            DisplayconfigOutputTechnologyHd15 = 0,
-            DisplayconfigOutputTechnologySvideo = 1,
-            DisplayconfigOutputTechnologyCompositeVideo = 2,
-            DisplayconfigOutputTechnologyComponentVideo = 3,
-            DisplayconfigOutputTechnologyDvi = 4,
-            DisplayconfigOutputTechnologyHdmi = 5,
-            DisplayconfigOutputTechnologyLvds = 6,
-            DisplayconfigOutputTechnologyDJpn = 8,
-            DisplayconfigOutputTechnologySdi = 9,
-            DisplayconfigOutputTechnologyDisplayportExternal = 10,
-            DisplayconfigOutputTechnologyDisplayportEmbedded = 11,
-            DisplayconfigOutputTechnologyUdiExternal = 12,
-            DisplayconfigOutputTechnologyUdiEmbedded = 13,
-            DisplayconfigOutputTechnologySdtvdongle = 14,
-            DisplayconfigOutputTechnologyMiracast = 15,
-            DisplayconfigOutputTechnologyInternal = 0x80000000,
-            DisplayconfigOutputTechnologyForceUint32 = 0xFFFFFFFF
-        }
-
-        private enum DisplayconfigScanlineOrdering : uint
+        private enum DisplayConfigScanlineOrdering : uint
         {
             DisplayconfigScanlineOrderingUnspecified = 0,
             DisplayconfigScanlineOrderingProgressive = 1,
@@ -210,11 +188,11 @@ namespace zDrive.Native
             public readonly Luid adapterId;
             public readonly uint id;
             public readonly uint modeInfoIdx;
-            private readonly DisplayconfigVideoOutputTechnology outputTechnology;
+            private readonly DisplayConfigVideoOutputTechnology outputTechnology;
             private readonly DisplayconfigRotation rotation;
             private readonly DisplayConfigScaling scaling;
             private readonly DisplayconfigRational refreshRate;
-            private readonly DisplayconfigScanlineOrdering scanLineOrdering;
+            private readonly DisplayConfigScanlineOrdering scanLineOrdering;
             public readonly bool targetAvailable;
             public readonly uint statusFlags;
         }
@@ -250,7 +228,7 @@ namespace zDrive.Native
             public readonly Displayconfig2Dregion activeSize;
             public readonly Displayconfig2Dregion totalSize;
             public readonly uint videoStandard;
-            public readonly DisplayconfigScanlineOrdering scanLineOrdering;
+            public readonly DisplayConfigScanlineOrdering scanLineOrdering;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -314,7 +292,7 @@ namespace zDrive.Native
         {
             public FormatHeader header;
             public readonly DisplayconfigTargetDeviceNameFlags flags;
-            public readonly DisplayconfigVideoOutputTechnology outputTechnology;
+            public readonly DisplayConfigVideoOutputTechnology outputTechnology;
             public readonly ushort edidManufactureId;
             public readonly ushort edidProductCodeId;
             public readonly uint connectorInstance;

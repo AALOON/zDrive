@@ -82,9 +82,9 @@ namespace zDrive
         }
 
         /// <summary>
-        /// Бывают случаи, когда при старте произошла ошибка и ни одно окно не появилось.
-        /// При этом второй инстанс приложения уже не запустить, а этот не закрыть, кроме как через панель задач. Deedlock
-        /// своего рода получился.
+        /// Sometimes there cases when there error on start and there no one windows is appeared.
+        /// And second instance of app will not started and current will not be closed.
+        /// This method prevents deadlock.
         /// </summary>
         private static void RemoveApplicationsStartupDeadlockForStartupCrushedWindows() =>
             Application.Current.Dispatcher.BeginInvoke(new Action(() => _ = LazyDispatcherTimer.Value),

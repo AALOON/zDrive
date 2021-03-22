@@ -3,31 +3,31 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 // ReSharper disable FieldCanBeMadeReadOnly.Global
-
+// ReSharper disable MemberCanBePrivate.Global
 namespace zDrive.Native
 {
     /// <summary>
     /// Monitor changer.
     /// </summary>
-    public sealed class MonitorChanger
+    internal sealed class MonitorChanger
     {
         /// <summary>
         /// Is prime  monitor
         /// </summary>
-        public static bool IsPrime(uint id) => Screen.AllScreens[(int)id].Primary;
+        internal static bool IsPrime(uint id) => Screen.AllScreens[(int)id].Primary;
 
-        public static void SetAsPrimaryMonitor(uint id)
+        internal static void SetAsPrimaryMonitor(uint id)
         {
             var device = new DisplayDevice();
             var deviceMode = new Devmode();
-            device.cb = Marshal.SizeOf(device);
+            device.Cb = Marshal.SizeOf(device);
 
             NativeMethods.EnumDisplayDevices(null, id, ref device, 0);
             NativeMethods.EnumDisplaySettings(device.DeviceName, -1, ref deviceMode);
-            var offsetX = deviceMode.DmPosition.x;
-            var offsetY = deviceMode.DmPosition.y;
-            deviceMode.DmPosition.x = 0;
-            deviceMode.DmPosition.y = 0;
+            var offsetX = deviceMode.DmPosition.X;
+            var offsetY = deviceMode.DmPosition.Y;
+            deviceMode.DmPosition.X = 0;
+            deviceMode.DmPosition.Y = 0;
 
             NativeMethods.ChangeDisplaySettingsEx(
                 device.DeviceName,
@@ -38,20 +38,20 @@ namespace zDrive.Native
                 IntPtr.Zero);
 
             device = new DisplayDevice();
-            device.cb = Marshal.SizeOf(device);
+            device.Cb = Marshal.SizeOf(device);
 
             // Update remaining devices
             for (uint otherId = 0; NativeMethods.EnumDisplayDevices(null, otherId, ref device, 0); otherId++)
             {
                 if (device.StateFlags.HasFlag(DisplayDeviceStateFlags.AttachedToDesktop) && otherId != id)
                 {
-                    device.cb = Marshal.SizeOf(device);
+                    device.Cb = Marshal.SizeOf(device);
                     var otherDeviceMode = new Devmode();
 
                     NativeMethods.EnumDisplaySettings(device.DeviceName, -1, ref otherDeviceMode);
 
-                    otherDeviceMode.DmPosition.x -= offsetX;
-                    otherDeviceMode.DmPosition.y -= offsetY;
+                    otherDeviceMode.DmPosition.X -= offsetX;
+                    otherDeviceMode.DmPosition.Y -= offsetY;
 
                     NativeMethods.ChangeDisplaySettingsEx(
                         device.DeviceName,
@@ -61,7 +61,7 @@ namespace zDrive.Native
                         IntPtr.Zero);
                 }
 
-                device.cb = Marshal.SizeOf(device);
+                device.Cb = Marshal.SizeOf(device);
             }
 
             // Apply settings
@@ -71,29 +71,29 @@ namespace zDrive.Native
     }
 
     [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Ansi)]
-    public struct Devmode
+    internal struct Devmode
     {
-        public const int Cchdevicename = 32;
-        public const int Cchformname = 32;
+        internal const int Cchdevicename = 32;
+        internal const int Cchformname = 32;
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = Cchdevicename)]
         [FieldOffset(0)]
-        public string DmDeviceName;
+        internal string DmDeviceName;
 
         [FieldOffset(32)]
-        public short DmSpecVersion;
+        internal short DmSpecVersion;
 
         [FieldOffset(34)]
-        public short DmDriverVersion;
+        internal short DmDriverVersion;
 
         [FieldOffset(36)]
-        public short DmSize;
+        internal short DmSize;
 
         [FieldOffset(38)]
-        public short DmDriverExtra;
+        internal short DmDriverExtra;
 
         [FieldOffset(40)]
-        public uint DmFields;
+        internal uint DmFields;
 
         [FieldOffset(44)]
         private readonly short dmOrientation;
@@ -120,56 +120,56 @@ namespace zDrive.Native
         private readonly short dmPrintQuality;
 
         [FieldOffset(44)]
-        public Pointl DmPosition;
+        internal Pointl DmPosition;
 
         [FieldOffset(52)]
-        public int DmDisplayOrientation;
+        internal int DmDisplayOrientation;
 
         [FieldOffset(56)]
-        public int DmDisplayFixedOutput;
+        internal int DmDisplayFixedOutput;
 
         [FieldOffset(60)]
-        public short DmColor; // See note below!
+        internal short DmColor; // See note below!
 
         [FieldOffset(62)]
-        public short DmDuplex; // See note below!
+        internal short DmDuplex; // See note below!
 
         [FieldOffset(64)]
-        public short DmYResolution;
+        internal short DmYResolution;
 
         [FieldOffset(66)]
-        public short DmTTOption;
+        internal short DmTTOption;
 
         [FieldOffset(68)]
-        public short DmCollate; // See note below!
+        internal short DmCollate; // See note below!
 
         [FieldOffset(72)]
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = Cchformname)]
-        public string DmFormName;
+        internal string DmFormName;
 
         [FieldOffset(102)]
-        public short DmLogPixels;
+        internal short DmLogPixels;
 
         [FieldOffset(104)]
-        public int DmBitsPerPel;
+        internal int DmBitsPerPel;
 
         [FieldOffset(108)]
-        public int DmPelsWidth;
+        internal int DmPelsWidth;
 
         [FieldOffset(112)]
-        public int DmPelsHeight;
+        internal int DmPelsHeight;
 
         [FieldOffset(116)]
-        public int DmDisplayFlags;
+        internal int DmDisplayFlags;
 
         [FieldOffset(116)]
-        public int DmNup;
+        internal int DmNup;
 
         [FieldOffset(120)]
-        public int DmDisplayFrequency;
+        internal int DmDisplayFrequency;
     }
 
-    public enum DispChange
+    internal enum DispChange
     {
         Successful = 0,
         Restart = 1,
@@ -182,29 +182,29 @@ namespace zDrive.Native
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-    public struct DisplayDevice
+    internal struct DisplayDevice
     {
         [MarshalAs(UnmanagedType.U4)]
-        public int cb;
+        internal int Cb;
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
-        public string DeviceName;
+        internal string DeviceName;
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
-        public string DeviceString;
+        internal string DeviceString;
 
         [MarshalAs(UnmanagedType.U4)]
-        public DisplayDeviceStateFlags StateFlags;
+        internal DisplayDeviceStateFlags StateFlags;
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
-        public string DeviceID;
+        internal string DeviceID;
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
-        public string DeviceKey;
+        internal string DeviceKey;
     }
 
     [Flags]
-    public enum DisplayDeviceStateFlags
+    internal enum DisplayDeviceStateFlags
     {
         /// <summary>The device is part of the desktop.</summary>
         AttachedToDesktop = 0x1,
@@ -229,7 +229,7 @@ namespace zDrive.Native
     }
 
     [Flags]
-    public enum ChangeDisplaySettingsFlags : uint
+    internal enum ChangeDisplaySettingsFlags : uint
     {
         CdsNone = 0,
         CdsUpdateregistry = 0x00000001,
@@ -245,29 +245,29 @@ namespace zDrive.Native
         CdsNoreset = 0x10000000
     }
 
-    public class NativeMethods
+    internal class NativeMethods
     {
-        [DllImport("user32.dll")]
-        public static extern DispChange ChangeDisplaySettingsEx(string lpszDeviceName, ref Devmode lpDevMode,
-            IntPtr hwnd, ChangeDisplaySettingsFlags dwflags, IntPtr lParam);
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        internal static extern DispChange ChangeDisplaySettingsEx(string lpszDeviceName, ref Devmode lpDevMode,
+            IntPtr hwnd, ChangeDisplaySettingsFlags dwFlags, IntPtr lParam);
 
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         // A signature for ChangeDisplaySettingsEx with a DEVMODE struct as the second parameter won't allow you to pass in IntPtr.Zero, so create an overload
-        public static extern DispChange ChangeDisplaySettingsEx(string lpszDeviceName, IntPtr lpDevMode, IntPtr hwnd,
-            ChangeDisplaySettingsFlags dwflags, IntPtr lParam);
+        internal static extern DispChange ChangeDisplaySettingsEx(string lpszDeviceName, IntPtr lpDevMode, IntPtr hwnd,
+            ChangeDisplaySettingsFlags dwFlags, IntPtr lParam);
 
-        [DllImport("user32.dll")]
-        public static extern bool EnumDisplayDevices(string lpDevice, uint iDevNum, ref DisplayDevice lpDisplayDevice,
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        internal static extern bool EnumDisplayDevices(string lpDevice, uint iDevNum, ref DisplayDevice lpDisplayDevice,
             uint dwFlags);
 
-        [DllImport("user32.dll")]
-        public static extern bool EnumDisplaySettings(string deviceName, int modeNum, ref Devmode devMode);
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        internal static extern bool EnumDisplaySettings(string deviceName, int modeNum, ref Devmode devMode);
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public struct Pointl
+    internal struct Pointl
     {
-        public int x;
-        public int y;
+        internal int X;
+        internal int Y;
     }
 }

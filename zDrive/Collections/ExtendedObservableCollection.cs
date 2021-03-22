@@ -38,6 +38,13 @@ namespace zDrive.Collections
             this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
+        /// <summary>
+        /// Raise changes of collection.
+        /// It can be used after SuppressNotification was enabled after some changes.
+        /// </summary>
+        public void RaiseChanged() =>
+            this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
             if (!this.SuppressNotification)
@@ -45,12 +52,5 @@ namespace zDrive.Collections
                 base.OnCollectionChanged(e);
             }
         }
-
-        /// <summary>
-        /// Raise changes of collection.
-        /// It can be used after SuppressNotification was enabled after some changes.
-        /// </summary>
-        public void RaiseChanged() =>
-            this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
     }
 }

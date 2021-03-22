@@ -13,10 +13,10 @@ namespace zDrive.ViewModels
     {
         static ViewModelLocator()
         {
-            Ioc.RegisterSingleton<IDictionary<string, IDriveViewModel>, ObservableDictionary<string, IDriveViewModel>>(
-                () => new ObservableDictionary<string, IDriveViewModel>());
-            Ioc.RegisterSingleton<IDictionary<string, IInfoViewModel>, ObservableDictionary<string, IInfoViewModel>>(
-                () => new ObservableDictionary<string, IInfoViewModel>());
+            Ioc.RegisterSingleton<IDictionary<string, IDriveViewModel>>(() =>
+                new ObservableDictionary<string, IDriveViewModel>());
+            Ioc.RegisterSingleton<IDictionary<string, IInfoViewModel>>(() =>
+                new ObservableDictionary<string, IInfoViewModel>());
             Ioc.RegisterSingleton<IRegistryService, RegistryService>();
             Ioc.RegisterSingleton<IDriveDetectionService, IWndProc, DriveDetectionService>();
             Ioc.RegisterSingleton<IWidgetsService, WidgetsService>();

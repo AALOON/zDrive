@@ -15,21 +15,6 @@ namespace zDrive
     {
         public MainWindow() => this.InitializeComponent();
 
-        private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ChangedButton == MouseButton.Left)
-            {
-                this.PropertiesPopup.IsOpen = false;
-                this.DragMove();
-            }
-            else if (e.ChangedButton == MouseButton.Right)
-            {
-                this.PropertiesPopup.IsOpen = !this.PropertiesPopup.IsOpen;
-            }
-        }
-
-        private void MainWindow_OnDeactivated(object sender, EventArgs e) => this.PropertiesPopup.IsOpen = false;
-
         #region < Detect Flash Mesage Hook >
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -46,5 +31,20 @@ namespace zDrive
         }
 
         #endregion
+
+        private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                this.PropertiesPopup.IsOpen = false;
+                this.DragMove();
+            }
+            else if (e.ChangedButton == MouseButton.Right)
+            {
+                this.PropertiesPopup.IsOpen = !this.PropertiesPopup.IsOpen;
+            }
+        }
+
+        private void MainWindow_OnDeactivated(object sender, EventArgs e) => this.PropertiesPopup.IsOpen = false;
     }
 }

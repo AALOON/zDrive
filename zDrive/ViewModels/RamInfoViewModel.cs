@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using zDrive.Interfaces;
@@ -14,12 +14,16 @@ namespace zDrive.ViewModels
         internal RamInfoViewModel(IInfoFormatter format)
         {
             this.format = format;
-            this.OpenCommand = new RelayCommand(this.Open);
+            this.LeftMouseCommand = new RelayCommand(this.Open);
+            this.RightMouseCommand = new RelayCommand(this.Open);
         }
 
         public long Total { get; private set; }
 
         public long Free { get; private set; }
+
+        /// <inheritdoc />
+        public RelayCommand RightMouseCommand { get; }
 
         public string Key => "RamInfo";
 
@@ -58,7 +62,7 @@ namespace zDrive.ViewModels
             this.RaisePropertyChanged(nameof(this.Value));
         }
 
-        public RelayCommand OpenCommand { get; }
+        public RelayCommand LeftMouseCommand { get; }
 
         private void Open(object param) => Process.Start(TaskManager);
 

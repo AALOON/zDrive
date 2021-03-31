@@ -17,7 +17,10 @@ namespace zDrive.ViewModels
 
         public ExtendedObservableCollection<DisplayViewModel> Displays { get; set; } = new();
 
-        public RelayCommand OpenCommand { get; } = RelayCommand.Empty;
+        public RelayCommand LeftMouseCommand { get; } = RelayCommand.Empty;
+
+        /// <inheritdoc />
+        public RelayCommand RightMouseCommand { get; } = RelayCommand.Empty;
 
         public string Key => "Displays";
 
@@ -40,7 +43,7 @@ namespace zDrive.ViewModels
         {
             this.Displays.SuppressNotification = true;
             this.Displays.Clear();
-            foreach (var screen in MonitorsService.AllMonitorDevices())
+            foreach (var screen in MonitorsService.Instance.AllMonitorDevices())
             {
                 this.Displays.Add(new DisplayViewModel(this.ReloadMonitor)
                 {
@@ -89,9 +92,9 @@ namespace zDrive.ViewModels
 
         private async Task SelectMonitorAsync()
         {
-            MonitorChanger.SetAsPrimaryMonitor(this.DisplayId);
+            MonitorsService.Instance.SetAsPrimaryMonitor(this.DisplayId);
             var sw = Stopwatch.StartNew();
-            while (!MonitorChanger.IsPrime(this.DisplayId) && sw.Elapsed < TimeSpan.FromSeconds(5))
+            while (!MonitorsService.Instance.IsPrime(this.DisplayId) && sw.Elapsed < TimeSpan.FromSeconds(5))
             {
                 await Task.Delay(50);
             }

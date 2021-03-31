@@ -102,8 +102,16 @@ namespace zDrive.Services.Ioc
             this.ThrowIfExists(typeKey2);
 
             func ??= () => (TDelivery)this.CtorResolver(deliveryType);
-            TBase1 Func1() => func();
-            TBase2 Func2() => func();
+
+            TBase1 Func1()
+            {
+                return func();
+            }
+
+            TBase2 Func2()
+            {
+                return func();
+            }
 
             var id = FactoryMetadata.GenerateInstanceId();
             this.TryAddFactory(new FactoryMetadata(typeKey1, Func1, Scope.Singleton, id));
@@ -133,8 +141,16 @@ namespace zDrive.Services.Ioc
 
             this.ThrowIfExists(typeKey1);
             this.ThrowIfExists(typeKey2);
-            TBase1 Func1() => (TBase1)func();
-            TBase2 Func2() => (TBase2)func();
+
+            TBase1 Func1()
+            {
+                return (TBase1)func();
+            }
+
+            TBase2 Func2()
+            {
+                return (TBase2)func();
+            }
 
             var id = FactoryMetadata.GenerateInstanceId();
             this.TryAddFactory(new FactoryMetadata(typeKey1, Func1, Scope.Singleton, id));

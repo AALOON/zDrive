@@ -13,12 +13,15 @@ namespace zDrive.Services.Ioc
         private int isSet = FalseValue;
 
         /// <summary>
-        /// Returns <value>true</value> when flag is set.
+        /// Returns
+        /// <value>true</value>
+        /// when flag is set.
         /// </summary>
         public bool IsSet => this.isSet == TrueValue;
 
         /// <summary>
-        /// Tries to set flag and if flag is set returns <value>true</value>
+        /// Tries to set flag and if flag is set returns
+        /// <value>true</value>
         /// </summary>
         /// <returns></returns>
         public bool TrySet() =>

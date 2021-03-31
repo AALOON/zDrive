@@ -1,13 +1,11 @@
-// ReSharper disable InconsistentNaming
-// ReSharper disable IdentifierTypo
-
-namespace zDrive.Native
+﻿namespace zDrive.Native.Display.DisplayConfig
 {
     /// <summary>
-    /// Possible target's connector types
-    /// https://msdn.microsoft.com/en-us/library/windows/hardware/ff554003(v=vs.85).aspx
+    /// The DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY enumeration specifies the target's connector type.
+    /// Possible target's connector types.
+    /// https://docs.microsoft.com/en-us/windows/win32/api/wingdi/ne-wingdi-displayconfig_video_output_technology
     /// </summary>
-    internal enum DisplayConfigVideoOutputTechnology : uint
+    public enum DisplayConfigVideoOutputTechnology : uint
     {
         /// <summary>
         /// Indicates a connector that is not one of the types that is indicated by the following enumerators in this

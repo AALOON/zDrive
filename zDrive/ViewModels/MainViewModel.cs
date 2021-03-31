@@ -50,6 +50,8 @@ namespace zDrive.ViewModels
             {
                 widgetsService.Add(InfoWidget.Displays);
             }
+
+            this.CheckIfVersionChanged();
         }
 
         /// <inheritdoc />
@@ -119,15 +121,7 @@ namespace zDrive.ViewModels
             {
                 if (value)
                 {
-                    const string dll = ".dll";
-                    const string exe = ".exe";
-
-                    var location = Assembly.GetExecutingAssembly().Location;
-                    if (location.EndsWith(dll, StringComparison.OrdinalIgnoreCase))
-                    {
-                        location = location.Substring(0, location.Length - dll.Length) + exe;
-                    }
-
+                    var location = GenerateLocation();
                     this.registryService.WriteAutoRun(location);
                 }
                 else
@@ -177,11 +171,35 @@ namespace zDrive.ViewModels
             }
         }
 
+        private void CheckIfVersionChanged()
+        {
+            var existingLocation = this.registryService.ReadAutoRun();
+            var location = GenerateLocation();
+            if (!string.Equals(existingLocation, location, StringComparison.OrdinalIgnoreCase))
+            {
+                this.registryService.WriteAutoRun(location);
+            }
+        }
+
         private void DeviceAdded(object sender, DeviceArrivalEventArgs e) =>
             this.driveInfoService.UpdateAddition(e.Volume);
 
         private void DeviceRemoved(object sender, DeviceRemovalEventArgs e) =>
             this.driveInfoService.UpdateRemoval(e.Volume);
+
+        private static string GenerateLocation()
+        {
+            const string dll = ".dll";
+            const string exe = ".exe";
+
+            var location = Assembly.GetExecutingAssembly().Location;
+            if (location.EndsWith(dll, StringComparison.OrdinalIgnoreCase))
+            {
+                location = location.Substring(0, location.Length - dll.Length) + exe;
+            }
+
+            return location;
+        }
 
         private void Initialize()
         {
@@ -202,6 +220,18 @@ namespace zDrive.ViewModels
             if (Math.Abs(this.Y) < 0.1)
             {
                 this.Y = 0D;
+            }
+
+            try
+            {
+                if (this.AutoRun) // reinitialize location in case of update.
+                {
+                    this.AutoRun = true;
+                }
+            }
+            catch (Exception)
+            {
+                //TODO: write log
             }
         }
 

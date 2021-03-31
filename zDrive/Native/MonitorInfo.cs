@@ -1,6 +1,6 @@
-﻿namespace zDrive.Native
+namespace zDrive.Native
 {
-    public class MonitorInfo
+    public sealed class MonitorInfo
     {
         public MonitorInfo(uint index, bool isPrimary, string deviceName, string friendlyName)
         {

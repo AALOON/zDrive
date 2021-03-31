@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Input;
 
 namespace zDrive.Mvvm
@@ -48,10 +48,10 @@ namespace zDrive.Mvvm
         {
             var element = (FrameworkElement)d;
 
-            element.PreviewMouseDown += element_MouseDown;
+            element.PreviewMouseDown += ElementMouseDown;
         }
 
-        private static void element_MouseDown(object sender, MouseButtonEventArgs e)
+        private static void ElementMouseDown(object sender, MouseButtonEventArgs e)
         {
             var element = (FrameworkElement)sender;
 
@@ -65,6 +65,76 @@ namespace zDrive.Mvvm
 
         internal static ICommand GetMouseDownCommand(UIElement element) =>
             (ICommand)element.GetValue(MouseDownCommandProperty);
+
+        #endregion
+
+        #region < LeftMouseDown >
+
+        public static readonly DependencyProperty LeftMouseButtonDownCommandProperty =
+            DependencyProperty.RegisterAttached("LeftMouseButtonDownCommand", typeof(ICommand),
+                typeof(MouseBehaviour), new FrameworkPropertyMetadata(LeftMouseButtonDownCommandChanged));
+
+        private static void LeftMouseButtonDownCommandChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var element = (FrameworkElement)d;
+
+            element.PreviewMouseDown += ElementLeftMouseButtonDown;
+        }
+
+        private static void ElementLeftMouseButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton != MouseButton.Left)
+            {
+                return;
+            }
+
+            var element = (FrameworkElement)sender;
+
+            var command = GetLeftMouseButtonDownCommand(element);
+
+            command.Execute(e);
+        }
+
+        internal static void SetLeftMouseButtonDownCommand(UIElement element, ICommand value) =>
+            element.SetValue(LeftMouseButtonDownCommandProperty, value);
+
+        internal static ICommand GetLeftMouseButtonDownCommand(UIElement element) =>
+            (ICommand)element.GetValue(LeftMouseButtonDownCommandProperty);
+
+        #endregion
+
+        #region < RightMouseDown >
+
+        public static readonly DependencyProperty RightMouseButtonDownCommandProperty =
+            DependencyProperty.RegisterAttached("RightMouseButtonDownCommand", typeof(ICommand),
+                typeof(MouseBehaviour), new FrameworkPropertyMetadata(RightMouseButtonDownCommandChanged));
+
+        private static void RightMouseButtonDownCommandChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var element = (FrameworkElement)d;
+
+            element.PreviewMouseDown += ElementRightMouseButtonDown;
+        }
+
+        private static void ElementRightMouseButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton != MouseButton.Right)
+            {
+                return;
+            }
+
+            var element = (FrameworkElement)sender;
+
+            var command = GetRightMouseButtonDownCommand(element);
+
+            command.Execute(e);
+        }
+
+        internal static void SetRightMouseButtonDownCommand(UIElement element, ICommand value) =>
+            element.SetValue(RightMouseButtonDownCommandProperty, value);
+
+        internal static ICommand GetRightMouseButtonDownCommand(UIElement element) =>
+            (ICommand)element.GetValue(RightMouseButtonDownCommandProperty);
 
         #endregion
     }

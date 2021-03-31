@@ -1,11 +1,16 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using zDrive.Interfaces;
 using zDrive.Mvvm;
+using zDrive.Native.Shell;
 
 namespace zDrive.ViewModels
 {
+    /// <summary>
+    /// Disk drive info view model.
+    /// </summary>
     internal class DriveViewModel : ViewModelBase, IDriveViewModel
     {
         private readonly DriveInfo driveInfo;
@@ -15,7 +20,8 @@ namespace zDrive.ViewModels
         {
             this.driveInfo = driveInfo ?? throw new ArgumentNullException(nameof(driveInfo));
             this.infoFormatter = format ?? throw new ArgumentNullException(nameof(format));
-            this.OpenCommand = new RelayCommand(this.Open);
+            this.LeftMouseCommand = new RelayCommand(this.Open);
+            this.RightMouseCommand = new RelayCommand(this.Properties);
         }
 
         public void RaiseChanges()
@@ -29,6 +35,9 @@ namespace zDrive.ViewModels
             this.RaisePropertyChanged(nameof(this.Info));
             this.RaisePropertyChanged(nameof(this.Value));
         }
+
+        /// <inheritdoc />
+        public RelayCommand RightMouseCommand { get; }
 
         public string Key => this.driveInfo.Name;
 
@@ -71,8 +80,18 @@ namespace zDrive.ViewModels
         }
 
 
-        public RelayCommand OpenCommand { get; }
+        public RelayCommand LeftMouseCommand { get; }
 
-        private void Open(object param) => Process.Start("explorer.exe", this.Name);
+        private void Open(object param) => Task.Run(() => Process.Start("explorer.exe", this.Name));
+
+        private void Properties(object param)
+        {
+            if (string.IsNullOrEmpty(this.Key))
+            {
+                return;
+            }
+
+            Task.Run(() => ShellExecuteApi.ShowFileProperties(this.Key));
+        }
     }
 }

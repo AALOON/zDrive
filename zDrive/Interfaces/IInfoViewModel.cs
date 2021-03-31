@@ -1,10 +1,12 @@
-﻿using zDrive.Mvvm;
+using zDrive.Mvvm;
 
 namespace zDrive.Interfaces
 {
     public interface IInfoViewModel
     {
-        RelayCommand OpenCommand { get; }
+        RelayCommand LeftMouseCommand { get; }
+
+        RelayCommand RightMouseCommand { get; }
 
         string Key { get; }
 

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 using zDrive.Collections;
 using zDrive.Interfaces;
 using zDrive.Services;
@@ -13,10 +14,18 @@ namespace zDrive.ViewModels
     {
         static ViewModelLocator()
         {
+            Ioc.RegisterSingleton(() => LoggerFactory.Create(builder
+                => builder.AddFilter("Microsoft", LogLevel.Warning)
+                    .AddFilter("System", LogLevel.Warning)
+                    .AddEventLog()));
+
+            // TODO: ioc generic support.
+            Ioc.RegisterPerDependency(() => Ioc.Resolve<ILoggerFactory>().CreateLogger(typeof(ViewModelLocator)));
+
             Ioc.RegisterSingleton<IDictionary<string, IDriveViewModel>>(() =>
                 new ObservableDictionary<string, IDriveViewModel>());
             Ioc.RegisterSingleton<IDictionary<string, IInfoViewModel>>(() =>
-                new ObservableDictionary<string, IInfoViewModel>());
+                new ObservableDictionary<string, IInfoViewModel>(() => new SortedDictionary<string, IInfoViewModel>()));
             Ioc.RegisterSingleton<IRegistryService, RegistryService>();
             Ioc.RegisterSingleton<IDriveDetectionService, IWndProc, DriveDetectionService>();
             Ioc.RegisterSingleton<IWidgetsService, WidgetsService>();

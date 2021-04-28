@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using zDrive.Converters;
 using zDrive.Mvvm;
 
@@ -33,6 +33,16 @@ namespace zDrive.Interfaces
         /// Windows on top of all windows.
         /// </summary>
         bool Topmost { get; set; }
+
+        /// <summary>
+        /// Ram usage widget.
+        /// </summary>
+        bool Ram { get; set; }
+
+        /// <summary>
+        /// Cpu usage widget.
+        /// </summary>
+        bool Cpu { get; set; }
 
         /// <summary>
         /// Location of X of window.

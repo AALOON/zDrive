@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.Windows;
+using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using zDrive.Interfaces;
 
@@ -13,18 +14,21 @@ namespace zDrive.Services
     /// </summary>
     internal sealed class RegistryService : IRegistryService
     {
+        private readonly ILogger logger;
         private const string AutoRunPath = @"Software\Microsoft\Windows\CurrentVersion\Run\";
         private readonly string keyName;
         private readonly string programName;
 
-        public RegistryService()
+        public RegistryService(ILogger logger)
         {
+            this.logger = logger;
             this.programName = Application.ResourceAssembly.GetName().Name;
             this.keyName = "Software\\" + this.programName;
         }
 
-        public RegistryService(string programName)
+        public RegistryService(string programName, ILogger logger)
         {
+            this.logger = logger;
             this.programName = programName;
             this.keyName = "Software\\" + programName;
         }
@@ -38,9 +42,9 @@ namespace zDrive.Services
                 key?.SetValue(name, value);
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //TODO: check particular exceptions
+                this.logger.LogWarning(ex, "Error on write registry {Name} on path {Path}", name, path);
                 return false;
             }
         }
@@ -57,8 +61,9 @@ namespace zDrive.Services
                 key?.DeleteValue(name, false);
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                this.logger.LogWarning(ex, "Error on remove registry {Name} on path {Path}", name, path);
                 return false;
             }
         }

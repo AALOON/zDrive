@@ -1,4 +1,4 @@
-﻿namespace zDrive.Interfaces
+namespace zDrive.Interfaces
 {
     /// <summary>
     /// Info widgets service manager.
@@ -8,6 +8,11 @@
         /// <summary>
         /// Adds new widget.
         /// </summary>
-        void Add(InfoWidget widget, params object[] param);
+        void Add(InfoWidget widget);
+
+        /// <summary>
+        /// Removes widget.
+        /// </summary>
+        void Remove(InfoWidget widget);
     }
 }

@@ -88,6 +88,15 @@ namespace zDrive.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Процессор.
+        /// </summary>
+        public static string CpuCheckbox_Text {
+            get {
+                return ResourceManager.GetString("CpuCheckbox_Text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Скрыть недоступные.
         /// </summary>
         public static string HideUnavailableCheckbox_Text {
@@ -120,6 +129,15 @@ namespace zDrive.Properties {
         public static string InfoFormat_UsedMax {
             get {
                 return ResourceManager.GetString("InfoFormat_UsedMax", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Озу.
+        /// </summary>
+        public static string RamCheckbox_Text {
+            get {
+                return ResourceManager.GetString("RamCheckbox_Text", resourceCulture);
             }
         }
         

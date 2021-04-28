@@ -115,6 +115,61 @@
             </Grid>
         </Grid>
     </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:CpuInfoViewModel}">
+        <Grid Margin="{DynamicResource ItemsMargin}" Height="{DynamicResource DefaultHeight}"
+              Width="{DynamicResource DefaultWidth}">
+            <Grid Name="Part_Background"
+                  Grid.Row="0" Grid.Column="0">
+                <ContentControl Template="{DynamicResource ItemsBackground}" />
+            </Grid>
+            <Grid Name="Part_Content" Margin="{DynamicResource ItemContentMargin}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="{DynamicResource IconColumnWidth}" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid Name="Part_Icon"
+                      Grid.Row="0" Grid.Column="0"
+                      Grid.RowSpan="3"
+                      Width="{DynamicResource IconImageSize}" Height="{DynamicResource IconImageSize}"
+                      mvvm:MouseBehaviour.MouseDownCommand="{Binding LeftMouseCommand}"
+                      Background="#02A4A4A4" Cursor="Hand">
+                    <Grid>
+                        <Grid.LayoutTransform>
+                            <TransformGroup>
+                                <ScaleTransform />
+                                <SkewTransform />
+                                <RotateTransform />
+                                <TranslateTransform />
+                            </TransformGroup>
+                        </Grid.LayoutTransform>
+                        <Path Data="{DynamicResource Ram}"
+                              Fill="{DynamicResource IconBrush}" HorizontalAlignment="Center"
+                              VerticalAlignment="Center" />
+                    </Grid>
+                </Grid>
+                <TextBlock Name="Part_Name"
+                           Grid.Row="0" Grid.Column="1"
+                           Text="{Binding DisplayString}"
+                           Foreground="{DynamicResource ForegroundName}"
+                           Style="{DynamicResource TextBlockL1}" />
+                <TextBlock Name="Part_Info"
+                           Grid.Column="1" Grid.Row="1"
+                           FontFamily="{DynamicResource ContentFontFamily}"
+                           Foreground="{DynamicResource ForegroundInfo}"
+                           Text="{Binding Info}" Style="{DynamicResource TextBlockL2}" />
+                <ProgressBar Name="Part_ProgressBar"
+                             Grid.Column="1" Grid.Row="2"
+                             VerticalAlignment="Top"
+                             Height="{DynamicResource DefaultProgressBarHeight}"
+                             Value="{Binding Value, Mode=OneWay}" Style="{DynamicResource ProgressBarStyle}" />
+            </Grid>
+        </Grid>
+    </DataTemplate>
     <DataTemplate DataType="{x:Type vm:DisplaysViewModel}">
         <Grid Margin="{DynamicResource ItemsMargin}" Height="{DynamicResource DefaultHeight}"
               Width="{DynamicResource DefaultWidth}">

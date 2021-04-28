@@ -20,8 +20,9 @@ namespace zDrive.Collections
         private const string KeysName = "Keys";
         private const string ValuesName = "Values";
 
-        private IDictionary<TKey, TValue> Dictionary { get; set; }
+        private readonly bool resetOnInsert;
 
+        private IDictionary<TKey, TValue> Dictionary { get; }
 
         #region IEnumerable<KeyValuePair<TKey,TValue>> Members
 
@@ -63,23 +64,23 @@ namespace zDrive.Collections
             {
                 if (this.Dictionary.Count > 0)
                 {
+                    // we don't want to change collection before validation
                     if (items.Keys.Any(k => this.Dictionary.ContainsKey(k)))
                     {
                         throw new ArgumentException("An item with the same key has already been added.");
                     }
-
-                    foreach (var item in items)
-                    {
-                        this.Dictionary.Add(item);
-                    }
                 }
-                else
+
+                var changed = new KeyValuePair<TKey, TValue>[items.Count];
+                var i = 0;
+                foreach (var item in items)
                 {
-                    this.Dictionary = new Dictionary<TKey, TValue>(items);
+                    this.Dictionary.Add(item);
+                    changed[i++] = item;
                 }
 
 
-                this.OnCollectionChanged(NotifyCollectionChangedAction.Add, items.ToArray());
+                this.OnCollectionChanged(NotifyCollectionChangedAction.Add, changed);
             }
         }
 
@@ -117,8 +118,15 @@ namespace zDrive.Collections
 
                 this.OnCollectionChanged(NotifyCollectionChangedAction.Add, new KeyValuePair<TKey, TValue>(key, value));
             }
+
+            if (this.resetOnInsert)
+            {
+                this.OnCollectionChanged();
+            }
         }
 
+
+        #region OnChanged
 
         private void OnCollectionChanged()
         {
@@ -162,12 +170,18 @@ namespace zDrive.Collections
         private void OnPropertyChanged(string propertyName) =>
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
+        #endregion
+
         #region Constructors
 
-        public ObservableDictionary() => this.Dictionary = new Dictionary<TKey, TValue>();
+        public ObservableDictionary(Func<IDictionary<TKey, TValue>> customBase = null) =>
+            this.Dictionary = customBase?.Invoke() ?? new Dictionary<TKey, TValue>();
 
-        public ObservableDictionary(IDictionary<TKey, TValue> dictionary) =>
-            this.Dictionary = new Dictionary<TKey, TValue>(dictionary);
+        public ObservableDictionary(bool resetOnInsert, Func<IDictionary<TKey, TValue>> customBase = null)
+        {
+            this.Dictionary = customBase?.Invoke() ?? new Dictionary<TKey, TValue>();
+            this.resetOnInsert = resetOnInsert;
+        }
 
         public ObservableDictionary(IEqualityComparer<TKey> comparer) =>
             this.Dictionary = new Dictionary<TKey, TValue>(comparer);

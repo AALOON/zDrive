@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 using System.Windows.Threading;
 using zDrive.Interfaces;
 
 namespace zDrive.Services
 {
-    internal class TimerService : ITimerService
+    internal sealed class TimerService : ITimerService
     {
-        private readonly TimeSpan interval = TimeSpan.FromSeconds(2d);
+        private readonly TimeSpan interval = TimeSpan.FromSeconds(1d);
 
         public TimerService()
         {

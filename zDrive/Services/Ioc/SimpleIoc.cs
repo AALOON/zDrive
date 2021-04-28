@@ -103,15 +103,9 @@ namespace zDrive.Services.Ioc
 
             func ??= () => (TDelivery)this.CtorResolver(deliveryType);
 
-            TBase1 Func1()
-            {
-                return func();
-            }
+            TBase1 Func1() => func();
 
-            TBase2 Func2()
-            {
-                return func();
-            }
+            TBase2 Func2() => func();
 
             var id = FactoryMetadata.GenerateInstanceId();
             this.TryAddFactory(new FactoryMetadata(typeKey1, Func1, Scope.Singleton, id));
@@ -142,15 +136,9 @@ namespace zDrive.Services.Ioc
             this.ThrowIfExists(typeKey1);
             this.ThrowIfExists(typeKey2);
 
-            TBase1 Func1()
-            {
-                return (TBase1)func();
-            }
+            TBase1 Func1() => (TBase1)func();
 
-            TBase2 Func2()
-            {
-                return (TBase2)func();
-            }
+            TBase2 Func2() => (TBase2)func();
 
             var id = FactoryMetadata.GenerateInstanceId();
             this.TryAddFactory(new FactoryMetadata(typeKey1, Func1, Scope.Singleton, id));
@@ -186,6 +174,28 @@ namespace zDrive.Services.Ioc
         /// <param name="key">The key how the service will be specified.</param>
         public void RegisterSingleton<TDelivery>(string key = null) where TDelivery : class =>
             this.RegisterSingleton<TDelivery>(null, key);
+
+        /// <summary>
+        /// Register new per dependency type.
+        /// </summary>
+        /// <typeparam name="TDelivery">Type by which instance will be resolved</typeparam>
+        /// <param name="func">Custom factory.</param>
+        /// <param name="key">The key how the service will be specified.</param>
+        public void RegisterPerDependency<TDelivery>(Func<TDelivery> func, string key = null) where TDelivery : class
+        {
+            this.ThrowIfDisposed();
+            var baseType = typeof(TDelivery);
+            var typeKey = new TypeKey(baseType, key);
+
+            if (this.factories.ContainsKey(typeKey))
+            {
+                throw new ArgumentException($"Already exists {typeKey}!");
+            }
+
+            func ??= () => (TDelivery)this.CtorResolver(baseType);
+
+            this.TryAddFactory(new FactoryMetadata(typeKey, func, Scope.PerDependency));
+        }
 
         /// <summary>
         /// Resolve service by type and key.

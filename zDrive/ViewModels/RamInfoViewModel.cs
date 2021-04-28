@@ -1,19 +1,23 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using Microsoft.Extensions.Logging;
 using zDrive.Interfaces;
 using zDrive.Mvvm;
+using zDrive.Native.Ps;
 
 namespace zDrive.ViewModels
 {
-    internal class RamInfoViewModel : ViewModelBase, IInfoViewModel
+    internal sealed class RamInfoViewModel : ViewModelBase, IInfoViewModel
     {
         private const string TaskManager = "Taskmgr";
         private readonly IInfoFormatter format;
+        private readonly ILogger<RamInfoViewModel> logger;
 
-        internal RamInfoViewModel(IInfoFormatter format)
+        internal RamInfoViewModel(IInfoFormatter format, ILogger<RamInfoViewModel> logger)
         {
             this.format = format;
+            this.logger = logger;
             this.LeftMouseCommand = new RelayCommand(this.Open);
             this.RightMouseCommand = new RelayCommand(this.Open);
         }
@@ -21,6 +25,9 @@ namespace zDrive.ViewModels
         public long Total { get; private set; }
 
         public long Free { get; private set; }
+
+        /// <inheritdoc />
+        public RelayCommand LeftMouseCommand { get; }
 
         /// <inheritdoc />
         public RelayCommand RightMouseCommand { get; }
@@ -51,8 +58,19 @@ namespace zDrive.ViewModels
 
         public void RaiseChanges()
         {
-            this.Free = PerformanceInfo.GetPhysicalAvailableMemory();
-            this.Total = PerformanceInfo.GetTotalMemory();
+            try
+            {
+                var pi = new PerformanceInformation();
+                if (PsApi.GetPerformanceInfo(out pi, Marshal.SizeOf(pi)))
+                {
+                    this.Free = Convert.ToInt64(pi.PhysicalAvailable.ToInt64() * pi.PageSize.ToInt64());
+                    this.Total = Convert.ToInt64(pi.PhysicalTotal.ToInt64() * pi.PageSize.ToInt64());
+                }
+            }
+            catch (Exception ex)
+            {
+                this.logger.LogWarning(ex, "Error on resolving ram info.");
+            }
 
             this.Info = this.format.GetFormatedString(this.Total, this.Free);
 
@@ -62,57 +80,11 @@ namespace zDrive.ViewModels
             this.RaisePropertyChanged(nameof(this.Value));
         }
 
-        public RelayCommand LeftMouseCommand { get; }
-
-        private void Open(object param) => Process.Start(TaskManager);
-
-        public static class PerformanceInfo
+        private void Open(object param)
         {
-            [DllImport("psapi.dll", SetLastError = true)]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool GetPerformanceInfo([Out] out PerformanceInformation performanceInformation,
-                [In] int size);
+            var process = new ProcessStartInfo(TaskManager) { UseShellExecute = true };
 
-            public static long GetPhysicalAvailableMemory()
-            {
-                var pi = new PerformanceInformation();
-                if (GetPerformanceInfo(out pi, Marshal.SizeOf(pi)))
-                {
-                    return Convert.ToInt64(pi.PhysicalAvailable.ToInt64() * pi.PageSize.ToInt64());
-                }
-
-                return -1;
-            }
-
-            public static long GetTotalMemory()
-            {
-                var pi = new PerformanceInformation();
-                if (GetPerformanceInfo(out pi, Marshal.SizeOf(pi)))
-                {
-                    return Convert.ToInt64(pi.PhysicalTotal.ToInt64() * pi.PageSize.ToInt64());
-                }
-
-                return -1;
-            }
-
-            [StructLayout(LayoutKind.Sequential)]
-            public struct PerformanceInformation
-            {
-                public int Size;
-                public IntPtr CommitTotal;
-                public IntPtr CommitLimit;
-                public IntPtr CommitPeak;
-                public IntPtr PhysicalTotal;
-                public IntPtr PhysicalAvailable;
-                public IntPtr SystemCache;
-                public IntPtr KernelTotal;
-                public IntPtr KernelPaged;
-                public IntPtr KernelNonPaged;
-                public IntPtr PageSize;
-                public int HandlesCount;
-                public int ProcessCount;
-                public int ThreadCount;
-            }
+            _ = Process.Start(process);
         }
     }
 }

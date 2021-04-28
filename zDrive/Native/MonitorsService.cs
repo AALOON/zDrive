@@ -58,7 +58,7 @@ namespace zDrive.Native
         }
 
         /// <summary>
-        /// Is prime  monitor
+        /// Is prime monitor.
         /// </summary>
         internal bool IsPrime(uint id) => Screen.AllScreens[(int)id].Primary;
 

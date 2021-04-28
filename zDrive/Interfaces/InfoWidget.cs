@@ -1,4 +1,4 @@
-﻿namespace zDrive.Interfaces
+namespace zDrive.Interfaces
 {
     /// <summary>
     /// Info widgets.
@@ -6,6 +6,7 @@
     public enum InfoWidget
     {
         RamDisk,
-        Displays
+        Displays,
+        Cpu,
     }
 }

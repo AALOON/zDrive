@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Microsoft.Extensions.Logging;
 using zDrive.Converters;
 using zDrive.Interfaces;
 using zDrive.ViewModels;
@@ -10,12 +11,15 @@ namespace zDrive.Services
     internal class DriveInfoService : IDriveInfoService
     {
         private readonly IInfoFormatService infoFormatter;
+        private readonly ILoggerFactory loggerFactory;
         private readonly Func<DriveInfo, string> keyFunc = x => x.Name;
 
 
-        public DriveInfoService(IDictionary<string, IDriveViewModel> dictionary, IInfoFormatService infoFormatter)
+        public DriveInfoService(IDictionary<string, IDriveViewModel> dictionary, IInfoFormatService infoFormatter,
+            ILoggerFactory loggerFactory)
         {
             this.infoFormatter = infoFormatter;
+            this.loggerFactory = loggerFactory;
             this.Drives = dictionary;
             this.Initialize();
         }
@@ -77,6 +81,6 @@ namespace zDrive.Services
         }
 
         private void Insert(DriveInfo driveInfo) =>
-            this.Drives.Add(this.keyFunc(driveInfo), new DriveViewModel(driveInfo, this.infoFormatter));
+            this.Drives.Add(this.keyFunc(driveInfo), new DriveViewModel(driveInfo, this.infoFormatter, this.loggerFactory));
     }
 }

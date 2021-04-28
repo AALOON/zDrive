@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Forms;
+using Microsoft.Extensions.Logging;
 using zDrive.Converters;
 using zDrive.Interfaces;
 using zDrive.Mvvm;
@@ -17,6 +18,9 @@ namespace zDrive.ViewModels
     {
         private readonly IDriveInfoService driveInfoService;
         private readonly IRegistryService registryService;
+        private readonly IWidgetsService widgetsService;
+        private bool cpu;
+        private bool ram;
 
         private bool showUnavailable;
         private Theme theme;
@@ -29,10 +33,12 @@ namespace zDrive.ViewModels
             IWidgetsService widgetsService,
             ITimerService timerService,
             IDictionary<string, IDriveViewModel> drives,
-            IDictionary<string, IInfoViewModel> widgets)
+            IDictionary<string, IInfoViewModel> widgets,
+            ILogger logger)
         {
             this.registryService = registryService;
             this.driveInfoService = driveInfoService;
+            this.widgetsService = widgetsService;
             this.Drives = drives;
             this.Widgets = widgets;
 
@@ -45,13 +51,10 @@ namespace zDrive.ViewModels
 
             this.Initialize();
 
-            widgetsService.Add(InfoWidget.RamDisk);
-            if (Screen.AllScreens.Length > 1)
-            {
-                widgetsService.Add(InfoWidget.Displays);
-            }
+            this.InitializeWidgets();
 
             this.CheckIfVersionChanged();
+            logger.LogInformation(nameof(zDrive) + " is started.");
         }
 
         /// <inheritdoc />
@@ -69,7 +72,7 @@ namespace zDrive.ViewModels
                 if (this.Set(ref this.showUnavailable, value))
                 {
                     this.driveInfoService.ShowUnavailable = value;
-                    this.registryService.Write("ShowUnavailable", value);
+                    this.registryService.Write(nameof(this.ShowUnavailable), value);
                 }
             }
         }
@@ -82,7 +85,51 @@ namespace zDrive.ViewModels
             {
                 if (this.Set(ref this.topmost, value))
                 {
-                    this.registryService.Write("Topmost", value);
+                    this.registryService.Write(nameof(this.Topmost), value);
+                }
+            }
+        }
+
+        /// <inheritdoc />
+        public bool Ram
+        {
+            get => this.ram;
+            set
+            {
+                if (value)
+                {
+                    this.widgetsService.Add(InfoWidget.RamDisk);
+                }
+                else
+                {
+                    this.widgetsService.Remove(InfoWidget.RamDisk);
+                }
+
+                if (this.Set(ref this.ram, value))
+                {
+                    this.registryService.Write(nameof(this.Ram), value);
+                }
+            }
+        }
+
+        /// <inheritdoc />
+        public bool Cpu
+        {
+            get => this.cpu;
+            set
+            {
+                if (value)
+                {
+                    this.widgetsService.Add(InfoWidget.Cpu);
+                }
+                else
+                {
+                    this.widgetsService.Remove(InfoWidget.Cpu);
+                }
+
+                if (this.Set(ref this.cpu, value))
+                {
+                    this.registryService.Write(nameof(this.Cpu), value);
                 }
             }
         }
@@ -232,6 +279,26 @@ namespace zDrive.ViewModels
             catch (Exception)
             {
                 //TODO: write log
+            }
+        }
+
+        private void InitializeWidgets()
+        {
+            this.ram = this.registryService.Read(nameof(this.Ram), true);
+            if (this.ram)
+            {
+                this.widgetsService.Add(InfoWidget.RamDisk);
+            }
+
+            this.cpu = this.registryService.Read(nameof(this.Cpu), true);
+            if (this.cpu)
+            {
+                this.widgetsService.Add(InfoWidget.Cpu);
+            }
+
+            if (Screen.AllScreens.Length > 1)
+            {
+                this.widgetsService.Add(InfoWidget.Displays);
             }
         }
 

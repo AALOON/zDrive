@@ -141,6 +141,11 @@
                                       FontSize="{DynamicResource MenuFontSize}"
                                       Foreground="{DynamicResource Foreground}"
                                       Content="{x:Static p:Resources.CpuCheckbox_Text}" />
+                            <CheckBox Name="HdrCheckbox"
+                                      IsChecked="{Binding Hdr}"
+                                      FontSize="{DynamicResource MenuFontSize}"
+                                      Foreground="{DynamicResource Foreground}"
+                                      Content="{x:Static p:Resources.HdrCheckbox_Text}" />
                             <ComboBox ItemsSource="{Binding Source={StaticResource InfoFormatList}}"
                                       SelectedItem="{Binding InfoFormat}" />
                             <ComboBox ItemsSource="{Binding Source={StaticResource SkinsList}}"

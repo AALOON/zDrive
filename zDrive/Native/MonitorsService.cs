@@ -17,44 +17,83 @@ namespace zDrive.Native
     {
         private const int ErrorSuccess = 0;
 
+        private const string DeviceNamePrefix = @"\\.\";
+
         private static readonly Lazy<MonitorsService> LazyInstance = new(() => new MonitorsService());
 
         public static MonitorsService Instance { get; } = LazyInstance.Value;
 
         public IEnumerable<MonitorInfo> AllMonitorDevices()
         {
-            var allFriendlyNames = this.GetAllMonitorsFriendlyNames().ToArray();
+            var targets = this.GetAllDisplayTargets();
             var screens = Screen.AllScreens;
             for (var i = 0; i < screens.Length; i++)
             {
                 var screen = screens[i];
-                yield return new MonitorInfo((uint)i, screen.Primary, screen.DeviceName, allFriendlyNames[i]);
-            }
-        }
-
-        public string DeviceFriendlyName(Screen screen)
-        {
-            var allFriendlyNames = this.GetAllMonitorsFriendlyNames();
-            for (var index = 0; index < Screen.AllScreens.Length; index++)
-            {
-                if (Equals(screen, Screen.AllScreens[index]))
+                var target = this.FindTarget(targets, screen.DeviceName);
+                var isHdrSupported = false;
+                var isHdrEnabled = false;
+                if (target != null && TryGetAdvancedColorInfo(target.AdapterId, target.TargetId, out var colorInfo))
                 {
-                    return allFriendlyNames.ToArray()[index];
+                    isHdrSupported = colorInfo.IsAdvancedColorSupported;
+                    isHdrEnabled = colorInfo.IsAdvancedColorEnabled;
                 }
-            }
 
-            return null;
+                yield return new MonitorInfo((uint)i, screen.Primary, screen.DeviceName,
+                    target?.FriendlyName ?? screen.DeviceName, isHdrSupported, isHdrEnabled);
+            }
         }
+
+        public string DeviceFriendlyName(Screen screen) =>
+            this.FindTarget(this.GetAllDisplayTargets(), screen.DeviceName)?.FriendlyName ?? screen.DeviceName;
 
         public string DeviceFriendlyName(uint screenId)
         {
-            var allFriendlyNames = this.GetAllMonitorsFriendlyNames().ToArray();
-            if (allFriendlyNames.Length <= screenId)
+            var screens = Screen.AllScreens;
+            if (screens.Length <= screenId)
             {
                 throw new ArgumentOutOfRangeException(nameof(screenId));
             }
 
-            return allFriendlyNames[screenId];
+            return this.DeviceFriendlyName(screens[screenId]);
+        }
+
+        /// <summary>
+        /// Hdr state of the display.
+        /// </summary>
+        public (bool IsSupported, bool IsEnabled) GetHdrState(string deviceName)
+        {
+            var target = this.FindTarget(this.GetAllDisplayTargets(), deviceName);
+            if (target == null || !TryGetAdvancedColorInfo(target.AdapterId, target.TargetId, out var colorInfo))
+            {
+                return (false, false);
+            }
+
+            return (colorInfo.IsAdvancedColorSupported, colorInfo.IsAdvancedColorEnabled);
+        }
+
+        /// <summary>
+        /// Is hdr enabled on the display.
+        /// </summary>
+        public bool IsHdrEnabled(string deviceName) => this.GetHdrState(deviceName).IsEnabled;
+
+        /// <summary>
+        /// Enable or disable hdr on the display.
+        /// </summary>
+        public void SetHdr(string deviceName, bool enable)
+        {
+            var target = this.FindTarget(this.GetAllDisplayTargets(), deviceName);
+            if (target == null)
+            {
+                throw new ArgumentException($"Display '{deviceName}' is not found.", nameof(deviceName));
+            }
+
+            var state = new DisplayConfigSetAdvancedColorInfo(target.AdapterId, target.TargetId, enable);
+            var error = DisplayConfigApi.DisplayConfigSetDeviceInfo(ref state);
+            if (error != ErrorSuccess)
+            {
+                throw new Win32Exception((int)error);
+            }
         }
 
         /// <summary>
@@ -114,7 +153,7 @@ namespace zDrive.Native
                 (IntPtr)null);
         }
 
-        private IEnumerable<string> GetAllMonitorsFriendlyNames()
+        private IEnumerable<DisplayTarget> GetAllDisplayTargets()
         {
             var error = DisplayConfigApi.GetDisplayConfigBufferSizes(QueryDeviceConfigFlags.OnlyActivePaths,
                 out var pathCount,
@@ -133,14 +172,41 @@ namespace zDrive.Native
                 throw new Win32Exception((int)error);
             }
 
-            for (var i = 0; i < modeCount; i++)
+            for (var i = 0; i < pathCount; i++)
             {
-                if (displayModes[i].InfoType == DisplayConfigModeInfoType.Target)
+                var path = displayPaths[i];
+                var sourceName = new DisplayConfigSourceDeviceName(path.SourceInfo.AdapterId,
+                    path.SourceInfo.SourceId);
+                error = DisplayConfigApi.DisplayConfigGetDeviceInfo(ref sourceName);
+                if (error != ErrorSuccess)
                 {
-                    yield return MonitorFriendlyName(displayModes[i].AdapterId, displayModes[i].Id);
+                    throw new Win32Exception((int)error);
                 }
+
+                yield return new DisplayTarget(sourceName.DeviceName,
+                    MonitorFriendlyName(path.TargetInfo.AdapterId, path.TargetInfo.TargetId),
+                    path.TargetInfo.AdapterId, path.TargetInfo.TargetId);
             }
         }
+
+        private DisplayTarget FindTarget(IEnumerable<DisplayTarget> targets, string deviceName)
+        {
+            var normalized = NormalizeDeviceName(deviceName);
+            return targets.FirstOrDefault(target =>
+                string.Equals(target.DeviceName, normalized, StringComparison.OrdinalIgnoreCase));
+        }
+
+        private static bool TryGetAdvancedColorInfo(Luid adapterId, uint targetId,
+            out DisplayConfigGetAdvancedColorInfo info)
+        {
+            info = new DisplayConfigGetAdvancedColorInfo(adapterId, targetId);
+            return DisplayConfigApi.DisplayConfigGetDeviceInfo(ref info) == ErrorSuccess;
+        }
+
+        private static string NormalizeDeviceName(string deviceName) =>
+            deviceName.StartsWith(DeviceNamePrefix, StringComparison.OrdinalIgnoreCase)
+                ? deviceName
+                : DeviceNamePrefix + deviceName;
 
         private static string MonitorFriendlyName(Luid adapterId, uint targetId)
         {
@@ -152,6 +218,25 @@ namespace zDrive.Native
             }
 
             return deviceName.MonitorFriendlyDeviceName;
+        }
+
+        private sealed class DisplayTarget
+        {
+            public DisplayTarget(string deviceName, string friendlyName, Luid adapterId, uint targetId)
+            {
+                this.DeviceName = deviceName;
+                this.FriendlyName = friendlyName;
+                this.AdapterId = adapterId;
+                this.TargetId = targetId;
+            }
+
+            public string DeviceName { get; }
+
+            public string FriendlyName { get; }
+
+            public Luid AdapterId { get; }
+
+            public uint TargetId { get; }
         }
     }
 }

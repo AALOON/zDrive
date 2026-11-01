@@ -45,6 +45,11 @@ namespace zDrive.Interfaces
         bool Cpu { get; set; }
 
         /// <summary>
+        /// Show hdr buttons on displays widget.
+        /// </summary>
+        bool Hdr { get; set; }
+
+        /// <summary>
         /// Location of X of window.
         /// </summary>
         double X { get; set; }

@@ -97,6 +97,24 @@ namespace zDrive.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Включить/выключить HDR.
+        /// </summary>
+        public static string HdrButton_Text {
+            get {
+                return ResourceManager.GetString("HdrButton_Text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Кнопка HDR.
+        /// </summary>
+        public static string HdrCheckbox_Text {
+            get {
+                return ResourceManager.GetString("HdrCheckbox_Text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Скрыть недоступные.
         /// </summary>
         public static string HideUnavailableCheckbox_Text {

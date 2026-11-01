@@ -186,6 +186,12 @@
   <data name="CpuCheckbox_Text" xml:space="preserve">
     <value>Процессор</value>
   </data>
+  <data name="HdrButton_Text" xml:space="preserve">
+    <value>Включить/выключить HDR</value>
+  </data>
+  <data name="HdrCheckbox_Text" xml:space="preserve">
+    <value>Кнопка HDR</value>
+  </data>
   <data name="RamCheckbox_Text" xml:space="preserve">
     <value>Озу</value>
   </data>

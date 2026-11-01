@@ -20,6 +20,7 @@ namespace zDrive.ViewModels
         private readonly IRegistryService registryService;
         private readonly IWidgetsService widgetsService;
         private bool cpu;
+        private bool hdr;
         private bool ram;
 
         private bool showUnavailable;
@@ -130,6 +131,20 @@ namespace zDrive.ViewModels
                 if (this.Set(ref this.cpu, value))
                 {
                     this.registryService.Write(nameof(this.Cpu), value);
+                }
+            }
+        }
+
+        /// <inheritdoc />
+        public bool Hdr
+        {
+            get => this.hdr;
+            set
+            {
+                if (this.Set(ref this.hdr, value))
+                {
+                    this.registryService.Write(nameof(this.Hdr), value);
+                    this.UpdateDisplaysWidget();
                 }
             }
         }
@@ -253,6 +268,7 @@ namespace zDrive.ViewModels
             // initialize settings from registry
             this.topmost = this.registryService.Read(nameof(this.Topmost), false);
             this.showUnavailable = this.registryService.Read(nameof(this.ShowUnavailable), false);
+            this.hdr = this.registryService.Read(nameof(this.Hdr), false);
             this.InfoFormat = this.registryService.Read(nameof(this.InfoFormat), InfoFormat.Free);
             this.Theme = this.registryService.Read(nameof(this.Theme), Theme.Default);
 
@@ -296,9 +312,30 @@ namespace zDrive.ViewModels
                 this.widgetsService.Add(InfoWidget.Cpu);
             }
 
-            if (Screen.AllScreens.Length > 1)
+            this.UpdateDisplaysWidget();
+        }
+
+        /// <summary>
+        /// Adds or removes the displays widget. The widget is shown for several displays,
+        /// or for the single display when hdr buttons are enabled.
+        /// </summary>
+        private void UpdateDisplaysWidget()
+        {
+            var key = nameof(InfoWidget.Displays);
+            var multipleScreens = Screen.AllScreens.Length > 1;
+
+            if (!this.Widgets.ContainsKey(key) && (this.hdr || multipleScreens))
             {
                 this.widgetsService.Add(InfoWidget.Displays);
+            }
+            else if (this.Widgets.ContainsKey(key) && !this.hdr && !multipleScreens)
+            {
+                this.widgetsService.Remove(InfoWidget.Displays);
+            }
+
+            if (this.Widgets.TryGetValue(key, out var widget) && widget is DisplaysViewModel displays)
+            {
+                displays.ShowHdrButton = this.hdr;
             }
         }
 

@@ -77,12 +77,30 @@ namespace zDrive.Native.Display
         );
 
         /// <summary>
+        /// The DisplayConfigGetDeviceInfo function retrieves display configuration information about the device.
+        /// https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-displayconfiggetdeviceinfo
+        /// </summary>
+        [DllImport(User32)]
+        public static extern User32Status DisplayConfigGetDeviceInfo(
+            ref DisplayConfigGetAdvancedColorInfo advancedColorInfo
+        );
+
+        /// <summary>
         /// The DisplayConfigSetDeviceInfo function sets the properties of a target.
         /// https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-displayconfigsetdeviceinfo
         /// </summary>
         [DllImport(User32)]
         public static extern User32Status DisplayConfigSetDeviceInfo(
             ref DisplayConfigSetTargetPersistence targetPersistence
+        );
+
+        /// <summary>
+        /// The DisplayConfigSetDeviceInfo function sets the properties of a target.
+        /// https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-displayconfigsetdeviceinfo
+        /// </summary>
+        [DllImport(User32)]
+        public static extern User32Status DisplayConfigSetDeviceInfo(
+            ref DisplayConfigSetAdvancedColorInfo advancedColorState
         );
 
         /// <summary>

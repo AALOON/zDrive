@@ -2,10 +2,8 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using zDrive.Interfaces;
 using zDrive.Mvvm;
-using zDrive.Native;
 using zDrive.Native.Shell;
 
 namespace zDrive.ViewModels
@@ -17,25 +15,23 @@ namespace zDrive.ViewModels
     {
         private readonly DriveInfo driveInfo;
         private readonly IInfoFormatter infoFormatter;
-        private readonly IPdhCounter counter;
+        private string info = string.Empty;
+        private long totalFreeSpace;
+        private long totalSize;
+        private double value;
 
-        public DriveViewModel(DriveInfo driveInfo, IInfoFormatter format, ILoggerFactory loggerFactory)
+        public DriveViewModel(DriveInfo driveInfo, IInfoFormatter format)
         {
             this.driveInfo = driveInfo ?? throw new ArgumentNullException(nameof(driveInfo));
             this.infoFormatter = format ?? throw new ArgumentNullException(nameof(format));
             this.LeftMouseCommand = new RelayCommand(this.Open);
             this.RightMouseCommand = new RelayCommand(this.Properties);
-            var label = driveInfo.Name;
-            if (label.EndsWith("\\", StringComparison.OrdinalIgnoreCase))
-            {
-                label = label[0..^1];
-                this.counter = new PdhCounter($@"\LogicalDisk({label})\Disk Read Bytes/sec", loggerFactory);
-            }
-            this.counter.InitializeCounters();
         }
 
         public void RaiseChanges()
         {
+            this.UpdateValues();
+
             this.RaisePropertyChanged(nameof(this.DisplayString));
             this.RaisePropertyChanged(nameof(this.Label));
             this.RaisePropertyChanged(nameof(this.Format));
@@ -61,34 +57,13 @@ namespace zDrive.ViewModels
 
         public DriveType Type => this.driveInfo.IsReady ? this.driveInfo.DriveType : DriveType.Unknown;
 
-        public long TotalSize => this.driveInfo.IsReady ? this.driveInfo.TotalSize : 0L;
+        public long TotalSize => this.totalSize;
 
-        public long TotalFreeSpace => this.driveInfo.IsReady ? this.driveInfo.AvailableFreeSpace : 0L;
+        public long TotalFreeSpace => this.totalFreeSpace;
 
+        public string Info => this.info;
 
-        public string Info => this.infoFormatter.GetFormatedString(this.TotalSize, this.TotalFreeSpace) + $" {this.counter?.Collect()}";
-
-        public double Value
-        {
-            get
-            {
-                if (!this.driveInfo.IsReady)
-                {
-                    return 0d;
-                }
-
-                var freeBytes = this.driveInfo.AvailableFreeSpace;
-                var totalByes = this.driveInfo.TotalSize;
-
-                if (totalByes == 0L)
-                {
-                    return 0d;
-                }
-
-                return (totalByes - freeBytes) / (totalByes / 100d);
-            }
-        }
-
+        public double Value => this.value;
 
         public RelayCommand LeftMouseCommand { get; }
 
@@ -102,6 +77,33 @@ namespace zDrive.ViewModels
             }
 
             Task.Run(() => ShellExecuteApi.ShowFileProperties(this.Key));
+        }
+
+        private void UpdateValues()
+        {
+            try
+            {
+                this.totalSize = this.driveInfo.IsReady ? this.driveInfo.TotalSize : 0L;
+                this.totalFreeSpace = this.driveInfo.IsReady ? this.driveInfo.AvailableFreeSpace : 0L;
+            }
+            catch (Exception)
+            {
+                // Drive became unavailable between checks - keep the last known values.
+                return;
+            }
+
+            this.info = this.infoFormatter.GetFormatedString(this.totalSize, this.totalFreeSpace);
+            this.value = GetValue(this.totalSize, this.totalFreeSpace);
+        }
+
+        private static double GetValue(long total, long free)
+        {
+            if (total == 0L)
+            {
+                return 0d;
+            }
+
+            return (total - free) / (total / 100d);
         }
     }
 }

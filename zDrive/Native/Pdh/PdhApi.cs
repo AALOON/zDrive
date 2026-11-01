@@ -14,11 +14,13 @@ namespace zDrive.Native.Pdh
         private const string PdhDll = "pdh.dll";
 
         /// <summary>
-        /// Adds counter to query
+        /// Adds the specified language-neutral counter to the query.
+        /// Counter paths are locale-independent in contrast to localized <c>PdhAddCounter</c>.
+        /// https://docs.microsoft.com/en-us/windows/win32/api/pdh/nf-pdh-pdhaddenglishcounterw
         /// </summary>
         [DllImport(PdhDll, CharSet = CharSet.Unicode)]
-        public static extern PdhErrorCode PdhAddCounter(PdhQueryHandle hQuery, string counterPath, IntPtr userData,
-            out PdhCounterHandle counter);
+        public static extern PdhErrorCode PdhAddEnglishCounter(PdhQueryHandle hQuery, string counterPath,
+            IntPtr userData, out PdhCounterHandle counter);
 
         /// <summary>
         /// Closes Query object handle

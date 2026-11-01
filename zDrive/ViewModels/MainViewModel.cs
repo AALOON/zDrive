@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Windows;
-using System.Windows.Forms;
 using Microsoft.Extensions.Logging;
 using zDrive.Converters;
 using zDrive.Interfaces;
 using zDrive.Mvvm;
+using zDrive.Native;
 using Application = System.Windows.Application;
 
 namespace zDrive.ViewModels
@@ -239,7 +239,13 @@ namespace zDrive.ViewModels
             const string dll = ".dll";
             const string exe = ".exe";
 
-            var location = Assembly.GetExecutingAssembly().Location;
+            // Assembly.Location is empty in a single-file app, so prefer the process path
+            var location = Environment.ProcessPath;
+            if (string.IsNullOrEmpty(location))
+            {
+                location = Assembly.GetExecutingAssembly().Location;
+            }
+
             if (location.EndsWith(dll, StringComparison.OrdinalIgnoreCase))
             {
                 location = location.Substring(0, location.Length - dll.Length) + exe;
@@ -296,7 +302,7 @@ namespace zDrive.ViewModels
                 this.widgetsService.Add(InfoWidget.Cpu);
             }
 
-            if (Screen.AllScreens.Length > 1)
+            if (MonitorsService.Instance.ScreensCount > 1)
             {
                 this.widgetsService.Add(InfoWidget.Displays);
             }

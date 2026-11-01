@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
 using zDrive.Native.Display;
 using zDrive.Native.Display.DeviceContext;
 using zDrive.Native.Display.DeviceContext.Structures;
@@ -24,27 +23,19 @@ namespace zDrive.Native
         public IEnumerable<MonitorInfo> AllMonitorDevices()
         {
             var allFriendlyNames = this.GetAllMonitorsFriendlyNames().ToArray();
-            var screens = Screen.AllScreens;
+            var screens = EnumerateAttachedScreens().ToArray();
             for (var i = 0; i < screens.Length; i++)
             {
                 var screen = screens[i];
-                yield return new MonitorInfo((uint)i, screen.Primary, screen.DeviceName, allFriendlyNames[i]);
+                yield return new MonitorInfo((uint)i, screen.IsPrimary, screen.DeviceName, allFriendlyNames[i]);
             }
         }
 
-        public string DeviceFriendlyName(Screen screen)
-        {
-            var allFriendlyNames = this.GetAllMonitorsFriendlyNames();
-            for (var index = 0; index < Screen.AllScreens.Length; index++)
-            {
-                if (Equals(screen, Screen.AllScreens[index]))
-                {
-                    return allFriendlyNames.ToArray()[index];
-                }
-            }
-
-            return null;
-        }
+        /// <summary>
+        /// Count of screens attached to the desktop
+        /// (the same set that WinForms Screen.AllScreens used to return).
+        /// </summary>
+        public int ScreensCount => EnumerateAttachedScreens().Count();
 
         public string DeviceFriendlyName(uint screenId)
         {
@@ -60,7 +51,21 @@ namespace zDrive.Native
         /// <summary>
         /// Is prime monitor.
         /// </summary>
-        internal bool IsPrime(uint id) => Screen.AllScreens[(int)id].Primary;
+        internal bool IsPrime(uint id) => EnumerateAttachedScreens().ElementAt((int)id).IsPrimary;
+
+        private static IEnumerable<(string DeviceName, bool IsPrimary)> EnumerateAttachedScreens()
+        {
+            var device = DisplayDevice.Initialize();
+            for (uint id = 0; DisplayContextApi.EnumDisplayDevices(null, id, ref device, 0); id++)
+            {
+                if (device.StateFlags.HasFlag(DisplayDeviceStateFlags.AttachedToDesktop))
+                {
+                    yield return (device.DeviceName, device.StateFlags.HasFlag(DisplayDeviceStateFlags.PrimaryDevice));
+                }
+
+                device = DisplayDevice.Initialize();
+            }
+        }
 
         internal void SetAsPrimaryMonitor(uint id)
         {

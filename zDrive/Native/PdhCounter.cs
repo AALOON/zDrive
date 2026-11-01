@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.InteropServices;
 using Microsoft.Extensions.Logging;
 using zDrive.Native.Pdh;
 using zDrive.Services.Ioc;
@@ -11,6 +10,8 @@ namespace zDrive.Native
         private readonly string counterPath;
         private readonly OneTimeSetup cpuCounterInitialized = new();
         private readonly ILogger logger;
+        private bool failed;
+        private PdhErrorCode? lastError;
 
         private PdhCounterHandle cpuCounterHandle;
         private PdhQueryHandle cpuCounterQuery;
@@ -32,11 +33,15 @@ namespace zDrive.Native
         /// <inheritdoc />
         public double? Collect()
         {
+            if (this.failed)
+            {
+                return null;
+            }
+
             var result = PdhApi.PdhCollectQueryData(this.cpuCounterQuery);
             if (result != PdhErrorCode.Success)
             {
-                var error = Marshal.GetLastWin32Error();
-                this.logger.LogWarning("Error on PdhCollectQueryData. Error: {Error}", error);
+                this.SetError(result, "Error on PdhCollectQueryData.");
                 return null;
             }
 
@@ -45,11 +50,11 @@ namespace zDrive.Native
                 out var value);
             if (pdhResult != PdhErrorCode.Success)
             {
-                var error = Marshal.GetLastWin32Error();
-                this.logger.LogWarning("Error on PdhGetFormattedCounterValue. Error: {Error}", error);
+                this.SetError(pdhResult, "Error on PdhGetFormattedCounterValue.");
                 return null;
             }
 
+            this.SetError(null, null);
             return value.DoubleValue;
         }
 
@@ -61,10 +66,43 @@ namespace zDrive.Native
                 return;
             }
 
-            PdhApi.PdhOpenQuery(null, IntPtr.Zero, out this.cpuCounterQuery);
+            var openResult = PdhApi.PdhOpenQuery(null, IntPtr.Zero, out this.cpuCounterQuery);
+            if (openResult != PdhErrorCode.Success)
+            {
+                this.MarkFailed("Error on PdhOpenQuery.", openResult);
+                return;
+            }
 
-            PdhApi.PdhAddCounter(this.cpuCounterQuery, this.counterPath, IntPtr.Zero,
+            var addResult = PdhApi.PdhAddEnglishCounter(this.cpuCounterQuery, this.counterPath, IntPtr.Zero,
                 out this.cpuCounterHandle);
+            if (addResult != PdhErrorCode.Success)
+            {
+                this.MarkFailed("Error on PdhAddEnglishCounter.", addResult);
+            }
+        }
+
+        private void SetError(PdhErrorCode? error, string message)
+        {
+            if (this.lastError == error)
+            {
+                return;
+            }
+
+            this.lastError = error;
+            if (error != null)
+            {
+                this.logger.LogWarning("{Message} Counter path: {CounterPath}. Error: {Error}.", message,
+                    this.counterPath, error);
+            }
+        }
+
+        private void MarkFailed(string message, PdhErrorCode error)
+        {
+            this.failed = true;
+            this.lastError = error;
+            this.logger.LogWarning(
+                "{Message} Counter path: {CounterPath}. Error: {Error}. Counter is disabled.", message,
+                this.counterPath, error);
         }
 
         private void Dispose(bool disposing)

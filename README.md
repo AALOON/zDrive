@@ -9,7 +9,7 @@ Widget with information about Storage  drives written on WPF
 - Open task manager
 - Primary display changer
 - English and Russian language
-- Dark, Gray skins
+- Dark, Gray, Modern skins
 
 ![Dark](dark.png)
 ![Gray](gray.png)

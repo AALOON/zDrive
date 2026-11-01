@@ -8,6 +8,7 @@
         Default = 0,
 
         Gray = 1,
-        Dark = 2
+        Dark = 2,
+        Modern = 3
     }
 }

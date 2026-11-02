@@ -30,7 +30,8 @@ namespace zDrive.Services.Ioc
 
         public bool Equals(TypeKey b) => this.Type == b.Type && this.Key.Compare(b.Key);
 
-        public override int GetHashCode() => this.Type.GetHashCode() ^ (this.Key?.GetHashCode() ?? 0);
+        public override int GetHashCode() =>
+            this.Type.GetHashCode() ^ (this.Key is null ? 0 : StringComparer.OrdinalIgnoreCase.GetHashCode(this.Key));
 
         public override string ToString() =>
             string.IsNullOrEmpty(this.Key) ? this.Type.Name : this.Type.Name + " " + this.Key;

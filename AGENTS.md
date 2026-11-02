@@ -18,7 +18,7 @@ dotnet publish zDrive/zDrive.csproj -p:PublishProfile=SingleFile   # self-contai
 
 - Publish profile lives at `zDrive/Properties/PublishProfiles/SingleFile.pubxml`.
 - SDK is pinned in `global.json` (`.NET 10.0.4xx`, `rollForward: latestFeature`).
-- There are **no automated tests** in the solution; verification = build (warnings are errors-prone style rules, see `.editorconfig`) + manual smoke run.
+- Unit tests live in `zDrive.Tests` (xUnit, `net10.0-windows`): `dotnet test zDrive.sln`. They cover pure-logic parts (IoC container, collections, formatting, commands, view-model base, drive detection). UI/hardware-bound services (registry, dispatcher timer, Pdh/PsApi/monitors) are verified by manual smoke run.
 
 ## Architecture
 

@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace zDrive.ViewModels
@@ -131,7 +130,7 @@ namespace zDrive.ViewModels
 
         internal bool Set(ref float field, float value, [CallerMemberName] string propertyName = "")
         {
-            if (Math.Abs(field - value) < 0.0)
+            if (field == value)
             {
                 return false;
             }
@@ -144,7 +143,7 @@ namespace zDrive.ViewModels
 
         internal bool Set(ref double field, double value, [CallerMemberName] string propertyName = "")
         {
-            if (Math.Abs(field - value) < 0.0)
+            if (field == value)
             {
                 return false;
             }

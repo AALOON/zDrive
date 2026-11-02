@@ -245,7 +245,8 @@ namespace zDrive.Services.Ioc
 
         private static Type GetEnumerableType(Type type)
         {
-            if (type.IsInterface && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+            if (type.IsInterface && type.IsGenericType
+                && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
             {
                 return type.GetGenericArguments()[0];
             }
